@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GuianzApp | Agencias de viajes minoristas</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+  <main class="shell">
+    <section class="intro"><p class="eyebrow">GUIANZAPP / BOGOTÁ</p><h1>Tu oferta turística,<br><em>Concentrada en un mismo lugar.</em></h1><p class="intro-copy">Registra tu agencia, valida tu documentación y reúne cada paquete en un solo espacio.</p><div class="signal"><!--<span></span> En desarrollo · Entorno local--> </div></section>
+    <section class="workspace"><div id="message" class="message" hidden></div>
+      <div id="auth-view"><div class="tabs"><button class="tab active" data-target="login-form">Ingresar</button><button class="tab" data-target="register-form">Registrar agencia</button></div>
+        <form id="login-form" class="form"><h2>Volver al espacio</h2><label>Correo electrónico<input type="email" name="email" required autocomplete="email"></label><label>Contraseña<input type="password" name="password" required autocomplete="current-password"></label><button class="primary" type="submit">Ingresar <span>→</span></button></form>
+        <form id="register-form" class="form" hidden enctype="multipart/form-data"><h2>Crear agencia</h2><p class="hint">Tu solicitud quedará pendiente de validación administrativa.</p><label>Nombre de la agencia<input name="agencyName" required></label><label>Correo de trabajo<input type="email" name="email" required></label><div class="row"><label>RNT<input name="rntNumber" required></label><label>Contraseña<input type="password" name="password" minlength="8" required></label></div><label class="file">Documento RNT <small>PDF, JPG o PNG · máximo 10 MB</small><input type="file" name="rntDocument" accept="application/pdf,image/jpeg,image/png" required></label><button class="primary" type="submit">Enviar registro <span>→</span></button></form>
+      </div>
+      <div id="app-view" hidden><header class="app-header"><div><p class="eyebrow">ESPACIO DE AGENCIA</p><h2 id="welcome"></h2></div><button id="logout" class="text-button">Salir</button></header><div class="status"><span id="status-dot"></span><div><strong id="status-label"></strong><p id="status-copy"></p></div></div><div class="section-heading"><div><p class="eyebrow">CATÁLOGO</p><h2>Mis paquetes</h2></div><button id="new-package" class="secondary">+ Nuevo paquete</button></div><div id="packages" class="packages"></div><div id="package-detail" class="package-detail hidden" aria-live="polite"><div class="package-detail-backdrop" data-close-detail="true"></div><article class="package-detail-card"><button id="close-package-detail" class="close-detail" type="button" aria-label="Cerrar detalle">×</button><div id="package-detail-content"></div></article></div><form id="package-form" class="package-form" hidden enctype="multipart/form-data"><h3>Nuevo paquete turístico</h3><div class="row"><label>Nombre del paquete<input name="title" required></label><label>Precio (COP)<input type="number" name="price" min="0" required></label></div><label>Descripción<textarea name="description" rows="4" required></textarea></label><label>Política de cancelación<textarea name="cancellationPolicy" rows="2"></textarea></label><label class="file">Archivos del paquete <small>Imágenes o PDF · hasta 10 MB cada uno</small><input type="file" name="files" accept="application/pdf,image/jpeg,image/png,image/webp" multiple></label><div class="form-actions"><button type="button" id="cancel-package" class="text-button">Cancelar</button><button class="primary" type="submit">Guardar borrador <span>→</span></button></div></form></div>
+    </section>
+  </main><script src="/app.js"></script>
+</body>
+</html>
