@@ -10,13 +10,21 @@ Quick start:
 npm install
 ```
 
-2. Iniciar servidor:
+2. Crear `.env` a partir de `.env.example` y completar los valores desde Supabase:
+
+- `SUPABASE_URL`: Project URL.
+- `SUPABASE_ANON_KEY`: clave pública anon.
+- `SUPABASE_SERVICE_ROLE_KEY`: clave service role, solo para el backend.
+
+3. En Supabase, ejecutar [docs/supabase-migration.sql](docs/supabase-migration.sql) y crear los buckets privados `rnt-documents` y `package-files` desde Storage.
+
+4. Iniciar servidor:
 
 ```bash
 npm start
 ```
 
-El servidor servirá los archivos estáticos de `client/` y la API local en `http://localhost:3000`.
+El servidor servirá los archivos estáticos de `client/` y la API en `http://localhost:3000`.
 
 Estructura principal:
 - `server/` : backend Express que sirve la PWA.
@@ -26,11 +34,13 @@ Estructura principal:
 ## Flujo disponible
 
 - Registrar una agencia con nombre, correo, contraseña, RNT y documento RNT (PDF/JPG/PNG).
-- Iniciar sesión con un token firmado localmente y consultar el estado de validación.
+- Iniciar sesión con Supabase Auth y consultar el estado de validación.
 - Crear borradores de paquetes con título, descripción, precio, política de cancelación y múltiples archivos.
 - Consultar únicamente los paquetes pertenecientes a la agencia autenticada.
 
-La persistencia del entorno de desarrollo usa `server/data/` y los archivos se guardan en `server/uploads/`; ambas carpetas están ignoradas por Git. La validación administrativa y el despliegue cloud quedan para la siguiente iteración, cuando se conecte una base de datos y almacenamiento administrado.
+La persistencia usa las tablas `profiles`, `packages` y `package_files` de Supabase. Los documentos RNT y archivos de paquetes se guardan en buckets privados y se entregan mediante URLs firmadas con una hora de duración. `SUPABASE_SERVICE_ROLE_KEY` nunca debe llegar al frontend ni publicarse.
+
+Los usuarios existentes en `server/data/users.json` no se migran automáticamente: sus contraseñas usan un hash local incompatible con Supabase Auth. Deben registrarse nuevamente o recibir un flujo de restablecimiento de contraseña.
 
 ## API local
 

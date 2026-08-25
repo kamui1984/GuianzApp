@@ -1,4 +1,14 @@
 Seguimiento semanal profe
+# 24-08-2026
+Conectar base de datos con la funcionalidad de agencias
+secciones 4 a 7 del documento
+Modificación de la metodología
+Sprint, entregables y duración
+Entre 4 y 5 actividades por sprint
+
+
+
+
 
 # 10-08-2026
 Los otros actores, agencias y guias deben validar
