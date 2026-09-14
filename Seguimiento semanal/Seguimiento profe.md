@@ -1,4 +1,23 @@
+ideas surgidas de la asignatura de emprendimiento:
+
+
+Ideas API para que el turista le pueda hacer seguimiento a los vuelos, que le pueda avisar si el vuelo se adelanta y que le recuerde la hora del vuelo 3 horas antes si es internacional y 2 si es nacional
+Agencias puedan tener su listado de guías favoritos
+
+
 Seguimiento semanal profe
+# 31-08-2026
+Ajustar nombres de entidades y atributos
+
+Documentos
+Capitulo 1-3, agregar sprint actividades, entregables, (puede ser tabla) max 25 pag
+Títulos versión plantilla capit 4-6, títulos de primer y segundo nivel
+Elaboración manual
+
+Sistema
+Mejorar imagen para que se vea como Versión final
+Landing Page
+
 # 24-08-2026
 Conectar base de datos con la funcionalidad de agencias
 secciones 4 a 7 del documento

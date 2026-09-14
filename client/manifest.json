@@ -3,7 +3,14 @@
   "short_name": "Guianz",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2b6cb0",
-  "icons": []
+  "background_color": "#F7F2E8",
+  "theme_color": "#174A5B",
+  "icons": [
+    {
+      "src": "/brand-assets/Logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

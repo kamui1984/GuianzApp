@@ -2,43 +2,825 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>GuianzApp | Agencias de viajes minoristas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GuianzApp | Descubre Bogotá y sus Paquetes Turísticos</title>
+  <meta name="description" content="Explora y reserva paquetes turísticos en Bogotá con agencias y guías certificados con RNT. Bogotá se conecta. Tú la descubres.">
+  <link rel="icon" type="image/svg+xml" href="/logo-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <link rel="manifest" href="/manifest.json">
 </head>
 <body>
-  <main class="shell">
-    <section class="intro"><p class="eyebrow">GUIANZAPP / BOGOTÁ</p><h1>Tu oferta turística,<br><em>Concentrada en un mismo lugar.</em></h1><p class="intro-copy">Registra tu agencia, valida tu documentación y reúne cada paquete en un solo espacio.</p><div class="signal"><!--<span></span> En desarrollo · Entorno local--> </div></section>
-    <section class="workspace"><div id="message" class="message" hidden></div>
-      <div id="auth-view"><div class="tabs"><button class="tab active" data-target="login-form">Ingresar</button><button class="tab" data-target="register-agency-form">Registrar agencia</button><button class="tab" data-target="register-guide-form">Registrar guía</button></div>
-        <form id="login-form" class="form"><h2>Volver al espacio</h2><label>Correo electrónico<input type="email" name="email" required autocomplete="email"></label><label>Contraseña<input type="password" name="password" required autocomplete="current-password"></label><button class="primary" type="submit">Ingresar <span>→</span></button></form>
-        <form id="register-agency-form" class="form" hidden enctype="multipart/form-data"><h2>Crear agencia</h2><p class="hint">Tu solicitud quedará pendiente de validación administrativa.</p><label>Nombre de la agencia<input name="agencyName" required></label><label>Correo de trabajo<input type="email" name="email" required></label><div class="row"><label>RNT<input name="rntNumber" required></label><label>Contraseña<input type="password" name="password" minlength="8" required></label></div><label class="file">Documento RNT <small>PDF, JPG o PNG · máximo 10 MB</small><input type="file" name="rntDocument" accept="application/pdf,image/jpeg,image/png" required></label><button class="primary" type="submit">Enviar registro <span>→</span></button></form>
-        <form id="register-guide-form" class="form" hidden enctype="multipart/form-data"><h2>Crear guía</h2><p class="hint">Tu perfil quedará en revisión antes de poder operar.</p><label>Nombre completo<input name="fullName" required></label><label>Correo profesional<input type="email" name="email" required></label><div class="row" style="flex-direction: column; gap: 1rem;"><div><label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Especialidades (selecciona una o más)</label><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;"><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo histórico"> Turismo histórico</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo de naturaleza"> Turismo de naturaleza</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo urbano"> Turismo urbano</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo gastronómico"> Turismo gastronómico</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo de aventura"> Turismo de aventura</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Ecoturismo"> Ecoturismo</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo fotográfico"> Turismo fotográfico</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="specialties" value="Turismo religioso"> Turismo religioso</label></div></div><div><label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Idiomas (selecciona uno o más)</label><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;"><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Inglés" checked> Inglés</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Francés"> Francés</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Portugués"> Portugués</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Alemán"> Alemán</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Japonés"> Japonés</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Chino"> Chino</label><label style="display: flex; gap: 0.5rem; font-weight: normal;"><input type="checkbox" name="languages" value="Italiano"> Italiano</label></div></div></div><label>Contraseña<input type="password" name="password" minlength="8" required></label><label class="file">Tarjeta profesional <small>PDF, JPG o PNG · máximo 10 MB</small><input type="file" name="professionalCard" accept="application/pdf,image/jpeg,image/png" required></label><button class="primary" type="submit">Enviar registro <span>→</span></button></form>
-      </div>
-      <div id="app-view" hidden><header class="app-header"><div><p class="eyebrow">ESPACIO DE AGENCIA</p><h2 id="welcome"></h2></div><button id="logout" class="text-button">Salir</button></header><div class="status"><span id="status-dot"></span><div><strong id="status-label"></strong><p id="status-copy"></p></div></div>
-        <div id="admin-panel" class="admin-panel" hidden>
-          <div class="section-heading"><div><p class="eyebrow">ADMIN</p><h2>Revisión de perfiles</h2></div></div>
-          <div id="admin-queue" class="admin-queue"></div>
-        </div>
-        <div id="guide-profile" class="guide-profile" hidden>
-          <div class="section-heading"><div><p class="eyebrow">PERFIL</p><h2>Mi perfil profesional</h2></div></div>
-          <div class="guide-card">
-            <h3 id="guide-name"></h3>
-            <p id="guide-specialties"></p>
-            <p id="guide-languages"></p>
+
+  <!-- ================= LANDING PAGE PÚBLICA (ESTILO DESPEGAR / BRAND_V2) ================= -->
+  <div id="landing-shell" class="landing-shell">
+    <!-- Franja ornamental tejida bogotana -->
+    <div class="franja-tejido"></div>
+
+    <!-- Header superior de navegación -->
+    <header class="landing-header">
+      <div class="landing-container landing-header-inner">
+        <a href="#inicio" class="landing-brand" id="landing-logo-btn">
+          <img src="/logo_vertical.svg" alt="GuianzApp" class="landing-brand-logo">
+          <div class="landing-brand-text">
+            <span class="landing-brand-name">GuianzApp</span>
+            <span class="landing-brand-tag">BOGOTÁ · RNT</span>
           </div>
-          <form id="guide-availability-form" class="package-form guide-form">
-            <h3>Disponibilidad</h3>
-            <div class="row"><label>Fecha<input type="date" name="date" required></label><label>Disponible<input type="checkbox" name="isAvailable" checked></label></div>
-            <div class="row"><label>Hora inicio<input type="time" name="startTime"></label><label>Hora fin<input type="time" name="endTime"></label></div>
-            <label>Notas<textarea name="notes" rows="2"></textarea></label>
-            <div class="form-actions"><button class="primary" type="submit">Guardar disponibilidad <span>→</span></button></div>
-          </form>
-          <div id="guide-availability-list" class="availability-list"></div>
+        </a>
+
+        <nav class="landing-nav" id="landing-nav-menu">
+          <a href="#paquetes-destacados" class="landing-nav-link active">Paquetes turísticos</a>
+          <a href="#destinos-bogota" class="landing-nav-link">Zonas de Bogotá</a>
+          <a href="#beneficios" class="landing-nav-link">Beneficios</a>
+          <a href="#para-prestadores" class="landing-nav-link">Para Agencias y Guías</a>
+        </nav>
+
+        <div class="landing-auth-actions">
+          <button class="btn btn-texto btn-login-nav" id="landing-btn-login">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Iniciar sesión
+          </button>
+          <button class="btn btn-primario btn-register-nav" id="landing-btn-register">
+            Registrarse <span>→</span>
+          </button>
         </div>
-        <div id="agency-packages"><div class="section-heading"><div><p class="eyebrow">CATÁLOGO</p><h2>Mis paquetes</h2></div><button id="new-package" class="secondary">+ Nuevo paquete</button></div><div id="packages" class="packages"></div><div id="package-detail" class="package-detail hidden" aria-live="polite"><div class="package-detail-backdrop" data-close-detail="true"></div><article class="package-detail-card"><button id="close-package-detail" class="close-detail" type="button" aria-label="Cerrar detalle">×</button><div id="package-detail-content"></div></article></div><form id="package-form" class="package-form" hidden enctype="multipart/form-data"><h3 id="package-form-title">Nuevo paquete turístico</h3><div class="row"><label>Nombre del paquete<input name="title" required></label><label>Precio (COP)<input type="number" name="price" min="0" required></label></div><label>Descripción<textarea name="description" rows="4" required></textarea></label><label>Política de cancelación<textarea name="cancellationPolicy" rows="2"></textarea></label><div id="package-form-preview" class="package-form-preview"></div><label class="file">Archivos del paquete <small>Imágenes o PDF · hasta 10 MB cada uno</small><input type="file" name="files" accept="application/pdf,image/jpeg,image/png,image/webp" multiple></label><div class="form-actions"><button type="button" id="cancel-package" class="text-button">Cancelar</button><button id="package-form-submit" class="primary" type="submit">Guardar borrador <span>→</span></button></div></form></div></div></div>
+      </div>
+    </header>
+
+    <!-- Contenido Principal de la Landing -->
+    <main class="landing-main">
+      
+      <!-- 1. Sección Superior: Continúa tu búsqueda / Te puede interesar (Referencia Despegar) -->
+      <section class="landing-container landing-section-quick" id="destinos-bogota">
+        <div class="landing-section-header">
+          <div class="landing-section-titles">
+            <span class="landing-eyebrow">Continúa tu búsqueda</span>
+            <h2 class="landing-title-h2">Te puede interesar en Bogotá</h2>
+          </div>
+          <div class="landing-quick-nav-arrows">
+            <button class="quick-arrow-btn" id="btn-quick-prev" aria-label="Anterior">‹</button>
+            <button class="quick-arrow-btn" id="btn-quick-next" aria-label="Siguiente">›</button>
+          </div>
+        </div>
+
+        <div class="landing-quick-carousel" id="landing-quick-carousel">
+          
+          <div class="landing-quick-card" data-category="centro" onclick="filtrarLandingPorZona('Candelaria')">
+            <div class="quick-card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=300&q=80" alt="La Candelaria" class="quick-card-img" loading="lazy">
+            </div>
+            <div class="quick-card-info">
+              <span class="quick-card-type">Paquetes</span>
+              <strong class="quick-card-title">La Candelaria</strong>
+              <span class="quick-card-meta">Centro Histórico · 3-4 h</span>
+            </div>
+          </div>
+
+          <div class="landing-quick-card" data-category="cerros" onclick="filtrarLandingPorZona('Monserrate')">
+            <div class="quick-card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1589561084283-930aa7b1ce50?auto=format&fit=crop&w=300&q=80" alt="Monserrate y Cerros" class="quick-card-img" loading="lazy">
+            </div>
+            <div class="quick-card-info">
+              <span class="quick-card-type">Paquetes</span>
+              <strong class="quick-card-title">Monserrate & Cerros</strong>
+              <span class="quick-card-meta">Miradores & Naturaleza</span>
+            </div>
+          </div>
+
+          <div class="landing-quick-card" data-category="gastronomia" onclick="filtrarLandingPorZona('Usaquén')">
+            <div class="quick-card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=300&q=80" alt="Usaquén Colonial" class="quick-card-img" loading="lazy">
+            </div>
+            <div class="quick-card-info">
+              <span class="quick-card-type">Paquetes</span>
+              <strong class="quick-card-title">Usaquén Colonial</strong>
+              <span class="quick-card-meta">Gastronomía & Mercados</span>
+            </div>
+          </div>
+
+          <div class="landing-quick-card" data-category="arte" onclick="filtrarLandingPorZona('Graffiti')">
+            <div class="quick-card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80" alt="Ruta del Graffiti" class="quick-card-img" loading="lazy">
+            </div>
+            <div class="quick-card-info">
+              <span class="quick-card-type">Paquetes</span>
+              <strong class="quick-card-title">Distrito Graffiti</strong>
+              <span class="quick-card-meta">Arte Urbano · Puente Aranda</span>
+            </div>
+          </div>
+
+          <div class="landing-quick-card" data-category="naturaleza" onclick="filtrarLandingPorZona('Chicaque')">
+            <div class="quick-card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1511497584788-87676104235f?auto=format&fit=crop&w=300&q=80" alt="Parque Chicaque" class="quick-card-img" loading="lazy">
+            </div>
+            <div class="quick-card-info">
+              <span class="quick-card-type">Paquetes</span>
+              <strong class="quick-card-title">Bosques de Niebla</strong>
+              <span class="quick-card-meta">Chicaque & Ecoturismo</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 2. Hero Banner Promocional Panorámico (Inspirado en el Banner de Despegar) -->
+      <section class="landing-container landing-section-hero-banner">
+        <div class="landing-hero-banner">
+          <div class="hero-banner-content">
+            <div class="hero-banner-badge">
+              <span class="pulse-dot"></span> EXPERIENCIAS BOGOTÁ 2026
+            </div>
+            <h1 class="hero-banner-title">
+              PAQUETES Y TOURS<br>
+              <span class="highlight-gold">EN BOGOTÁ</span>
+            </h1>
+            <div class="hero-banner-price-lockup">
+              <span class="price-from">Planes desde</span>
+              <div class="price-amount">$ 45.000 <span class="price-currency">COP</span></div>
+              <div class="price-badge-rnt">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                Agencias Verificadas RNT
+              </div>
+            </div>
+            <p class="hero-banner-legal">Conecta directamente con agencias y guías profesionales certificados de Bogotá.</p>
+            <div class="hero-banner-ctas">
+              <a href="#paquetes-destacados" class="btn btn-dorado btn-lg">Explorar paquetes <span>↓</span></a>
+              <button class="btn btn-outline-light btn-lg" onclick="mostrarAuthTab('register-agency-form')">Soy una Agencia</button>
+            </div>
+          </div>
+
+          <div class="hero-banner-visual">
+            <div class="hero-banner-img-frame">
+              <img src="https://images.unsplash.com/photo-1589561084283-930aa7b1ce50?auto=format&fit=crop&w=1000&q=80" alt="Bogotá Monserrate" class="hero-banner-img">
+              <div class="hero-banner-floating-badge">
+                <div class="floating-icon">⭐ 4.9/5</div>
+                <div class="floating-text">
+                  <strong>+100 Rutas Locales</strong>
+                  <span>Operadores con RNT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Franja de Tarjetas de Beneficios (Estilo Despegar bajo el Banner) -->
+        <div class="landing-benefits-grid" id="beneficios">
+          <div class="landing-benefit-card">
+            <div class="benefit-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Agencias y Guías con RNT</strong>
+              <p>Prestadores formalizados y verificados ante el Registro Nacional de Turismo.</p>
+            </div>
+          </div>
+
+          <div class="landing-benefit-card">
+            <div class="benefit-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Tarifas Transparentes en COP</strong>
+              <p>Precios directos de agencia sin comisiones ocultas ni sobrecostos.</p>
+            </div>
+          </div>
+
+          <div class="landing-benefit-card">
+            <div class="benefit-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Experiencias Auténticas</strong>
+              <p>Rutas de historia, arte urbano, café de origen, cerros y gastronomía bogotana.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Buscador y Filtros Interactivos -->
+      <section class="landing-container landing-section-search">
+        <div class="landing-search-bar">
+          <div class="search-input-group">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="landing-search-input" placeholder="Buscar por tour, destino (ej. Candelaria, Monserrate, Café, Bicicleta)..." autocomplete="off">
+          </div>
+          <div class="search-categories-pills">
+            <button class="cat-pill active" data-filter="all">Todos</button>
+            <button class="cat-pill" data-filter="centro">Centro Histórico</button>
+            <button class="cat-pill" data-filter="naturaleza">Cerros & Naturaleza</button>
+            <button class="cat-pill" data-filter="gastronomia">Café & Gastronomía</button>
+            <button class="cat-pill" data-filter="arte">Graffiti & Arte</button>
+            <button class="cat-pill" data-filter="bici">Aventura & Bici</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Catálogo de Paquetes Turísticos de Agencias (Base de Datos Supabase) -->
+      <section class="landing-container landing-section-packages" id="paquetes-destacados">
+        <div class="landing-packages-header">
+          <div>
+            <span class="landing-eyebrow">Oferta turística disponible</span>
+            <h2 class="landing-title-h2">Paquetes creados por nuestras agencias</h2>
+            <p class="landing-subtitle">Explora los paquetes creados por agencias con RNT en Bogotá.</p>
+          </div>
+          <div class="landing-packages-count" id="landing-packages-count-badge">
+            Cargando paquetes...
+          </div>
+        </div>
+
+        <!-- Grid dinámico de paquetes -->
+        <div class="landing-packages-grid" id="landing-paquetes-grid">
+          <div class="landing-loading-state">
+            <div class="landing-spinner"></div>
+            <p>Cargando paquetes turísticos de Bogotá...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Sección B2B: Convocatoria para Agencias y Guías -->
+      <section class="landing-container landing-section-b2b" id="para-prestadores">
+        <div class="b2b-card">
+          <div class="b2b-content">
+            <span class="b2b-tag">PORTAL DE PRESTADORES DE BOGOTÁ</span>
+            <h2>¿Eres una Agencia de Viajes o Guía Turístico?</h2>
+            <p>Únete a la plataforma oficial de coordinación turística de Bogotá. Publica tus paquetes, coordina guías por especialidad e idioma y haz crecer tus reservas de forma ágil.</p>
+            <div class="b2b-features-list">
+              <div class="b2b-feature-item">
+                <span class="check-icon">✓</span> Validación oficial de RNT
+              </div>
+              <div class="b2b-feature-item">
+                <span class="check-icon">✓</span> Asignación inteligente de guías
+              </div>
+              <div class="b2b-feature-item">
+                <span class="check-icon">✓</span> Control de agenda y disponibilidad
+              </div>
+            </div>
+            <div class="b2b-actions">
+              <button class="btn btn-primario" onclick="mostrarAuthTab('register-agency-form')">
+                Registrar mi Agencia <span>→</span>
+              </button>
+              <button class="btn btn-outline" onclick="mostrarAuthTab('register-guide-form')">
+                Registrarme como Guía <span>→</span>
+              </button>
+            </div>
+          </div>
+          <div class="b2b-visual">
+            <div class="b2b-stats-card">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Conexión directa Agencia ↔ Guía</div>
+            </div>
+            <div class="b2b-stats-card highlight">
+              <div class="stat-number">RNT</div>
+              <div class="stat-label">Verificación de calidad y legalidad</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Oficial de GuianzApp -->
+    <footer class="landing-footer">
+      <div class="landing-container landing-footer-inner">
+        <div class="footer-brand-col">
+          <div class="footer-brand-lockup">
+            <img src="/logo-icon.svg" alt="G" class="footer-logo">
+            <strong>GuianzApp</strong>
+          </div>
+          <p class="footer-slogan">Bogotá se conecta. Tú la descubres.</p>
+          <p class="footer-copy-text">Plataforma PWA para la coordinación y oferta ágil de servicios turísticos en Bogotá, Colombia.</p>
+        </div>
+
+        <div class="footer-links-col">
+          <strong>Explorar Bogotá</strong>
+          <a href="#paquetes-destacados">Paquetes Populares</a>
+          <a href="#destinos-bogota">Zonas y Destinos</a>
+          <a href="#beneficios">Garantía RNT</a>
+        </div>
+
+        <div class="footer-links-col">
+          <strong>Prestadores</strong>
+          <a href="javascript:void(0)" onclick="mostrarAuthTab('register-agency-form')">Registro de Agencias</a>
+          <a href="javascript:void(0)" onclick="mostrarAuthTab('register-guide-form')">Registro de Guías</a>
+          <a href="javascript:void(0)" onclick="mostrarAuthTab('login-form')">Acceso al Panel</a>
+        </div>
+
+        <div class="footer-links-col">
+          <strong>Plataforma</strong>
+          <span>Bogotá D.C., Colombia</span>
+          <span>Cumplimiento Ley 300 / RNT</span>
+          <span class="footer-badge-secure">🔒 Conexión Segura</span>
+        </div>
+      </div>
+
+      <div class="landing-footer-bottom">
+        <div class="landing-container footer-bottom-flex">
+          <p>© 2026 GuianzApp. Todos los derechos reservados.</p>
+          <p>Hecho con pasión por el turismo y la cultura de Bogotá.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ================= VISTA AUTENTICACIÓN / SPLIT VIEW ================= -->
+  <main id="auth-shell" class="shell" hidden>
+    <section class="intro">
+      <button class="btn-volver-landing-header" id="btn-volver-landing" title="Volver a la página principal">
+        ← Volver a explorar paquetes
+      </button>
+      <div class="brand-lockup">
+        <img src="/logo_vertical.svg" alt="GuianzApp" class="brand-logo-img">
+        <span class="eyebrow-tag">GUIANZAPP / BOGOTÁ</span>
+      </div>
+      <h1>Tu oferta turística,<br><em>Concentrada en un mismo lugar.</em></h1>
+      <p class="intro-copy">Registra tu agencia, valida tu documentación y reúne cada paquete en un solo espacio.</p>
+      <div class="signal">
+        <span class="pulse-dot"></span> Plataforma turística oficial · Bogotá, Colombia
+      </div>
     </section>
-  </main><script src="/app.js"></script>
+
+    <section class="workspace">
+      <div id="message" class="message" hidden></div>
+      <div id="auth-view">
+        <div class="tabs">
+          <button class="tab active" data-target="login-form">Ingresar</button>
+          <button class="tab" data-target="register-agency-form">Registrar agencia</button>
+          <button class="tab" data-target="register-guide-form">Registrar guía</button>
+        </div>
+
+        <!-- Formulario Inicio de Sesión -->
+        <form id="login-form" class="form">
+          <h2>Volver al espacio</h2>
+          <label>Correo electrónico
+            <input type="email" name="email" required autocomplete="email" placeholder="ejemplo@agencia.com">
+          </label>
+          <label>Contraseña
+            <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+          </label>
+          <button class="btn btn-primario full-width" type="submit">Ingresar <span>→</span></button>
+        </form>
+
+        <!-- Formulario Registro Agencia -->
+        <form id="register-agency-form" class="form" hidden enctype="multipart/form-data">
+          <h2>Crear agencia</h2>
+          <p class="hint">Tu solicitud quedará pendiente de validación administrativa.</p>
+          <label>Nombre de la agencia
+            <input name="agencyName" required placeholder="Ej. Agencia Bogotá Tours">
+          </label>
+          <label>Correo de trabajo
+            <input type="email" name="email" required placeholder="contacto@agencia.com">
+          </label>
+          <div class="campo-fila">
+            <label>RNT
+              <input name="rntNumber" required placeholder="Número de RNT">
+            </label>
+            <label>Contraseña
+              <input type="password" name="password" minlength="8" required placeholder="Mínimo 8 caracteres">
+            </label>
+          </div>
+          <label class="file-upload">
+            <span class="file-title">Documento RNT</span>
+            <small>PDF, JPG o PNG · máximo 10 MB</small>
+            <input type="file" name="rntDocument" accept="application/pdf,image/jpeg,image/png" required>
+          </label>
+          <button class="btn btn-primario full-width" type="submit">Enviar registro <span>→</span></button>
+        </form>
+
+        <!-- Formulario Registro Guía -->
+        <form id="register-guide-form" class="form" hidden enctype="multipart/form-data">
+          <h2>Crear guía</h2>
+          <p class="hint">Tu perfil quedará en revisión antes de poder operar.</p>
+          <label>Nombre completo
+            <input name="fullName" required placeholder="Nombre y apellidos">
+          </label>
+          <label>Correo profesional
+            <input type="email" name="email" required placeholder="guia@email.com">
+          </label>
+          <div class="campo-fila">
+            <label>RNT
+              <input name="rntNumber" required placeholder="Número de RNT">
+            </label>
+            <label>Contraseña
+              <input type="password" name="password" minlength="8" required placeholder="Mínimo 8 caracteres">
+            </label>
+          </div>
+
+          <div class="checkbox-group-block">
+            <span class="group-title">Especialidades (selecciona una o más)</span>
+            <div class="checkbox-grid">
+              <label><input type="checkbox" name="specialties" value="Centro histórico" checked> Centro histórico</label>
+              <label><input type="checkbox" name="specialties" value="Arte y grafiti"> Arte y grafiti</label>
+              <label><input type="checkbox" name="specialties" value="Gastronomía local"> Gastronomía local</label>
+              <label><input type="checkbox" name="specialties" value="Turismo fotográfico"> Turismo fotográfico</label>
+              <label><input type="checkbox" name="specialties" value="Turismo de naturaleza"> Turismo de naturaleza</label>
+              <label><input type="checkbox" name="specialties" value="Turismo de aventura"> Turismo de aventura</label>
+            </div>
+          </div>
+
+          <div class="checkbox-group-block">
+            <span class="group-title">Idiomas (selecciona uno o más)</span>
+            <div class="checkbox-grid">
+              <label><input type="checkbox" name="languages" value="Español" checked> Español</label>
+              <label><input type="checkbox" name="languages" value="Inglés"> Inglés</label>
+              <label><input type="checkbox" name="languages" value="Portugués"> Portugués</label>
+              <label><input type="checkbox" name="languages" value="Francés"> Francés</label>
+              <label><input type="checkbox" name="languages" value="Alemán"> Alemán</label>
+              <label><input type="checkbox" name="languages" value="Italiano"> Italiano</label>
+            </div>
+          </div>
+
+          <div class="campo-fila">
+            <label class="file-upload">
+              <span class="file-title">Documento RNT</span>
+              <small>PDF o imagen</small>
+              <input type="file" name="rntDocument" accept="application/pdf,image/jpeg,image/png" required>
+            </label>
+            <label class="file-upload">
+              <span class="file-title">Tarjeta profesional</span>
+              <small>PDF o imagen</small>
+              <input type="file" name="professionalCard" accept="application/pdf,image/jpeg,image/png" required>
+            </label>
+          </div>
+
+          <button class="btn btn-primario full-width" type="submit">Enviar registro <span>→</span></button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= VISTA APLICACIÓN PRINCIPAL (DASHBOARDS) ================= -->
+  <div id="app-shell" hidden>
+    <!-- Franja ornamental superior tejida -->
+    <div class="franja-tejido"></div>
+
+    <!-- Header superior -->
+    <header class="header">
+      <div class="marca">
+        <img src="/logo-icon.svg" class="marca-icono-img" alt="G">
+        <div class="marca-nombre">GuianzApp</div>
+      </div>
+
+      <!-- Badge de rol activo -->
+      <div id="logged-role-badge" class="etiqueta etiqueta-verde">
+        <span id="logged-role-label">Panel de Agencia</span>
+      </div>
+
+      <!-- Información de Usuario actual de Supabase -->
+      <div class="usuario-actual">
+        <div class="usuario-info">
+          <strong id="nombre-usuario">Cargando...</strong>
+          <span id="rol-usuario">Usuario</span>
+        </div>
+        <div class="avatar" id="avatar-usuario">--</div>
+        <button id="logout" class="btn btn-outline btn-sm" title="Cerrar sesión">Salir</button>
+      </div>
+    </header>
+
+    <!-- App Layout: Sidebar + Contenido -->
+    <div class="app">
+      <!-- Barra lateral -->
+      <nav class="sidebar">
+        <!-- Sidebar para Agencia -->
+        <div class="sidebar-vista" data-rol="agencia">
+          <div class="sidebar-etiqueta">Panel de agencia</div>
+          <a class="item activo" href="#agencia-paquetes" data-target-subview="agencia-sec-paquetes"><span class="punto"></span> Paquetes turísticos</a>
+          <a class="item" href="#agencia-guias" data-target-subview="agencia-sec-guias"><span class="punto"></span> Guías disponibles</a>
+        </div>
+
+        <!-- Sidebar para Guía -->
+        <div class="sidebar-vista" data-rol="guia">
+          <div class="sidebar-etiqueta">Panel de guía</div>
+          <a class="item activo" href="#guia-perfil" data-target-subview="guia-sec-perfil"><span class="punto"></span> Mi perfil profesional</a>
+          <a class="item" href="#guia-agenda" data-target-subview="guia-sec-agenda"><span class="punto"></span> Mi agenda y disponibilidad</a>
+        </div>
+
+        <!-- Sidebar para Turista -->
+        <div class="sidebar-vista" data-rol="turista">
+          <div class="sidebar-etiqueta">Panel de turista</div>
+          <a class="item activo" href="#turista-explorar" data-target-subview="turista-sec-explorar"><span class="punto"></span> Explorar experiencias</a>
+          <a class="item" href="#turista-guias" data-target-subview="turista-sec-guias"><span class="punto"></span> Guías certificados</a>
+        </div>
+
+        <!-- Sidebar para Admin -->
+        <div class="sidebar-vista" data-rol="administrador">
+          <div class="sidebar-etiqueta">Panel de administración</div>
+          <a class="item activo" href="#admin-revision" data-target-subview="admin-sec-revision"><span class="punto"></span> Revisión de perfiles</a>
+        </div>
+      </nav>
+
+      <!-- Contenido Principal -->
+      <main class="contenido">
+        <div id="app-message" class="message" hidden></div>
+
+        <!-- ================= 1. VISTA AGENCIA ================= -->
+        <section class="vista" data-rol="agencia" id="vista-agencia">
+          
+          <!-- Subsección: Paquetes turísticos (Principal) -->
+          <div class="subvista activa" id="agencia-sec-paquetes">
+            <div class="contenido-header">
+              <div>
+                <h1>Mis paquetes turísticos</h1>
+                <p class="subtitulo">Gestiona tus paquetes turísticos registrados en la plataforma</p>
+              </div>
+              <button class="btn btn-primario" id="btn-abrir-modal-paquete">+ Crear paquete</button>
+            </div>
+
+            <!-- Status banner real de Supabase -->
+            <div class="status-card" id="agency-status-banner">
+              <span class="status-dot" id="agency-status-dot"></span>
+              <div>
+                <strong id="agency-status-label">Estado de la cuenta</strong>
+                <p id="agency-status-copy">Cargando estado...</p>
+              </div>
+            </div>
+
+            <!-- Métricas reales -->
+            <div class="metricas">
+              <div class="metrica">
+                <div class="valor" id="metric-paquetes-count">0</div>
+                <div class="etiqueta-metrica">Paquetes registrados</div>
+              </div>
+              <div class="metrica">
+                <div class="valor" id="metric-guias-count">0</div>
+                <div class="etiqueta-metrica">Guías en plataforma</div>
+              </div>
+            </div>
+
+            <!-- Tabla de Paquetes reales -->
+            <div class="tarjeta">
+              <table class="tabla" id="tabla-paquetes">
+                <thead>
+                  <tr>
+                    <th>Paquete</th>
+                    <th>Precio</th>
+                    <th>Archivos</th>
+                    <th>Estado</th>
+                    <th>Fecha de creación</th>
+                    <th style="text-align: right;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="lista-tabla-paquetes">
+                  <tr><td colspan="6" class="empty" style="text-align:center; padding:24px;">Cargando paquetes...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Subsección: Guías Agencia -->
+          <div class="subvista" id="agencia-sec-guias" hidden>
+            <div class="contenido-header">
+              <div>
+                <h1>Guías certificados en la plataforma</h1>
+                <p class="subtitulo">Guías registrados con RNT disponibles en Bogotá</p>
+              </div>
+            </div>
+            <div class="grid-3" id="directorio-guias-agencia">
+              <p class="empty">Cargando guías...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= 2. VISTA GUÍA ================= -->
+        <section class="vista" data-rol="guia" id="vista-guia">
+          
+          <!-- Subsección: Mi Perfil Guía -->
+          <div class="subvista activa" id="guia-sec-perfil">
+            <div class="contenido-header">
+              <div>
+                <h1 id="guide-view-title">Mi perfil profesional</h1>
+                <p class="subtitulo">Información oficial registrada en tu perfil</p>
+              </div>
+              <button class="btn btn-outline" id="btn-editar-perfil-guia">Editar perfil</button>
+            </div>
+
+            <!-- Status banner Guía -->
+            <div class="status-card" id="guide-status-banner" style="margin-bottom:20px;">
+              <span class="status-dot" id="guide-status-dot"></span>
+              <div>
+                <strong id="guide-status-label">Estado del perfil</strong>
+                <p id="guide-status-copy">Cargando estado...</p>
+              </div>
+            </div>
+
+            <div class="tarjeta">
+              <div class="perfil-cabecera">
+                <div class="perfil-avatar" id="guide-avatar-badge">--</div>
+                <div>
+                  <h2 id="guide-name-display">Cargando nombre...</h2>
+                  <p class="subtitulo" id="guide-subtitle-display" style="margin-top:2px;">Guía de turismo · Bogotá</p>
+                </div>
+              </div>
+
+              <div class="perfil-bloque">
+                <h3>Especialidades</h3>
+                <div class="chips-fila" id="guide-specialties-chips">
+                  <span class="empty">Sin especialidades registradas</span>
+                </div>
+              </div>
+
+              <div class="perfil-bloque">
+                <h3>Idiomas</h3>
+                <div class="chips-fila" id="guide-languages-list">
+                  <span class="empty">Sin idiomas registrados</span>
+                </div>
+              </div>
+
+              <div class="perfil-bloque">
+                <h3>Documentos cargados</h3>
+                <div id="guide-docs-list" style="display:flex; gap:16px; font-size:13.5px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subsección: Mi Agenda Guía -->
+          <div class="subvista" id="guia-sec-agenda" hidden>
+            <div class="contenido-header">
+              <div>
+                <h1>Mi Agenda de Disponibilidad</h1>
+                <p class="subtitulo">Registra tus fechas y horarios de disponibilidad</p>
+              </div>
+            </div>
+
+            <div class="tarjeta" style="padding:22px; margin-bottom:20px;">
+              <h3 id="form-guia-disp-titulo">Registrar nueva fecha u horario</h3>
+              <form id="form-guia-disponibilidad" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) 120px auto; gap:12px; align-items:flex-end; margin-top:14px;">
+                <div class="campo">
+                  <label>Fecha</label>
+                  <input type="date" name="fecha" required>
+                </div>
+                <div class="campo">
+                  <label>Hora inicio</label>
+                  <input type="time" name="horaInicio">
+                </div>
+                <div class="campo">
+                  <label>Hora fin</label>
+                  <input type="time" name="horaFin">
+                </div>
+                <div class="campo">
+                  <label>Notas</label>
+                  <input type="text" name="notas" placeholder="Ej. Solo mañanas">
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button type="submit" class="btn btn-primario" id="btn-submit-guia-disp" style="margin-bottom:1px;">+ Agregar</button>
+                  <button type="button" class="btn btn-texto" id="btn-cancelar-guia-disp" style="margin-bottom:1px; display:none;">Cancelar</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="tarjeta">
+              <table class="tabla">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Horario</th>
+                    <th>Estado</th>
+                    <th>Notas</th>
+                    <th style="text-align: right;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="lista-disponibilidad-guia">
+                  <tr><td colspan="5" class="empty" style="text-align:center; padding:20px;">Cargando disponibilidad...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= 3. VISTA TURISTA ================= -->
+        <section class="vista" data-rol="turista" id="vista-turista">
+          <!-- Explorar paquetes reales -->
+          <div class="subvista activa" id="turista-sec-explorar">
+            <div class="contenido-header">
+              <div>
+                <h1>Explora experiencias en Bogotá</h1>
+                <p class="subtitulo">Paquetes turísticos reales ofrecidos por agencias verificadas</p>
+              </div>
+            </div>
+
+            <div class="grid-3" id="turista-paquetes-grid">
+              <p class="empty">Cargando paquetes...</p>
+            </div>
+          </div>
+
+          <!-- Guías certificados reales -->
+          <div class="subvista" id="turista-sec-guias" hidden>
+            <div class="contenido-header">
+              <div>
+                <h1>Guías certificados en Bogotá</h1>
+                <p class="subtitulo">Perfiles con RNT verificados por la administración</p>
+              </div>
+            </div>
+            <div class="grid-3" id="turista-guias-grid">
+              <p class="empty">Cargando guías...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= 4. VISTA ADMIN ================= -->
+        <section class="vista" data-rol="administrador" id="vista-admin">
+          <div class="subvista activa" id="admin-sec-revision">
+            <div class="contenido-header">
+              <div>
+                <h1>Revisión y validación de perfiles</h1>
+                <p class="subtitulo">Valida los documentos RNT y tarjetas profesionales pendientes</p>
+              </div>
+            </div>
+            <div id="admin-queue" class="admin-queue">
+              <p class="empty">Cargando cola de revisión...</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CREAR / EDITAR PAQUETE ================= -->
+  <div class="overlay" id="overlay-paquete">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-paquete-titulo">Nuevo paquete turístico</h2>
+        <button type="button" class="modal-cerrar" id="btn-cerrar-modal-paquete">✕</button>
+      </div>
+      <form id="form-modal-paquete" enctype="multipart/form-data">
+        <div class="modal-cuerpo">
+          <div class="campo">
+            <label for="campo-titulo">Nombre del paquete</label>
+            <input id="campo-titulo" name="titulo" type="text" required placeholder="Ej. Tour Centro Histórico">
+          </div>
+          <div class="campo">
+            <label for="campo-descripcion">Descripción detallada</label>
+            <textarea id="campo-descripcion" name="descripcion" rows="4" required placeholder="Describe las actividades, itinerario y puntos clave del tour."></textarea>
+          </div>
+          <div class="campo">
+            <label for="campo-precio">Precio por persona (COP)</label>
+            <input id="campo-precio" name="precio" type="number" min="0" required placeholder="Ej. 75000">
+          </div>
+          <div class="campo">
+            <label for="campo-cancelacion">Política de cancelación</label>
+            <textarea id="campo-cancelacion" name="politicaCancelacion" rows="2" placeholder="Ej. Cancelación gratuita hasta 24 horas antes."></textarea>
+          </div>
+          <div id="modal-preview-archivos" class="form-preview-container"></div>
+          <div class="campo">
+            <label class="file-upload">
+              <span class="file-title">Archivos o fotos del paquete</span>
+              <small>Imágenes (JPG, PNG, WebP) o PDF · hasta 10 MB</small>
+              <input type="file" name="files" accept="application/pdf,image/jpeg,image/png,image/webp" multiple>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-texto" id="btn-cancelar-modal-paquete">Cancelar</button>
+          <button type="submit" class="btn btn-primario" id="btn-submit-modal-paquete">Guardar paquete <span>→</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: EDITAR PERFIL GUÍA ================= -->
+  <div class="overlay" id="overlay-editar-perfil-guia">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Editar mi perfil profesional</h2>
+        <button type="button" class="modal-cerrar" id="btn-cerrar-modal-perfil">✕</button>
+      </div>
+      <form id="form-modal-perfil-guia">
+        <div class="modal-cuerpo">
+          <div class="campo">
+            <label for="perfil-campo-nombre">Nombre completo</label>
+            <input id="perfil-campo-nombre" name="nombreCompleto" type="text" required>
+          </div>
+          <div class="campo">
+            <label for="perfil-campo-rnt">Número RNT</label>
+            <input id="perfil-campo-rnt" name="numeroRnt" type="text">
+          </div>
+          <div class="campo">
+            <label for="perfil-campo-especialidades">Especialidades (separadas por coma)</label>
+            <input id="perfil-campo-especialidades" name="especialidades" type="text" placeholder="Ej. Centro histórico, Gastronomía">
+          </div>
+          <div class="campo">
+            <label for="perfil-campo-idiomas">Idiomas (separados por coma)</label>
+            <input id="perfil-campo-idiomas" name="idiomas" type="text" placeholder="Ej. Español, Inglés">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-texto" id="btn-cancelar-modal-perfil">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Actualizar perfil</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DETALLE DE PAQUETE ================= -->
+  <div id="package-detail" class="package-detail hidden" aria-live="polite">
+    <div class="package-detail-backdrop" data-close-detail="true"></div>
+    <article class="package-detail-card">
+      <button id="close-package-detail" class="close-detail" type="button" aria-label="Cerrar detalle">×</button>
+      <div id="package-detail-content"></div>
+    </article>
+  </div>
+
+  <script src="/app.js"></script>
 </body>
 </html>

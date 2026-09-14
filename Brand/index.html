@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GuianzApp — Simulación de navegación por roles</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="franja-tejido"></div>
+
+<header class="header">
+  <div class="marca">
+    <div class="marca-icono">G</div>
+    <div class="marca-nombre">GuianzApp</div>
+  </div>
+
+  <div class="selector-rol" role="tablist" aria-label="Cambiar de rol">
+    <button class="activo" data-rol="agencia" onclick="cambiarRol('agencia')">Agencia</button>
+    <button data-rol="guia" onclick="cambiarRol('guia')">Guía</button>
+    <button data-rol="turista" onclick="cambiarRol('turista')">Turista</button>
+  </div>
+
+  <div class="usuario-actual">
+    <div class="usuario-info">
+      <strong id="nombre-usuario">Bogotá Andando S.A.S.</strong>
+      <span id="rol-usuario">Agencia de viajes</span>
+    </div>
+    <div class="avatar" id="avatar-usuario">BA</div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <nav class="sidebar">
+
+    <div class="sidebar-vista activa" data-rol="agencia">
+      <div class="sidebar-etiqueta">Panel de agencia</div>
+      <a class="item" href="#"><span class="punto"></span> Inicio</a>
+      <a class="item activo" href="#"><span class="punto"></span> Paquetes turísticos</a>
+      <a class="item" href="#"><span class="punto"></span> Guías</a>
+      <a class="item" href="#"><span class="punto"></span> Reservas</a>
+      <a class="item" href="#"><span class="punto"></span> Reportes</a>
+    </div>
+
+    <div class="sidebar-vista" data-rol="guia">
+      <div class="sidebar-etiqueta">Panel de guía</div>
+      <a class="item" href="#"><span class="punto"></span> Inicio</a>
+      <a class="item activo" href="#"><span class="punto"></span> Mi perfil</a>
+      <a class="item" href="#"><span class="punto"></span> Mi agenda</a>
+      <a class="item" href="#"><span class="punto"></span> Paquetes asignados</a>
+      <a class="item" href="#"><span class="punto"></span> Reseñas</a>
+    </div>
+
+    <div class="sidebar-vista" data-rol="turista">
+      <div class="sidebar-etiqueta">Panel de turista</div>
+      <a class="item activo" href="#"><span class="punto"></span> Explorar</a>
+      <a class="item" href="#"><span class="punto"></span> Guías</a>
+      <a class="item" href="#"><span class="punto"></span> Mis reservas</a>
+      <a class="item" href="#"><span class="punto"></span> Favoritos</a>
+      <a class="item" href="#"><span class="punto"></span> Perfil</a>
+    </div>
+
+  </nav>
+
+  <!-- ================= CONTENIDO ================= -->
+  <main class="contenido">
+
+    <!-- ---------- VISTA AGENCIA ---------- -->
+    <section class="vista activa" data-rol="agencia">
+
+      <div class="contenido-header">
+        <div>
+          <h1>Paquetes turísticos</h1>
+          <p class="subtitulo">Crea experiencias y asigna el guía adecuado para cada una</p>
+        </div>
+        <button class="btn btn-primario" onclick="abrirModal()">+ Crear paquete</button>
+      </div>
+
+      <div class="metricas">
+        <div class="metrica"><div class="valor">12</div><div class="etiqueta-metrica">Paquetes activos</div></div>
+        <div class="metrica"><div class="valor">7</div><div class="etiqueta-metrica">Guías disponibles</div></div>
+        <div class="metrica"><div class="valor">34</div><div class="etiqueta-metrica">Reservas este mes</div></div>
+        <div class="metrica"><div class="valor">$4.1M</div><div class="etiqueta-metrica">Ingresos estimados</div></div>
+      </div>
+
+      <div class="tarjeta">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Paquete</th>
+              <th>Destino</th>
+              <th>Duración</th>
+              <th>Precio</th>
+              <th>Guía asignado</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Bogotá colonial a pie</strong></td>
+              <td>La Candelaria</td>
+              <td>3 h</td>
+              <td>$85.000</td>
+              <td><span class="chip">Camila Ruiz</span></td>
+              <td><span class="etiqueta etiqueta-verde">Activo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Ciclopaseo Cerros Orientales</strong></td>
+              <td>Cerros Orientales</td>
+              <td>4 h</td>
+              <td>$120.000</td>
+              <td><span class="etiqueta etiqueta-gris">Sin asignar</span></td>
+              <td><span class="etiqueta etiqueta-dorado">Borrador</span></td>
+            </tr>
+            <tr>
+              <td><strong>Ruta del café urbano</strong></td>
+              <td>Chapinero</td>
+              <td>2.5 h</td>
+              <td>$65.000</td>
+              <td><span class="chip">Andrés Gómez</span></td>
+              <td><span class="etiqueta etiqueta-verde">Activo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Grafiti y arte urbano</strong></td>
+              <td>San Felipe</td>
+              <td>2 h</td>
+              <td>$55.000</td>
+              <td><span class="chip">Camila Ruiz</span></td>
+              <td><span class="etiqueta etiqueta-verde">Activo</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---------- VISTA GUÍA ---------- -->
+    <section class="vista" data-rol="guia">
+
+      <div class="contenido-header">
+        <div>
+          <h1>Mi perfil profesional</h1>
+          <p class="subtitulo">Así te ven las agencias y los turistas al asignarte o reservarte</p>
+        </div>
+        <button class="btn btn-outline">Editar perfil</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="tarjeta">
+          <div class="perfil-cabecera">
+            <div class="perfil-avatar">CR</div>
+            <div>
+              <h2>Camila Ruiz</h2>
+              <p class="subtitulo" style="margin-top:2px;">Guía de turismo certificada · Bogotá, Colombia</p>
+            </div>
+          </div>
+
+          <div class="perfil-bloque">
+            <h3>Especialidades</h3>
+            <div class="chips-fila">
+              <span class="chip">Centro histórico</span>
+              <span class="chip">Arte y grafiti</span>
+              <span class="chip">Gastronomía local</span>
+              <span class="chip">Turismo fotográfico</span>
+            </div>
+          </div>
+
+          <div class="perfil-bloque">
+            <h3>Competencias</h3>
+            <div class="chips-fila">
+              <span class="chip chip-verde">Primeros auxilios</span>
+              <span class="chip chip-verde">Manejo de grupos grandes</span>
+              <span class="chip chip-verde">Guía certificada MinCIT</span>
+            </div>
+          </div>
+
+          <div class="perfil-bloque">
+            <h3>Idiomas</h3>
+            <div class="fila-idioma">
+              <span>Español</span>
+              <div class="nivel-barra"><span style="width:100%"></span></div>
+            </div>
+            <div class="fila-idioma">
+              <span>Inglés</span>
+              <div class="nivel-barra"><span style="width:85%"></span></div>
+            </div>
+            <div class="fila-idioma">
+              <span>Portugués</span>
+              <div class="nivel-barra"><span style="width:45%"></span></div>
+            </div>
+          </div>
+
+          <div class="perfil-bloque">
+            <h3>Sobre mí</h3>
+            <p style="color:var(--gris-piedra); font-size:14px;">Llevo 6 años mostrando La Candelaria y sus alrededores. Me gusta conectar la historia de Bogotá con su escena de arte urbano actual.</p>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="perfil-bloque">
+            <h3>Paquetes asignados</h3>
+            <div style="display:flex; flex-direction:column; gap:14px; margin-top:10px;">
+              <div>
+                <strong style="font-size:14px;">Bogotá colonial a pie</strong>
+                <p class="subtitulo" style="margin-top:2px;">Bogotá Andando S.A.S. · 3 h</p>
+              </div>
+              <div>
+                <strong style="font-size:14px;">Grafiti y arte urbano</strong>
+                <p class="subtitulo" style="margin-top:2px;">Bogotá Andando S.A.S. · 2 h</p>
+              </div>
+              <div>
+                <strong style="font-size:14px;">Sabores de Chapinero</strong>
+                <p class="subtitulo" style="margin-top:2px;">Rutas Urbanas Co. · 2.5 h</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tarjeta" style="margin-top:22px;">
+        <div class="perfil-bloque">
+          <h3>Mi agenda de disponibilidad</h3>
+          <p class="subtitulo" style="margin-bottom:14px;">Marca los horarios en los que puedes guiar. Las agencias solo verán tus espacios disponibles.</p>
+
+          <div class="agenda" id="agenda">
+            <div class="agenda-celda agenda-hora"> </div>
+            <div class="agenda-celda agenda-dia-cabecera">Lun</div>
+            <div class="agenda-celda agenda-dia-cabecera">Mar</div>
+            <div class="agenda-celda agenda-dia-cabecera">Mié</div>
+            <div class="agenda-celda agenda-dia-cabecera">Jue</div>
+            <div class="agenda-celda agenda-dia-cabecera">Vie</div>
+            <div class="agenda-celda agenda-dia-cabecera">Sáb</div>
+            <div class="agenda-celda agenda-dia-cabecera">Dom</div>
+            <!-- filas generadas por JS -->
+          </div>
+
+          <div class="agenda-leyenda">
+            <span><span class="punto-leyenda" style="background:var(--verde-cafetero-tinte); border:1px solid var(--verde-cafetero);"></span> Disponible</span>
+            <span><span class="punto-leyenda" style="background:var(--gris-niebla);"></span> Ya asignado</span>
+            <span><span class="punto-leyenda" style="background:var(--blanco); border:1px solid var(--gris-niebla);"></span> Sin definir · clic para marcar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- VISTA TURISTA ---------- -->
+    <section class="vista" data-rol="turista">
+
+      <div class="contenido-header">
+        <div>
+          <h1>Explora experiencias en Bogotá</h1>
+          <p class="subtitulo">Paquetes con guía verificado, según tu idioma y tus intereses</p>
+        </div>
+      </div>
+
+      <div class="chips-fila" style="margin-bottom:20px;">
+        <span class="chip chip-idioma">Idioma: Español</span>
+        <span class="chip chip-idioma">Idioma: Inglés</span>
+        <span class="chip chip-idioma">Centro histórico</span>
+        <span class="chip chip-idioma">Gastronomía</span>
+        <span class="chip chip-idioma">Aire libre</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="paquete-card">
+          <div class="paquete-imagen"><span class="precio-flotante">$85.000</span></div>
+          <div class="paquete-cuerpo">
+            <h3>Bogotá colonial a pie</h3>
+            <div class="paquete-meta">📍 La Candelaria · 🕒 3 h</div>
+            <div class="paquete-guia">
+              <div class="mini-avatar">CR</div>
+              <div style="flex:1;">Camila Ruiz</div>
+              <div class="estrellas">★★★★★</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paquete-card">
+          <div class="paquete-imagen"><span class="precio-flotante">$65.000</span></div>
+          <div class="paquete-cuerpo">
+            <h3>Ruta del café urbano</h3>
+            <div class="paquete-meta">📍 Chapinero · 🕒 2.5 h</div>
+            <div class="paquete-guia">
+              <div class="mini-avatar">AG</div>
+              <div style="flex:1;">Andrés Gómez</div>
+              <div class="estrellas">★★★★☆</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paquete-card">
+          <div class="paquete-imagen"><span class="precio-flotante">$55.000</span></div>
+          <div class="paquete-cuerpo">
+            <h3>Grafiti y arte urbano</h3>
+            <div class="paquete-meta">📍 San Felipe · 🕒 2 h</div>
+            <div class="paquete-guia">
+              <div class="mini-avatar">CR</div>
+              <div style="flex:1;">Camila Ruiz</div>
+              <div class="estrellas">★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="margin: 32px 0 16px;">Guías destacados</h2>
+      <div class="grid-3">
+        <div class="tarjeta" style="padding:16px;">
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+            <div class="mini-avatar" style="width:36px; height:36px; font-size:13px;">CR</div>
+            <div>
+              <strong style="font-size:14px;">Camila Ruiz</strong>
+              <div class="estrellas">★★★★★ <span style="color:var(--gris-piedra); font-weight:400;">(48)</span></div>
+            </div>
+          </div>
+          <div class="chips-fila">
+            <span class="chip chip-idioma">Español</span>
+            <span class="chip chip-idioma">Inglés</span>
+          </div>
+        </div>
+
+        <div class="tarjeta" style="padding:16px;">
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+            <div class="mini-avatar" style="width:36px; height:36px; font-size:13px;">AG</div>
+            <div>
+              <strong style="font-size:14px;">Andrés Gómez</strong>
+              <div class="estrellas">★★★★☆ <span style="color:var(--gris-piedra); font-weight:400;">(21)</span></div>
+            </div>
+          </div>
+          <div class="chips-fila">
+            <span class="chip chip-idioma">Español</span>
+            <span class="chip chip-idioma">Portugués</span>
+          </div>
+        </div>
+
+        <div class="tarjeta" style="padding:16px;">
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+            <div class="mini-avatar" style="width:36px; height:36px; font-size:13px;">LP</div>
+            <div>
+              <strong style="font-size:14px;">Laura Peña</strong>
+              <div class="estrellas">★★★★★ <span style="color:var(--gris-piedra); font-weight:400;">(63)</span></div>
+            </div>
+          </div>
+          <div class="chips-fila">
+            <span class="chip chip-idioma">Español</span>
+            <span class="chip chip-idioma">Inglés</span>
+            <span class="chip chip-idioma">Francés</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= MODAL: CREAR PAQUETE (rol Agencia) ================= -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Crear paquete turístico</h2>
+      <button class="modal-cerrar" onclick="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-cuerpo">
+      <div class="campo">
+        <label for="nombre-paquete">Nombre del paquete</label>
+        <input id="nombre-paquete" type="text" placeholder="Ej. Atardecer en Monserrate">
+      </div>
+      <div class="campo">
+        <label for="descripcion-paquete">Descripción</label>
+        <textarea id="descripcion-paquete" rows="3" placeholder="¿Qué va a vivir el turista en esta experiencia?"></textarea>
+      </div>
+      <div class="campo-fila">
+        <div class="campo">
+          <label for="destino-paquete">Zona / destino</label>
+          <input id="destino-paquete" type="text" placeholder="Ej. La Candelaria">
+        </div>
+        <div class="campo">
+          <label for="duracion-paquete">Duración (horas)</label>
+          <input id="duracion-paquete" type="number" placeholder="Ej. 3">
+        </div>
+      </div>
+      <div class="campo-fila">
+        <div class="campo">
+          <label for="precio-paquete">Precio por persona</label>
+          <input id="precio-paquete" type="text" placeholder="Ej. $85.000">
+        </div>
+        <div class="campo">
+          <label for="cupos-paquete">Cupos máximos</label>
+          <input id="cupos-paquete" type="number" placeholder="Ej. 12">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="guia-paquete">Asignar guía</label>
+        <select id="guia-paquete">
+          <option>Camila Ruiz — Centro histórico, Arte y grafiti (ES/EN)</option>
+          <option>Andrés Gómez — Gastronomía local (ES/PT)</option>
+          <option>Laura Peña — Turismo fotográfico (ES/EN/FR)</option>
+        </select>
+        <small>Solo se muestran guías cuya agenda tiene disponibilidad en este horario.</small>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-texto" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primario" onclick="cerrarModal()">Guardar paquete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Cambio de rol / navegación ----------
+  const usuarios = {
+    agencia: { nombre: 'Bogotá Andando S.A.S.', rol: 'Agencia de viajes', iniciales: 'BA' },
+    guia:    { nombre: 'Camila Ruiz',            rol: 'Guía de turismo',   iniciales: 'CR' },
+    turista: { nombre: 'Julián Torres',          rol: 'Turista',           iniciales: 'JT' },
+  };
+
+  function cambiarRol(rol){
+    document.querySelectorAll('.selector-rol button').forEach(b => {
+      b.classList.toggle('activo', b.dataset.rol === rol);
+    });
+    document.querySelectorAll('.sidebar-vista').forEach(s => {
+      s.classList.toggle('activa', s.dataset.rol === rol);
+    });
+    document.querySelectorAll('.vista').forEach(v => {
+      v.classList.toggle('activa', v.dataset.rol === rol);
+    });
+    const u = usuarios[rol];
+    document.getElementById('nombre-usuario').textContent = u.nombre;
+    document.getElementById('rol-usuario').textContent = u.rol;
+    document.getElementById('avatar-usuario').textContent = u.iniciales;
+  }
+
+  // ---------- Modal crear paquete ----------
+  function abrirModal(){ document.getElementById('overlay').classList.add('activo'); }
+  function cerrarModal(){ document.getElementById('overlay').classList.remove('activo'); }
+  document.getElementById('overlay').addEventListener('click', (e) => {
+    if(e.target.id === 'overlay') cerrarModal();
+  });
+
+  // ---------- Agenda de disponibilidad (rol guía) ----------
+  const horas = ['7:00','9:00','11:00','13:00','15:00','17:00'];
+  const ocupadosFijos = new Set(['1-3','4-2']); // fila-columna ya asignada por una agencia
+  const disponiblesIniciales = new Set(['0-1','0-2','2-4','2-5','3-1']);
+  const agenda = document.getElementById('agenda');
+
+  horas.forEach((hora, filaIdx) => {
+    const celdaHora = document.createElement('div');
+    celdaHora.className = 'agenda-celda agenda-hora';
+    celdaHora.textContent = hora;
+    agenda.appendChild(celdaHora);
+
+    for(let col = 0; col < 7; col++){
+      const key = `${filaIdx}-${col}`;
+      const celda = document.createElement('div');
+      celda.className = 'agenda-celda';
+      const slot = document.createElement('div');
+      slot.className = 'slot';
+
+      if(ocupadosFijos.has(key)){
+        slot.classList.add('ocupado');
+      } else if(disponiblesIniciales.has(key)){
+        slot.classList.add('disponible');
+      }
+
+      slot.addEventListener('click', () => {
+        if(slot.classList.contains('ocupado')) return;
+        slot.classList.toggle('disponible');
+      });
+
+      celda.appendChild(slot);
+      agenda.appendChild(celda);
+    }
+  });
+</script>
+
+</body>
+</html>

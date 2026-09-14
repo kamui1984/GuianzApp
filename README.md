@@ -18,6 +18,8 @@ npm install
 
 3. En Supabase, ejecutar [docs/supabase-migration.sql](docs/supabase-migration.sql) y crear los buckets privados `rnt-documents` y `package-files` desde Storage.
 
+La primera migración de columnas de perfiles y disponibilidad está documentada en [docs/migracion-nombres-espanol.sql](docs/migracion-nombres-espanol.sql). Para completar paquetes, archivos y asignaciones, ejecuta una sola vez [docs/migracion-paquetes-espanol.sql](docs/migracion-paquetes-espanol.sql). Para traducir roles y estados, ejecuta [docs/migracion-enums-espanol.sql](docs/migracion-enums-espanol.sql). Finalmente, renombra la tabla `profiles` ejecutando [docs/migracion-perfiles-espanol.sql](docs/migracion-perfiles-espanol.sql). El backend ya está preparado para el esquema completo en español.
+
 4. Iniciar servidor:
 
 ```bash
