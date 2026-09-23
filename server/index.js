@@ -45,9 +45,18 @@ const serializarPaquete = async (paquete) => {
     rutaAlmacenamiento: archivo.ruta_almacenamiento
   })));
 
+  const nombreAgencia = paquete.nombreAgencia ||
+                        paquete.nombre_agencia ||
+                        paquete.perfiles?.nombre_agencia ||
+                        paquete.perfiles?.nombre_completo ||
+                        '';
+
   return {
     id: paquete.id,
     idAgencia: paquete.id_agencia,
+    nombreAgencia,
+    agencyName: nombreAgencia,
+    numeroRnt: paquete.perfiles?.numero_rnt || paquete.numero_rnt || '',
     titulo: paquete.titulo,
     descripcion: paquete.descripcion,
     precio: paquete.precio,
@@ -622,24 +631,46 @@ app.get('/api/explorar/paquetes', async (req, res) => {
   try {
     const { data: packages, error } = await supabaseAdmin
       .from('paquetes')
-      .select('*, archivos_paquete(*), perfiles!paquetes_id_agencia_fkey(nombre_agencia, nombre_completo, estado)')
+      .select('*, archivos_paquete(*)')
       .order('creado_en', { ascending: false });
 
     if (error) {
-      // Fallback simple si la relación fkey no está nombrada de esa forma
-      const { data: simplePackages, error: simpleError } = await supabaseAdmin
-        .from('paquetes')
-        .select('*, archivos_paquete(*)')
-        .order('creado_en', { ascending: false });
-
-      if (simpleError) return res.status(500).json({ error: 'No se pudieron cargar los paquetes' });
-      const serialized = await Promise.all((simplePackages || []).map(serializePackageItem));
-      return res.json({ paquetes: serialized, packages: serialized });
+      console.error('Error al cargar paquetes:', error);
+      return res.status(500).json({ error: 'No se pudieron cargar los paquetes' });
     }
 
-    const serialized = await Promise.all((packages || []).map(serializePackageItem));
+    const agencyIds = [...new Set((packages || []).map(p => p.id_agencia).filter(Boolean))];
+    let agencyMap = {};
+    if (agencyIds.length > 0) {
+      const { data: profiles } = await supabaseAdmin
+        .from('perfiles')
+        .select('id, nombre_agencia, nombre_completo, numero_rnt, estado')
+        .in('id', agencyIds);
+
+      if (profiles) {
+        profiles.forEach(p => {
+          agencyMap[p.id] = p;
+        });
+      }
+    }
+
+    const serialized = await Promise.all((packages || []).map(async (pkg) => {
+      const agency = agencyMap[pkg.id_agencia];
+      const base = await serializePackageItem(pkg);
+      const agencyName = agency?.nombre_agencia || agency?.nombre_completo || base.nombreAgencia || 'Agencia Operadora';
+      const rnt = agency?.numero_rnt || base.numeroRnt || 'Validado';
+      return {
+        ...base,
+        nombreAgencia: agencyName,
+        agencyName: agencyName,
+        numeroRnt: rnt,
+        rntNumber: rnt
+      };
+    }));
+
     res.json({ paquetes: serialized, packages: serialized });
   } catch (error) {
+    console.error('Error en /api/explorar/paquetes:', error);
     res.status(500).json({ error: 'Error al explorar paquetes' });
   }
 });

@@ -46,7 +46,7 @@ let busquedaLanding = '';
 
 // Catálogo base de experiencias en Bogotá con agencias verificadas RNT
 const PAQUETES_DESTACADOS_BOGOTA = [
-  {
+  /*{
     id: 'dest-1',
     titulo: 'Bogotá Colonial & Secretos de La Candelaria',
     descripcion: 'Recorrido a pie por las calles históricas, plazas coloniales, el Chorro de Quevedo y degustación de chicha y café de origen. Guiado por historiadores y profesionales certificados.',
@@ -141,9 +141,8 @@ const PAQUETES_DESTACADOS_BOGOTA = [
     archivos: [
       { tipo: 'image/jpeg', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80', nombre: 'gastronomia.jpg' }
     ]
-  }
+ }*/
 ];
-
 // =========================================================
 // NAVEGACIÓN Y CONTROL DE VISTAS (LANDING, AUTH, APP)
 // =========================================================
@@ -723,7 +722,7 @@ async function cargarPaquetesLanding() {
       ...pkg,
       categoria: pkg.categoria || (idx % 2 === 0 ? 'centro' : 'naturaleza'),
       zona: pkg.zona || 'Bogotá',
-      nombreAgencia: pkg.nombreAgencia || 'Agencia Certificada RNT',
+      nombreAgencia: pkg.nombreAgencia || pkg.agencyName || 'Agencia Operadora',
       numeroRnt: pkg.numeroRnt || 'Validado',
       rating: '5.0',
       duracion: 'Día completo'

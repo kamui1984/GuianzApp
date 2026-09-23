@@ -7,8 +7,8 @@
   "theme_color": "#174A5B",
   "icons": [
     {
-      "src": "/brand-assets/Logo.png",
-      "sizes": "any",
+      "src": "/Logos _PNG/Versión3/Recurso 11.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
