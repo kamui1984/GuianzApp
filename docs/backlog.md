@@ -1,3 +1,60 @@
+Langing page, se deberán ver los paquetes, seleccionar y simular el pago
+Profe sugiere dos fases
+1 crear paquetes
+
+2 crear horarios
+
+Evaluar cobro por suscripción
+
+
+Documento
+Títulos de los roles con mayúsculas
+
+No entregables enseguida de la tabla de limitaciones
+Resaltar lo que hace la app diferente a los competidores
+Preguntas para marcar con x o chulito
+
+Design thinking
+En sprint review párrafo que defina que se va a hacer analisis con usuario final para evaluar si requiere cambios
+
+
+Arquitectura de software moverlo al cap 4
+
+
+En roles del equipo de desarrollo se pueden poner como PO a las agencias
+
+Profe como SM
+
+Tabla de SCRUM con columna de entregables Objetivo, desarrollo, # incrementos/resultados
+
+Cap 4 Desarrollo del trabajo de grado
+
+4.1 Sub numeral contexto
+1 Tecnológico, herramientas decisiones de diseño
+2 Modelo de negocio, usuarios destinatarios, perfilarlos, modelo de monetización, 
+
+
+
+5. GuianzApp producto final
+Cómo quedó, cómo se validó
+5.2 Modelo de negocios 
+
+
+
+
+
+
+
+
+
+Cuándo estarán disponibles los paquetes
+
+Terminar agencia de viajes, creación de paquetes y edición
+
+
+
+
+
 # Backlog Técnico por Sprint (Resumen)
 
 Formato: tarea - estimación (horas)

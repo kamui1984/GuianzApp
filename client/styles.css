@@ -1,26 +1,42 @@
 /* =========================================================
    GuianzApp — Estilos Principales
-   Identidad visual bogotana, moderna, cálida y profesional
-   Basado en BRAND_v2.md
+   Identidad visual: El Dorado Sagrado & Geometría Muisca (v1.0)
+   Basado en BRAND_v2.md (Propuesta 5 Aprobada)
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Poppins:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+
+@property --gold-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes girarRayoDorado {
+  0% {
+    --gold-angle: 0deg;
+  }
+  100% {
+    --gold-angle: 360deg;
+  }
+}
 
 :root {
   /* Paleta cromática oficial BRAND_v2.md */
   --azul-andino: #174A5B;
   --azul-andino-oscuro: #123D4B;
-  --azul-andino-tinte: #E7F0F2;
+  --azul-andino-tinte: #EBF2F4;
   --verde-cerros: #1F5D50;
   --verde-cerros-hover: #184B40;
-  --verde-cerros-tinte: #E7F1EE;
+  --verde-cerros-tinte: #E8F2EF;
   --verde-cafetero: #28745A;
   --verde-cafetero-tinte: #EAF5EE;
   --dorado-patrimonio: #C6A15B;
   --dorado-patrimonio-hover: #A98649;
-  --dorado-patrimonio-tinte: #F5EDDC;
+  --dorado-patrimonio-tinte: #F6EEDB;
   --dorado-bogota: #C6A15B;
   --dorado-bogota-tinte: #FDF3DD;
+  --dorado-brillante: #FFE8A3;
   --ladrillo-bogota: #A64B3C;
   --ladrillo-bogota-hover: #863C31;
   --ladrillo-bogota-tinte: #F5E8E5;
@@ -29,23 +45,25 @@
   /* Neutros */
   --carbon: #1E2933;
   --gris-piedra: #64727A;
-  --gris-niebla: #E5E7EB;
-  --blanco-cerros: #FAF9F7;
-  --fondo-marfil: #F7F2E8;
+  --gris-niebla: #D8D2C4;
+  --blanco-cerros: #F7F4EC;
+  --fondo-marfil: #F7F4EC;
   --blanco: #FFFFFF;
 
   /* Tipografías */
-  --font-display: 'Manrope', 'Poppins', system-ui, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Space Grotesk', monospace;
 
   /* Layout y sombras */
   --sidebar-w: 248px;
-  --radius-lg: 16px;
-  --radius: 10px;
-  --radius-sm: 6px;
+  --radius-lg: 18px;
+  --radius: 12px;
+  --radius-sm: 8px;
   --shadow-sm: 0 1px 3px rgba(30, 41, 51, 0.05);
-  --shadow-card: 0 4px 16px rgba(30, 41, 51, 0.06);
-  --shadow-hover: 0 8px 24px rgba(30, 41, 51, 0.12);
+  --shadow-card: 0 4px 16px rgba(30, 41, 51, 0.07);
+  --shadow-hover: 0 12px 30px rgba(23, 74, 91, 0.15);
+  --shadow-gold-glow: 0 6px 25px rgba(198, 161, 91, 0.22);
 }
 
 * {
@@ -56,15 +74,34 @@
   display: none !important;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+#catalogo-paquetes,
+#zonas-bogota,
+#beneficios,
+#para-prestadores,
+#destinos-bogota,
+#paquetes-destacados {
+  scroll-margin-top: 40px;
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--blanco-cerros);
+  background-color: var(--fondo-marfil);
   color: var(--carbon);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  
+  /* Patrón Geométrico Muisca SVG Sutil */
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23174A5B' stroke-width='0.75' stroke-opacity='0.06'%3E%3Cpath d='M40 8 L72 40 L40 72 L8 40 Z' /%3E%3Cpath d='M40 18 L62 40 L40 62 L18 40 Z' /%3E%3Cpath d='M40 28 L52 40 L40 52 L28 40 Z' /%3E%3Ccircle cx='40' cy='40' r='2' fill='%23C6A15B' fill-opacity='0.12' /%3E%3Cpath d='M0 0 L16 16 M80 0 L64 16 M0 80 L16 64 M80 80 L64 64' /%3E%3Cpath d='M0 40 L8 40 M72 40 L80 40 M40 0 L40 8 M40 72 L40 80' /%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  background-attachment: fixed;
 }
 
 h1, h2, h3, h4 {
@@ -108,16 +145,20 @@ a {
 }
 
 /* =========================================================
-   ELEMENTOS DE MARCA Y DECORATIVOS
+   ELEMENTOS DE MARCA Y DECORATIVOS (GRECA MUISCA)
    ========================================================= */
 .franja-tejido {
-  height: 4px;
+  height: 6px;
   background: repeating-linear-gradient(
     90deg,
-    var(--azul-andino) 0 20px,
-    var(--verde-cerros) 20px 40px,
-    var(--dorado-patrimonio) 40px 52px,
-    var(--ladrillo-bogota) 52px 64px
+    var(--azul-andino) 0px,
+    var(--azul-andino) 28px,
+    var(--dorado-patrimonio) 28px,
+    var(--dorado-patrimonio) 46px,
+    var(--ladrillo-bogota) 46px,
+    var(--ladrillo-bogota) 64px,
+    var(--verde-cerros) 64px,
+    var(--verde-cerros) 92px
   );
   width: 100%;
 }
@@ -607,11 +648,48 @@ a {
 }
 
 .tarjeta {
+  position: relative;
   background: var(--blanco);
   border: 1px solid var(--gris-niebla);
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.tarjeta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 65%,
+    rgba(198, 161, 91, 0.25) 75%,
+    #E8C67B 85%,
+    #FFF4D2 92%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  animation: girarRayoDorado 2.4s linear infinite;
+  transition: opacity 0.35s ease;
+  z-index: 5;
+}
+
+.tarjeta:hover {
+  border-color: var(--dorado-patrimonio);
+  box-shadow: var(--shadow-hover), var(--shadow-gold-glow);
+}
+
+.tarjeta:hover::before {
+  opacity: 1;
 }
 
 .tabla {
@@ -987,34 +1065,29 @@ a {
 .landing-nav {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 10px;
 }
 
 .landing-nav-link {
-  font-size: 14.5px;
-  font-weight: 500;
-  color: #46545B;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--carbon);
+  background: var(--blanco);
+  border: 1px solid var(--gris-niebla);
+  border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
-  padding: 6px 0;
-  position: relative;
+  padding: 7px 14px;
+  white-space: nowrap;
 }
 
 .landing-nav-link:hover,
 .landing-nav-link.active {
   color: var(--azul-andino);
-  font-weight: 600;
-}
-
-.landing-nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--azul-andino);
-  border-radius: 2px;
+  background: var(--azul-andino-tinte);
+  border-color: var(--azul-andino);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(23, 74, 91, 0.08);
 }
 
 .landing-auth-actions {
@@ -1134,24 +1207,56 @@ a {
 }
 
 .landing-quick-card {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
   background: var(--blanco);
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--gris-niebla);
   border-radius: 14px;
   padding: 10px 16px 10px 10px;
   min-width: 250px;
   flex-shrink: 0;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(30, 41, 51, 0.04);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.landing-quick-card::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 14px;
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 55%,
+    rgba(198, 161, 91, 0.2) 68%,
+    #C6A15B 80%,
+    #FFE8A3 90%,
+    #FFFFFF 95%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  animation: girarRayoDorado 2.4s linear infinite;
+  transition: opacity 0.35s ease;
+  z-index: 5;
 }
 
 .landing-quick-card:hover {
   transform: translateY(-3px);
-  border-color: var(--azul-andino);
-  box-shadow: 0 8px 20px rgba(23, 74, 91, 0.12);
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(23, 74, 91, 0.12), var(--shadow-gold-glow);
+}
+
+.landing-quick-card:hover::before {
+  opacity: 1;
 }
 
 .quick-card-img-wrap {
@@ -1215,6 +1320,43 @@ a {
   position: relative;
   overflow: hidden;
   box-shadow: 0 16px 36px rgba(23, 74, 91, 0.22);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.landing-hero-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 65%,
+    rgba(198, 161, 91, 0.3) 78%,
+    #E8C67B 88%,
+    #FFF5D6 94%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.35;
+  animation: girarRayoDorado 4s linear infinite;
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+
+.landing-hero-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 45px rgba(23, 74, 91, 0.28), var(--shadow-gold-glow);
+}
+
+.landing-hero-banner:hover::after {
+  opacity: 1;
+  animation-duration: 2.6s;
 }
 
 .landing-hero-banner::before {
@@ -1599,20 +1741,52 @@ a {
 }
 
 .landing-package-card {
+  position: relative;
   background: var(--blanco);
   border-radius: 16px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--gris-niebla);
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(30, 41, 51, 0.06);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
+.landing-package-card::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 16px;
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 55%,
+    rgba(198, 161, 91, 0.2) 68%,
+    #C6A15B 80%,
+    #FFE8A3 90%,
+    #FFFFFF 95%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  animation: girarRayoDorado 2.4s linear infinite;
+  transition: opacity 0.35s ease;
+  z-index: 5;
+}
+
 .landing-package-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 32px rgba(23, 74, 91, 0.14);
-  border-color: var(--azul-andino);
+  box-shadow: 0 16px 32px rgba(23, 74, 91, 0.14), var(--shadow-gold-glow);
+  border-color: transparent;
+}
+
+.landing-package-card:hover::before {
+  opacity: 1;
 }
 
 .landing-pkg-media {
@@ -1795,14 +1969,52 @@ a {
 }
 
 .b2b-card {
+  position: relative;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   gap: 36px;
   background: var(--blanco);
-  border: 1.5px solid #D8DEE0;
+  border: 1px solid var(--gris-niebla);
   border-radius: 20px;
   padding: 44px 50px;
   box-shadow: 0 8px 24px rgba(30, 41, 51, 0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.3s ease;
+}
+
+.b2b-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 65%,
+    rgba(198, 161, 91, 0.25) 75%,
+    #E8C67B 85%,
+    #FFF4D2 92%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  animation: girarRayoDorado 2.6s linear infinite;
+  transition: opacity 0.35s ease;
+  z-index: 5;
+}
+
+.b2b-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--dorado-patrimonio);
+  box-shadow: 0 16px 36px rgba(23, 74, 91, 0.16), var(--shadow-gold-glow);
+}
+
+.b2b-card:hover::before {
+  opacity: 1;
 }
 
 .b2b-tag {

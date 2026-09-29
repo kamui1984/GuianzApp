@@ -1,8 +1,50 @@
+# 23-09-2026
+Guía especializado por tour
+
+Usar una categoría o especialización transversal para que pueda filtrar y asociar según paquetes con especialidades para que se crucen
+
+Relación guía paquete, para que según definición del tour me filtre los guías que se ajustan
+Filtro
+Especializacicón
+Horario
+Profe propone que sea por lugares, sitio, evaluar cuál será el conector entre guías, agencias y paquetes
+Agencias 
+Modelo de negocios durante la validación se identificó que para la fase de MVP no se ve conveniente la comisión
+
+Flujo guía-agencia-usuario
+Evaluar posibilidad de vincular mercadopago
+Enlace hacia WA
+Sistema centralizado para organizar la oferta y venta de las agencias
+
+
+documento
+Adaptar para integrar fase de design thinking para todos los sprint con el fin de sustentar la ideación y empatización
+
+
+# 15-09-2026
+Animaciones
+Funcionalidad guía e integración con rol agencia
+
+Ajustar tabla de competidores para simplificar el entendimiento
+Doc Mover roles a capítulo 4
+Resumir marco legal
+Mover imagen del backlog
+PO Agencia
+Profe como SM
+Tener documento en limpio
+4.2 contexto módelo de negocio
+descripción general BMC
+4.3 Sprint 
+
+
+
 ideas surgidas de la asignatura de emprendimiento:
 
 
 Ideas API para que el turista le pueda hacer seguimiento a los vuelos, que le pueda avisar si el vuelo se adelanta y que le recuerde la hora del vuelo 3 horas antes si es internacional y 2 si es nacional
 Agencias puedan tener su listado de guías favoritos
+Fotos de los guías
+La agencia puede tener su grupo de guías y cuando 
 
 
 Seguimiento semanal profe

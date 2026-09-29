@@ -1,6 +1,6 @@
-# GUianzApp — Dirección de marca v0.1
+# GUianzApp — Dirección de marca v1.0 (Aprobada)
 
-> **Estado:** propuesta inicial basada en las respuestas proporcionadas.
+> **Estado:** Aprobada y consolidada (Basada en la Propuesta 5: El Dorado Sagrado & Geometría Muisca).
 
 ## 1. Esencia de marca
 
@@ -12,21 +12,19 @@
 
 **Personalidad:** dinámica, bogotana, cultural, humana, confiable, moderna y cálida.
 
-**Evitar:** caos, frialdad, ruido, suciedad, estética excesivamente corporativa o estridente.
+**Evitar:** caos, frialdad sintética de IA genérica, ruido, suciedad, degradados fosforescentes púrpuras o estética excesivamente corporativa/bancaria.
 
 ### Concepto rector
 
 **Bogotá se conecta. Tú la descubres.**
 
-La identidad representa la conexión **Agencia ↔ Guía ↔ Turista** y **personas ↔ experiencias ↔ territorio**. Debe combinar una base digital/tecnológica con referencias sutiles a cerros, arquitectura, ladrillo, patrimonio, cultura y naturaleza.
+La identidad representa la conexión **Agencia ↔ Guía ↔ Turista** y **personas ↔ experiencias ↔ territorio**. Combina una base digital de alta tecnología con raíces culturales ancestrales: los cerros orientales, las curvas de nivel cartográficas, la arquitectura de ladrillo y la geometría sagrada de la orfebrería Muisca de Bacatá.
 
 ---
 
 ## 2. Investigación visual y decisión cromática
 
-La identidad de GuianzApp debe sentirse bogotana sin copiar la Marca Ciudad de Bogotá. La identidad oficial tiene lineamientos propios y una paleta que incluye rojo/coral y amarillos; por eso se propone una paleta propia, más sobria y orientada a producto digital. citeturn0search0turn0search48
-
-La bandera de Bogotá utiliza amarillo y rojo, con significados oficiales ligados a justicia, virtud, libertad y prosperidad. GuianzApp puede tomar esa referencia cultural indirectamente mediante tonos apagados y terrosos, sin reproducir la identidad oficial. citeturn0search6
+La identidad de GuianzApp es propia, sobria y orientada a producto digital travel-tech con alto arraigo identitario bogotano.
 
 ### Paleta recomendada
 
@@ -34,60 +32,48 @@ La bandera de Bogotá utiliza amarillo y rojo, con significados oficiales ligado
 |---|---|---|---|
 | Primary | Azul Andino | `#174A5B` | Marca, navegación, CTAs principales |
 | Secondary | Verde Cerros | `#1F5D50` | Naturaleza, categorías y estados secundarios |
-| Accent | Dorado Patrimonio | `#C6A15B` | Ratings, destacados y detalles culturales |
+| Accent | Dorado Patrimonio / Muisca | `#C6A15B` | Ratings, destellos solares, orfebrería y detalles culturales |
 | Accent 2 | Ladrillo Bogotá | `#A64B3C` | Cultura, patrimonio y recursos editoriales |
-| Background | Marfil Bogotá | `#F7F2E8` | Fondo general cálido |
+| Background | Marfil Bogotá Cálido | `#F7F4EC` | Fondo general cálido con trama muisca |
 | Surface | Blanco | `#FFFFFF` | Cards y superficies |
 | Text | Carbón | `#1E2933` | Texto principal |
 | Muted | Gris Piedra | `#64727A` | Texto secundario |
-| Border | Gris Niebla | `#D8DEE0` | Bordes |
-
-### Por qué esta combinación
-
-- **Azul Andino:** confianza, tecnología y estabilidad.
-- **Verde Cerros:** naturaleza y territorio.
-- **Dorado Patrimonio:** patrimonio, calidez y luz sin recurrir a amarillo brillante.
-- **Ladrillo Bogotá:** referencia sutil a la arquitectura y materialidad bogotana.
-- **Marfil Bogotá:** reduce la sensación fría de una interfaz puramente tecnológica.
-
-### Proporción de uso
-
-- 60% neutrales: blanco, marfil y grises.
-- 25% azul andino.
-- 10% verde cerros.
-- 5% acentos: dorado y ladrillo.
-
-Los acentos deben dirigir la atención, no dominar la interfaz.
+| Border | Gris Niebla / Cálido | `#D8D2C4` | Bordes |
 
 ---
 
-## 3. Tokens CSS iniciales
+## 3. Tokens CSS Consolidados & Efectos de Marca
 
 ```css
+@property --gold-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   --color-primary: #174A5B;
   --color-primary-hover: #123D4B;
-  --color-primary-active: #0E303B;
-  --color-primary-soft: #E7F0F2;
+  --color-primary-soft: #EBF2F4;
 
   --color-secondary: #1F5D50;
   --color-secondary-hover: #184B40;
-  --color-secondary-soft: #E7F1EE;
+  --color-secondary-soft: #E8F2EF;
 
   --color-accent: #C6A15B;
   --color-accent-hover: #A98649;
-  --color-accent-soft: #F5EDDC;
+  --color-accent-soft: #F6EEDB;
+  --color-gold-bright: #FFE8A3;
 
   --color-accent-cultural: #A64B3C;
-  --color-accent-cultural-hover: #863C31;
   --color-accent-cultural-soft: #F5E8E5;
 
-  --color-success: #28745A;
+  --color-success: #1F5D50;
   --color-warning: #9A6B16;
   --color-error: #A64040;
-  --color-info: #286A82;
+  --color-info: #174A5B;
 
-  --color-background: #F7F2E8;
+  --color-background: #F7F4EC;
   --color-surface: #FFFFFF;
   --color-surface-elevated: #FFFFFF;
 
@@ -96,48 +82,53 @@ Los acentos deben dirigir la atención, no dominar la interfaz.
   --color-text-muted: #64727A;
   --color-text-inverse: #FFFFFF;
 
-  --color-border: #D8DEE0;
+  --color-border: #D8D2C4;
   --color-border-strong: #AEB9BD;
   --color-focus: #174A5B;
 
   --font-family-display: "Manrope", system-ui, sans-serif;
   --font-family-body: "Inter", system-ui, sans-serif;
-  --font-family-mono: "JetBrains Mono", monospace;
+  --font-family-mono: "Space Grotesk", monospace;
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
 
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-12: 48px;
-  --space-16: 64px;
-
-  --shadow-sm: 0 1px 3px rgb(30 41 51 / 0.08);
-  --shadow-md: 0 4px 12px rgb(30 41 51 / 0.10);
-  --shadow-lg: 0 12px 32px rgb(30 41 51 / 0.14);
+  --shadow-sm: 0 1px 3px rgb(30 41 51 / 0.05);
+  --shadow-md: 0 4px 16px rgb(30 41 51 / 0.07);
+  --shadow-lg: 0 14px 34px rgb(23 74 91 / 0.16);
+  --shadow-gold-glow: 0 6px 25px rgba(198, 161, 91, 0.22);
 }
 ```
 
-Estos valores son una **propuesta inicial**, no una aprobación definitiva. Deben probarse en componentes reales y validarse con contraste WCAG antes de congelar la versión final.
+### 3.1 Patrón Geométrico Muisca de Fondo
+Fondo con patrón vectorial SVG ultra sutil de rombos concéntricos escalonados (símbolo muisca de fertilidad y tierra) y conexiones andinas:
+```css
+body {
+  background-color: var(--color-background);
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23174A5B' stroke-width='0.75' stroke-opacity='0.06'%3E%3Cpath d='M40 8 L72 40 L40 72 L8 40 Z' /%3E%3Cpath d='M40 18 L62 40 L40 62 L18 40 Z' /%3E%3Cpath d='M40 28 L52 40 L40 52 L28 40 Z' /%3E%3Ccircle cx='40' cy='40' r='2' fill='%23C6A15B' fill-opacity='0.12' /%3E%3Cpath d='M0 0 L16 16 M80 0 L64 16 M0 80 L16 64 M80 80 L64 64' /%3E%3Cpath d='M0 40 L8 40 M72 40 L80 40 M40 0 L40 8 M40 72 L40 80' /%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  background-attachment: fixed;
+}
+```
+
+### 3.2 Microinteracción: Rayo Dorado Perimetral en Hover (El Dorado / Sué)
+Al pasar el cursor por tarjetas o hero banners, un haz de luz dorada recorre elegantemente el perímetro:
+- **Tarjetas de Experiencias:** Duración de ciclo calibrada en **2.4s** (`girarRayoDorado 2.4s linear infinite`).
+- **Hero / Banners Principales:** Duración en hover calibrada en **2.6s** (y 4.0s en reposo).
 
 ---
 
-## 4. Tipografía propuesta
+## 4. Tipografía oficial
 
 ### Display — Manrope
-Para H1, H2, H3, cifras y elementos de identidad. Aporta una personalidad moderna, tecnológica y amigable.
+Para H1, H2, H3, cifras, badges y elementos de identidad. Aporta modernidad tecnológica andina.
 
 ### Body — Inter
-Para navegación, formularios, dashboards, reservas y textos. Aporta legibilidad y neutralidad.
+Para navegación, formularios, dashboards, reservas y textos. Aporta máxima legibilidad neutra.
 
-**Regla:** máximo dos familias tipográficas principales en la interfaz.
+**Regla:** Máximo dos familias tipográficas principales en la interfaz.
 
 ---
 

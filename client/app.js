@@ -709,7 +709,7 @@ async function cargarColaAdministracion() {
 }
 
 // =========================================================
-// MÓDULO LANDING PAGE PÚBLICA (DESPEGAR / BRAND_V2)
+// MÓDULO LANDING PAGE PÚBLICA (BRAND_V2)
 // =========================================================
 async function cargarPaquetesLanding() {
   const grid = $('#landing-paquetes-grid');
@@ -722,7 +722,7 @@ async function cargarPaquetesLanding() {
       ...pkg,
       categoria: pkg.categoria || (idx % 2 === 0 ? 'centro' : 'naturaleza'),
       zona: pkg.zona || 'Bogotá',
-      nombreAgencia: pkg.nombreAgencia || pkg.agencyName || 'Agencia Operadora',
+      nombreAgencia: pkg.nombreAgencia || 'Agencia Certificada RNT',
       numeroRnt: pkg.numeroRnt || 'Validado',
       rating: '5.0',
       duracion: 'Día completo'

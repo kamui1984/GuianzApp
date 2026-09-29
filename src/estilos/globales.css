@@ -1,0 +1,491 @@
+@import './variables.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--fuente-cuerpo);
+  background-color: var(--fondo-principal);
+  color: var(--texto-principal);
+  line-height: 1.6;
+}
+
+#catalogo-paquetes,
+#zonas-bogota,
+#beneficios,
+#para-prestadores,
+#destinos-bogota,
+#paquetes-destacados {
+  scroll-margin-top: 80px;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background-color: var(--fondo-principal);
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23174A5B' stroke-width='0.75' stroke-opacity='0.06'%3E%3Cpath d='M40 8 L72 40 L40 72 L8 40 Z' /%3E%3Cpath d='M40 18 L62 40 L40 62 L18 40 Z' /%3E%3Cpath d='M40 28 L52 40 L40 52 L28 40 Z' /%3E%3Ccircle cx='40' cy='40' r='2' fill='%23C6A15B' fill-opacity='0.12' /%3E%3Cpath d='M0 0 L16 16 M80 0 L64 16 M0 80 L16 64 M80 80 L64 64' /%3E%3Cpath d='M0 40 L8 40 M72 40 L80 40 M40 0 L40 8 M40 72 L40 80' /%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  background-attachment: fixed;
+}
+
+#raiz {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Franja ornamental decorativa inspirada en el tejido precolombino */
+.franja-ornamental {
+  height: 6px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-primario) 0px,
+    var(--color-primario) 28px,
+    var(--color-dorado) 28px,
+    var(--color-dorado) 46px,
+    var(--color-acento-bogota) 46px,
+    var(--color-acento-bogota) 64px,
+    var(--color-secundario) 64px,
+    var(--color-secundario) 92px
+  );
+}
+
+/* Contenedores */
+.contenedor {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.contenedor-estrecho {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Tipografía */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fuente-titulos);
+  color: var(--texto-principal);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+a {
+  color: var(--texto-enlace);
+  text-decoration: none;
+  transition: color var(--transicion-rapida);
+}
+
+a:hover {
+  color: var(--color-primario-hover);
+}
+
+/* =========================================================
+   EFECTO RAYO DORADO PERIMETRAL (EL DORADO / SUÉ)
+   ========================================================= */
+.tarjeta-paquete-dorada {
+  position: relative;
+  background-color: #FFFFFF;
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-grande);
+  overflow: hidden;
+  box-shadow: var(--sombra-media);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.tarjeta-paquete-dorada::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: var(--radio-grande);
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 55%,
+    rgba(198, 161, 91, 0.2) 68%,
+    #C6A15B 80%,
+    #FFE8A3 90%,
+    #FFFFFF 95%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  animation: girarRayoDorado 2.4s linear infinite;
+  transition: opacity 0.35s ease;
+  z-index: 5;
+}
+
+.tarjeta-paquete-dorada:hover {
+  transform: translateY(-5px);
+  border-color: transparent;
+  box-shadow: var(--sombra-elevada), var(--sombra-brillo-dorado);
+}
+
+.tarjeta-paquete-dorada:hover::before {
+  opacity: 1;
+}
+
+/* Tarjeta Zona Muisca con Rayo Dorado */
+.tarjeta-zona-muisca {
+  position: relative;
+  background-color: #FFFFFF;
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-medio);
+  overflow: hidden;
+  box-shadow: var(--sombra-sutil);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.tarjeta-zona-muisca::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: var(--radio-medio);
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 55%,
+    rgba(198, 161, 91, 0.2) 68%,
+    #C6A15B 80%,
+    #FFE8A3 90%,
+    #FFFFFF 95%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  animation: girarRayoDorado 2.4s linear infinite;
+  transition: opacity 0.35s ease;
+  z-index: 5;
+}
+
+.tarjeta-zona-muisca:hover {
+  transform: translateY(-3px);
+  border-color: transparent;
+  box-shadow: var(--sombra-media), var(--sombra-brillo-dorado);
+}
+
+.tarjeta-zona-muisca:hover::before {
+  opacity: 1;
+}
+
+/* Hero Card Muisca con Rayo Dorado */
+.hero-card-muisca {
+  position: relative;
+  border-radius: var(--radio-grande);
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(23, 74, 91, 0.22);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.hero-card-muisca::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radio-grande);
+  padding: 3px;
+  background: conic-gradient(
+    from var(--gold-angle),
+    transparent 0%,
+    transparent 55%,
+    rgba(198, 161, 91, 0.25) 68%,
+    #C6A15B 80%,
+    #FFE8A3 90%,
+    #FFFFFF 95%,
+    #C6A15B 98%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.35;
+  animation: girarRayoDorado 4s linear infinite;
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+
+.hero-card-muisca:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 45px rgba(23, 74, 91, 0.28), var(--sombra-brillo-dorado);
+}
+
+.hero-card-muisca:hover::after {
+  opacity: 1;
+  animation-duration: 2.6s;
+}
+
+/* Botones */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--fuente-titulos);
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radio-pequeno);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transicion-rapida);
+  text-decoration: none;
+  user-select: none;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.boton-primario {
+  background: var(--color-primario);
+  color: #ffffff;
+}
+
+.boton-primario:hover {
+  background: var(--color-primario-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(23, 74, 91, 0.25);
+}
+
+.boton-dorado {
+  background: linear-gradient(135deg, var(--color-dorado) 0%, #B38E46 100%);
+  color: #1A1200;
+  box-shadow: 0 4px 14px rgba(198, 161, 91, 0.35);
+}
+
+.boton-dorado:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(198, 161, 91, 0.45);
+}
+
+.boton-contorno {
+  background: #FFFFFF;
+  border: 1px solid var(--borde-sutil);
+  color: var(--texto-principal);
+}
+
+.boton-contorno:hover {
+  background: #FFFFFF;
+  border-color: var(--color-primario);
+  color: var(--color-primario);
+}
+
+.boton-peligro {
+  background: var(--color-peligro-fondo);
+  border: 1px solid rgba(166, 64, 64, 0.4);
+  color: var(--color-peligro);
+}
+
+.boton-peligro:hover {
+  background: var(--color-peligro);
+  color: #ffffff;
+}
+
+.boton-texto {
+  background: transparent;
+  border: none;
+  color: var(--texto-secundario);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--fuente-titulos);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.boton-texto:hover {
+  color: var(--color-primario);
+}
+
+.boton-pequeno {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* Campos de Formulario */
+.grupo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+
+.etiqueta-formulario {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--texto-principal);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.campo-formulario,
+.area-texto-formulario,
+.selector-formulario {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-medio);
+  color: var(--texto-principal);
+  font-family: var(--fuente-cuerpo);
+  font-size: 0.95rem;
+  transition: all var(--transicion-rapida);
+}
+
+.campo-formulario:focus,
+.area-texto-formulario:focus,
+.selector-formulario:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(23, 74, 91, 0.15);
+  background-color: #FFFFFF;
+}
+
+.campo-formulario::placeholder {
+  color: var(--texto-atenuado);
+}
+
+.texto-ayuda {
+  font-size: 0.8rem;
+  color: var(--texto-secundario);
+}
+
+/* Insignias / Badges */
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radio-completo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.insignia-rnt {
+  background: #FFFFFF;
+  color: var(--color-secundario);
+  border: 1px solid var(--borde-sutil);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.insignia-aprobado {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito);
+  border: 1px solid rgba(31, 93, 80, 0.3);
+}
+
+.insignia-pendiente {
+  background: var(--color-advertencia-fondo);
+  color: var(--color-advertencia);
+  border: 1px solid rgba(198, 161, 91, 0.4);
+}
+
+.insignia-rechazado {
+  background: var(--color-peligro-fondo);
+  color: var(--color-peligro);
+  border: 1px solid rgba(166, 64, 64, 0.4);
+}
+
+.insignia-borrador {
+  background: var(--color-primario-claro);
+  color: var(--color-primario);
+  border: 1px solid var(--borde-sutil);
+}
+
+/* Efecto Panel Superficie */
+.panel-vidrio {
+  background: #FFFFFF;
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-sutil);
+}
+
+/* =========================================================
+   BARRA DE NAVEGACIÓN Y BOTONES SUPERIORES
+   ========================================================= */
+.menu-escritorio {
+  display: flex !important;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.nav-pill-btn {
+  background: #FFFFFF;
+  border: 1px solid var(--borde-sutil);
+  border-radius: 8px;
+  color: var(--texto-principal);
+  font-family: var(--fuente-cuerpo);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  cursor: pointer;
+  transition: all var(--transicion-rapida);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-pill-btn:hover {
+  border-color: var(--color-primario);
+  color: var(--color-primario);
+  background: var(--color-primario-claro);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(23, 74, 91, 0.08);
+}
+
+.boton-menu-movil {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  .menu-escritorio {
+    display: none !important;
+  }
+  .boton-menu-movil {
+    display: inline-flex !important;
+  }
+}
+
+/* Animaciones */
+@keyframes aparecerSuave {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animar-aparicion {
+  animation: aparecerSuave 0.3s ease-out forwards;
+}

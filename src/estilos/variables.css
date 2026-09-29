@@ -1,0 +1,79 @@
+@property --gold-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes girarRayoDorado {
+  0% {
+    --gold-angle: 0deg;
+  }
+  100% {
+    --gold-angle: 360deg;
+  }
+}
+
+:root {
+  /* Paleta Corporativa GuianzApp - Identidad Oficial Brand v1.0 (El Dorado & Muisca) */
+  --color-primario: #174A5B;            /* Azul Andino */
+  --color-primario-hover: #123D4B;
+  --color-primario-claro: #EBF2F4;
+  --color-primario-oscuro: #0E303B;
+
+  --color-secundario: #1F5D50;          /* Verde Cerros */
+  --color-secundario-hover: #184B40;
+  --color-secundario-claro: #E8F2EF;
+
+  --color-dorado: #C6A15B;              /* Dorado Patrimonio / Muisca */
+  --color-dorado-hover: #A98649;
+  --color-dorado-claro: #F6EEDB;
+  --color-dorado-brillante: #FFE8A3;
+
+  --color-acento-bogota: #A64B3C;       /* Ladrillo Bogotá */
+  --color-acento-verde: #1F5D50;
+
+  /* Colores de Fondo y Superficie */
+  --fondo-principal: #F7F4EC;           /* Marfil Bogotá */
+  --fondo-secundario: #F3EFE6;
+  --fondo-tarjeta: #FFFFFF;
+  --fondo-tarjeta-hover: #FFFFFF;
+
+  /* Bordes */
+  --borde-sutil: #D8D2C4;
+  --borde-destacado: #174A5B;
+  --borde-dorado: #C6A15B;
+
+  /* Texto */
+  --texto-principal: #1E2933;          /* Carbón */
+  --texto-secundario: #53626C;         /* Gris Piedra */
+  --texto-atenuado: #64727A;
+  --texto-enlace: #174A5B;
+
+  /* Estados */
+  --color-exito: #1F5D50;
+  --color-exito-fondo: #E8F2EF;
+  --color-peligro: #A64040;
+  --color-peligro-fondo: #F5E8E5;
+  --color-advertencia: #9A6B16;
+  --color-advertencia-fondo: #F6EEDB;
+
+  /* Tipografías */
+  --fuente-titulos: 'Manrope', system-ui, sans-serif;
+  --fuente-cuerpo: 'Inter', system-ui, sans-serif;
+  --fuente-mono: 'Space Grotesk', monospace;
+
+  /* Sombras y Elevaciones */
+  --sombra-sutil: 0 1px 3px rgba(30, 41, 51, 0.05);
+  --sombra-media: 0 4px 16px rgba(30, 41, 51, 0.07);
+  --sombra-elevada: 0 12px 30px rgba(23, 74, 91, 0.15);
+  --sombra-brillo-dorado: 0 6px 25px rgba(198, 161, 91, 0.22);
+
+  /* Radios */
+  --radio-pequeno: 8px;
+  --radio-medio: 14px;
+  --radio-grande: 18px;
+  --radio-completo: 9999px;
+
+  --transicion-rapida: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transicion-suave: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
