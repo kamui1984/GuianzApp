@@ -47,7 +47,7 @@ export const solicitarApi = async (ruta, opciones = {}) => {
   }
 
   try {
-    const urlBase = import.meta.env.VITE_API_URL || '';
+    const urlBase = import.meta.env.VITE_API_URL || 'https://guianzapp.onrender.com';
     const urlDestino = ruta.startsWith('http') ? ruta : `${urlBase}${ruta}`;
 
     const respuesta = await fetch(urlDestino, {
