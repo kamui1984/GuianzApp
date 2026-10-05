@@ -28,6 +28,17 @@ aplicacion.get('/health', (peticion, respuesta) => {
   respuesta.json({ estado: 'activo', fecha: new Date().toISOString() });
 });
 
+// Cabeceras específicas para Progressive Web App (PWA)
+aplicacion.use((peticion, respuesta, siguiente) => {
+  if (peticion.path === '/sw.js' || peticion.path === '/registerSW.js') {
+    respuesta.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    respuesta.setHeader('Content-Type', 'application/javascript');
+  } else if (peticion.path === '/manifest.webmanifest') {
+    respuesta.setHeader('Content-Type', 'application/manifest+json');
+  }
+  siguiente();
+});
+
 // Servir el frontend compilado (dist) o fallback
 const rutaDistReact = path.join(__dirname, '..', 'dist');
 aplicacion.use(express.static(rutaDistReact));

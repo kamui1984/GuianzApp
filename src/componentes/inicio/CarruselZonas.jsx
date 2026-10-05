@@ -7,6 +7,7 @@ const ZONAS_BOGOTA = [
     titulo: 'La Candelaria',
     subtitulo: 'Centro Histórico · 3-4 h',
     filtro: 'Candelaria',
+    categoria: 'centro',
     imagen: 'https://images.unsplash.com/photo-1715503052107-34c1ec2ec84a?auto=format&fit=crop&w=400&q=80'
   },
   {
@@ -14,6 +15,7 @@ const ZONAS_BOGOTA = [
     titulo: 'Monserrate & Cerros',
     subtitulo: 'Miradores & Naturaleza',
     filtro: 'Monserrate',
+    categoria: 'naturaleza',
     imagen: 'https://images.unsplash.com/photo-1681145553148-14ad720913c1?auto=format&fit=crop&w=400&q=80'
   },
   {
@@ -21,6 +23,7 @@ const ZONAS_BOGOTA = [
     titulo: 'Usaquén Colonial',
     subtitulo: 'Gastronomía & Mercados',
     filtro: 'Usaquén',
+    categoria: 'gastronomia',
     imagen: 'https://images.unsplash.com/photo-1677472914929-d25a4e851f7a?auto=format&fit=crop&w=400&q=80'
   },
   {
@@ -28,6 +31,7 @@ const ZONAS_BOGOTA = [
     titulo: 'Distrito Graffiti',
     subtitulo: 'Arte Urbano · Puente Aranda',
     filtro: 'Graffiti',
+    categoria: 'arte',
     imagen: 'https://images.unsplash.com/photo-1551225183-94acb7d595b6?auto=format&fit=crop&w=400&q=80'
   },
   {
@@ -35,11 +39,12 @@ const ZONAS_BOGOTA = [
     titulo: 'Bosques de Niebla',
     subtitulo: 'Ecoturismo & Páramo',
     filtro: 'Niebla',
+    categoria: 'ecoturismo',
     imagen: 'https://images.unsplash.com/photo-1674558350402-84bf8cee7c2a?auto=format&fit=crop&w=400&q=80'
   }
 ];
 
-export const CarruselZonas = ({ alSeleccionarZona }) => {
+export const CarruselZonas = ({ alSeleccionarZona, categoriaSeleccionada = 'todos' }) => {
   const contenedorRef = useRef(null);
 
   const desplazar = (direccion) => {
@@ -101,51 +106,62 @@ export const CarruselZonas = ({ alSeleccionarZona }) => {
             scrollbarWidth: 'none'
           }}
         >
-          {ZONAS_BOGOTA.map((zona) => (
-            <div
-              key={zona.id}
-              onClick={() => alSeleccionarZona(zona.filtro)}
-              className="tarjeta-zona-muisca"
-              style={{
-                minWidth: '260px',
-                flexShrink: 0,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.85rem',
-                padding: '0.65rem 1rem 0.65rem 0.65rem',
-                cursor: 'pointer'
-              }}
-            >
+          {ZONAS_BOGOTA.map((zona) => {
+            const estaActiva = categoriaSeleccionada === zona.categoria;
+
+            return (
               <div
+                key={zona.id}
+                onClick={() => alSeleccionarZona(zona)}
+                className="tarjeta-zona-muisca"
                 style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '10px',
-                  overflow: 'hidden',
+                  minWidth: '260px',
                   flexShrink: 0,
-                  backgroundColor: 'var(--borde-sutil)'
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.65rem 1rem 0.65rem 0.65rem',
+                  cursor: 'pointer',
+                  border: estaActiva ? '2px solid var(--color-primario)' : '1px solid var(--borde-sutil)',
+                  backgroundColor: estaActiva ? 'var(--color-primario-claro)' : '#FFFFFF',
+                  transform: estaActiva ? 'translateY(-2px)' : 'none',
+                  boxShadow: estaActiva ? 'var(--sombra-media)' : 'var(--sombra-sutil)',
+                  transition: 'all 0.25s ease'
                 }}
               >
-                <img
-                  src={zona.imagen}
-                  alt={zona.titulo}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
+                <div
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    backgroundColor: 'var(--borde-sutil)'
+                  }}
+                >
+                  <img
+                    src={zona.imagen}
+                    alt={zona.titulo}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-secundario)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Paquetes
-                </span>
-                <strong style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--texto-principal)', margin: '1px 0' }}>
-                  {zona.titulo}
-                </strong>
-                <span style={{ fontSize: '0.78rem', color: 'var(--texto-secundario)' }}>
-                  {zona.subtitulo}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: estaActiva ? 'var(--color-primario)' : 'var(--color-secundario)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      {estaActiva ? '✓ Seleccionado' : 'Paquetes'}
+                    </span>
+                  </div>
+                  <strong style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--texto-principal)', margin: '1px 0' }}>
+                    {zona.titulo}
+                  </strong>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--texto-secundario)' }}>
+                    {zona.subtitulo}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

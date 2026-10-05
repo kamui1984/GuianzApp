@@ -465,6 +465,17 @@ a:hover {
   display: none !important;
 }
 
+.acciones-auth-superior {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .acciones-auth-superior {
+    display: none !important;
+  }
+}
+
 @media (max-width: 1024px) {
   .menu-escritorio {
     display: none !important;
@@ -472,6 +483,11 @@ a:hover {
   .boton-menu-movil {
     display: inline-flex !important;
   }
+}
+
+.boton-tab-movil:active {
+  transform: scale(0.92);
+  transition: transform 0.1s ease;
 }
 
 /* Animaciones */
@@ -489,3 +505,53 @@ a:hover {
 .animar-aparicion {
   animation: aparecerSuave 0.3s ease-out forwards;
 }
+
+/* =========================================================
+   OPTIMIZACIONES MÓVILES Y PWA (RESPONSIVE & TOUCH)
+   ========================================================= */
+
+/* Espaciado para la barra de navegación inferior en dispositivos móviles */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .barra-inferior-movil {
+    display: block !important;
+  }
+
+  /* Prevenir zoom no deseado en iOS al hacer foco en formularios */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Reducir padding en contenedores en pantallas pequeñas */
+  .contenedor, .contenedor-estrecho {
+    padding: 0 1rem;
+  }
+
+  /* Touch targets optimizados */
+  .boton {
+    min-height: 44px;
+  }
+
+  /* Ajustar modal a pantalla móvil */
+  .modal-overlay-movil {
+    padding: 0.75rem !important;
+    align-items: flex-end !important;
+  }
+
+  .modal-contenido-movil {
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 88dvh !important;
+    width: 100% !important;
+  }
+
+  /* Ubicación del banner PWA por encima de la barra inferior */
+  aside[aria-label="Instalación de la aplicación"] {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+  }
+}
+

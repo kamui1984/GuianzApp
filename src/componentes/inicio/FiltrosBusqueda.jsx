@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Landmark, Trees, Coffee, Palette, Mountain } from 'lucide-react';
+import { Compass, Landmark, Trees, Coffee, Palette, Mountain, X, Search } from 'lucide-react';
 
 const CATEGORIAS = [
   { id: 'todos', etiqueta: 'Todos los Paquetes', icono: <Compass size={16} /> },
@@ -10,7 +10,13 @@ const CATEGORIAS = [
   { id: 'ecoturismo', etiqueta: 'Ecoturismo & Páramo', icono: <Mountain size={16} /> }
 ];
 
-export const FiltrosBusqueda = ({ categoriaSeleccionada, alCambiarCategoria, totalResultados }) => {
+export const FiltrosBusqueda = ({
+  categoriaSeleccionada,
+  alCambiarCategoria,
+  totalResultados,
+  busqueda = '',
+  alLimpiarBusqueda
+}) => {
   return (
     <div style={{ marginBottom: '2rem' }}>
       <div
@@ -31,6 +37,46 @@ export const FiltrosBusqueda = ({ categoriaSeleccionada, alCambiarCategoria, tot
             Mostrando {totalResultados} {totalResultados === 1 ? 'experiencia verificada' : 'experiencias verificadas'}
           </p>
         </div>
+
+        {busqueda && (
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              backgroundColor: 'var(--color-primario-claro)',
+              border: '1px solid var(--color-primario)',
+              borderRadius: '9999px',
+              padding: '0.35rem 0.85rem',
+              fontSize: '0.84rem',
+              color: 'var(--color-primario)',
+              fontWeight: 600
+            }}
+          >
+            <Search size={14} />
+            <span>Filtro de búsqueda: <strong>"{busqueda}"</strong></span>
+            {alLimpiarBusqueda && (
+              <button
+                type="button"
+                onClick={alLimpiarBusqueda}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '2px',
+                  color: 'var(--color-primario)',
+                  borderRadius: '50%'
+                }}
+                title="Quitar búsqueda"
+                aria-label="Quitar búsqueda"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Barra de pestañas de categorías */}

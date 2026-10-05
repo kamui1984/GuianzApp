@@ -36,6 +36,7 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
 
   return (
     <div
+      className="modal-overlay-movil"
       style={{
         position: 'fixed',
         top: 0,
@@ -54,7 +55,7 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
       onMouseUp={manejarMouseUpFondo}
     >
       <div
-        className="animar-aparicion"
+        className="animar-aparicion modal-contenido-movil"
         style={{
           width: '100%',
           maxWidth: anchoMaximo,

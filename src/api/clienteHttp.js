@@ -47,7 +47,10 @@ export const solicitarApi = async (ruta, opciones = {}) => {
   }
 
   try {
-    const respuesta = await fetch(ruta, {
+    const urlBase = import.meta.env.VITE_API_URL || '';
+    const urlDestino = ruta.startsWith('http') ? ruta : `${urlBase}${ruta}`;
+
+    const respuesta = await fetch(urlDestino, {
       ...opciones,
       headers: cabeceras
     });

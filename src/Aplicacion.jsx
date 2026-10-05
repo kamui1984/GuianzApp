@@ -17,6 +17,9 @@ import { ModalAutenticacion } from './componentes/autenticacion/ModalAutenticaci
 import { PanelAgencia } from './componentes/paneles/PanelAgencia';
 import { PanelGuia } from './componentes/paneles/PanelGuia';
 import { PanelAdministrador } from './componentes/paneles/PanelAdministrador';
+import { InstaladorPWA } from './componentes/comunes/InstaladorPWA';
+import { AvisoConexion } from './componentes/comunes/AvisoConexion';
+import { BarraNavegacionMovil } from './componentes/comunes/BarraNavegacionMovil';
 import { Sparkles, Calendar, Compass } from 'lucide-react';
 
 // Catálogo base de Bogotá garantizado con agencias formales
@@ -134,30 +137,40 @@ export const Aplicacion = () => {
 
   // Filtrado reactivo de paquetes
   const paquetesFiltrados = useMemo(() => {
-    return paquetes.filter((paquete) => {
-      const coincideBusqueda =
-        !busqueda ||
-        paquete.titulo?.toLowerCase().includes(busqueda.toLowerCase()) ||
-        paquete.descripcion?.toLowerCase().includes(busqueda.toLowerCase()) ||
-        paquete.nombreAgencia?.toLowerCase().includes(busqueda.toLowerCase());
+    const busquedaNorm = (busqueda || '').trim().toLowerCase();
 
-      if (!coincideBusqueda) return false;
+    return paquetes.filter((paquete) => {
+      // Concatenar texto relevante de especialidades si existen
+      const espTexto = Array.isArray(paquete.especialidades)
+        ? paquete.especialidades.map((e) => (typeof e === 'object' ? `${e.subcategoria || ''} ${e.nombre || ''} ${e.categoria || ''}` : String(e))).join(' ')
+        : '';
+
+      const contenidoBusqueda = `${paquete.titulo || ''} ${paquete.descripcion || ''} ${paquete.nombreAgencia || ''} ${espTexto}`.toLowerCase();
+
+      if (busquedaNorm && !contenidoBusqueda.includes(busquedaNorm)) {
+        return false;
+      }
 
       if (categoriaSeleccionada === 'todos') return true;
 
-      const textoCompleto = `${paquete.titulo || ''} ${paquete.descripcion || ''} ${paquete.categoria || ''}`.toLowerCase();
+      // Comparación directa si el paquete tiene la categoría explícita
+      if (paquete.categoria && paquete.categoria.toLowerCase() === categoriaSeleccionada.toLowerCase()) {
+        return true;
+      }
+
+      const textoCompleto = `${paquete.titulo || ''} ${paquete.descripcion || ''} ${paquete.categoria || ''} ${espTexto}`.toLowerCase();
 
       switch (categoriaSeleccionada) {
         case 'centro':
-          return textoCompleto.includes('candelaria') || textoCompleto.includes('colonial') || textoCompleto.includes('histórico') || textoCompleto.includes('museo');
+          return /candelaria|colonial|hist[oó]rico|museo|centro|chorro|bol[ií]var/i.test(textoCompleto);
         case 'naturaleza':
-          return textoCompleto.includes('cerros') || textoCompleto.includes('monserrate') || textoCompleto.includes('montaña') || textoCompleto.includes('bosque');
+          return /cerros?|monserrate|monta[ñn]a|bosque|sender[oi]|mirador|guadalupe|naturaleza/i.test(textoCompleto);
         case 'gastronomia':
-          return textoCompleto.includes('café') || textoCompleto.includes('gastronomía') || textoCompleto.includes('usaquén') || textoCompleto.includes('cata');
+          return /caf[eé]|gastronom[ií]a|usaqu[eé]n|cata|tostador|culinari|sabores|barismo|plaza/i.test(textoCompleto);
         case 'arte':
-          return textoCompleto.includes('graffiti') || textoCompleto.includes('arte') || textoCompleto.includes('mural') || textoCompleto.includes('aranda');
+          return /graffiti|grafiti|arte|mural|aranda|urbano|galer[ií]a/i.test(textoCompleto);
         case 'ecoturismo':
-          return textoCompleto.includes('niebla') || textoCompleto.includes('páramo') || textoCompleto.includes('ecoturismo') || textoCompleto.includes('chicaque');
+          return /niebla|p[aá]ramo|ecoturismo|chicaque|cascada|chorrera|verj[oó]n|laguna|chingaza|fauna|flora/i.test(textoCompleto);
         default:
           return true;
       }
@@ -202,8 +215,19 @@ export const Aplicacion = () => {
             />
 
             <CarruselZonas
+              categoriaSeleccionada={categoriaSeleccionada}
               alSeleccionarZona={(zona) => {
-                setBusqueda(zona);
+                const categoriaDestino = typeof zona === 'object' ? zona.categoria : zona;
+                // Si ya está seleccionada esa categoría, alternar a todos
+                if (categoriaSeleccionada === categoriaDestino) {
+                  setCategoriaSeleccionada('todos');
+                } else {
+                  setCategoriaSeleccionada(categoriaDestino);
+                }
+                // Limpiar búsqueda por texto para que no bloquee los paquetes de la zona
+                setBusqueda('');
+                const seccion = document.getElementById('catalogo-paquetes');
+                seccion?.scrollIntoView({ behavior: 'smooth' });
               }}
             />
 
@@ -211,7 +235,11 @@ export const Aplicacion = () => {
               <div className="contenedor">
                 <FiltrosBusqueda
                   categoriaSeleccionada={categoriaSeleccionada}
-                  alCambiarCategoria={setCategoriaSeleccionada}
+                  alCambiarCategoria={(nuevaCat) => {
+                    setCategoriaSeleccionada(nuevaCat);
+                  }}
+                  busqueda={busqueda}
+                  alLimpiarBusqueda={() => setBusqueda('')}
                   totalResultados={paquetesFiltrados.length}
                 />
 
@@ -319,6 +347,15 @@ export const Aplicacion = () => {
           />
         </>
       )}
+
+      {/* Componentes de Experiencia PWA y Móvil */}
+      <AvisoConexion />
+      <InstaladorPWA />
+      <BarraNavegacionMovil
+        alCambiarVista={setVistaActual}
+        vistaActual={vistaActual}
+        alAbrirAutenticacion={abrirModalAutenticacion}
+      />
     </>
   );
 };

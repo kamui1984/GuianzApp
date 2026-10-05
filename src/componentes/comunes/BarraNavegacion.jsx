@@ -153,49 +153,51 @@ export const BarraNavegacion = ({
               gap: '0.85rem'
             }}
           >
-            {estaAutenticado ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <button
-                  onClick={() => alCambiarVista(usuarioActual.rol || 'agencia')}
-                  className="boton boton-contorno"
-                  style={{ gap: '0.45rem' }}
-                >
-                  <LayoutDashboard size={16} />
-                  <span>{obtenerEtiquetaPanel()}</span>
-                </button>
-                <button
-                  onClick={cerrarSesion}
-                  className="boton boton-texto"
-                  style={{ color: 'var(--color-peligro)', padding: '0.5rem' }}
-                  title="Cerrar sesión"
-                >
-                  <LogOut size={18} />
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <button
-                  onClick={() => alAbrirAutenticacion('login')}
-                  className="boton boton-texto"
-                  style={{ gap: '0.4rem', color: 'var(--texto-principal)', fontWeight: 600 }}
-                >
-                  <User size={16} color="var(--color-primario)" />
-                  <span>Iniciar sesión</span>
-                </button>
-                <button
-                  onClick={() => alAbrirAutenticacion('registro-agencia')}
-                  className="boton boton-primario"
-                >
-                  Registrarse
-                </button>
-              </div>
-            )}
+            <div className="acciones-auth-superior">
+              {estaAutenticado ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <button
+                    onClick={() => alCambiarVista(usuarioActual.rol || 'agencia')}
+                    className="boton boton-contorno"
+                    style={{ gap: '0.45rem' }}
+                  >
+                    <LayoutDashboard size={16} />
+                    <span>{obtenerEtiquetaPanel()}</span>
+                  </button>
+                  <button
+                    onClick={cerrarSesion}
+                    className="boton boton-texto"
+                    style={{ color: 'var(--color-peligro)', padding: '0.5rem' }}
+                    title="Cerrar sesión"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <button
+                    onClick={() => alAbrirAutenticacion('login')}
+                    className="boton boton-texto"
+                    style={{ gap: '0.4rem', color: 'var(--texto-principal)', fontWeight: 600 }}
+                  >
+                    <User size={16} color="var(--color-primario)" />
+                    <span>Iniciar sesión</span>
+                  </button>
+                  <button
+                    onClick={() => alAbrirAutenticacion('registro-agencia')}
+                    className="boton boton-primario"
+                  >
+                    Registrarse
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Botón de Menú Móvil */}
             <button
               onClick={() => setMenuMovilAbierto(!menuMovilAbierto)}
               className="boton boton-contorno boton-menu-movil"
-              style={{ padding: '0.5rem' }}
+              style={{ padding: '0.5rem', minWidth: '40px', minHeight: '40px' }}
               aria-label="Abrir menú"
             >
               {menuMovilAbierto ? <X size={20} /> : <Menu size={20} />}
@@ -206,6 +208,7 @@ export const BarraNavegacion = ({
         {/* Menú Móvil Desplegable */}
         {menuMovilAbierto && (
           <div
+            className="animar-aparicion"
             style={{
               backgroundColor: '#FFFFFF',
               borderBottom: '1px solid var(--borde-sutil)',
@@ -218,31 +221,84 @@ export const BarraNavegacion = ({
             <button
               onClick={() => desplazarASeccion('catalogo-paquetes')}
               className="nav-pill-btn"
-              style={{ textAlign: 'left', width: '100%' }}
+              style={{ textAlign: 'left', width: '100%', justifyContent: 'flex-start' }}
             >
               Paquetes Turísticos
             </button>
             <button
               onClick={() => desplazarASeccion('zonas-bogota')}
               className="nav-pill-btn"
-              style={{ textAlign: 'left', width: '100%' }}
+              style={{ textAlign: 'left', width: '100%', justifyContent: 'flex-start' }}
             >
               Zonas de Bogotá
             </button>
             <button
               onClick={() => desplazarASeccion('beneficios')}
               className="nav-pill-btn"
-              style={{ textAlign: 'left', width: '100%' }}
+              style={{ textAlign: 'left', width: '100%', justifyContent: 'flex-start' }}
             >
               Beneficios
             </button>
             <button
               onClick={() => desplazarASeccion('para-prestadores')}
               className="nav-pill-btn"
-              style={{ textAlign: 'left', width: '100%' }}
+              style={{ textAlign: 'left', width: '100%', justifyContent: 'flex-start' }}
             >
               Agencias y Guías
             </button>
+
+            <div style={{ height: '1px', backgroundColor: 'var(--borde-sutil)', margin: '0.5rem 0' }} />
+
+            {!estaAutenticado ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                <button
+                  onClick={() => {
+                    setMenuMovilAbierto(false);
+                    alAbrirAutenticacion('login');
+                  }}
+                  className="boton boton-contorno"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <User size={16} />
+                  <span>Iniciar sesión</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuMovilAbierto(false);
+                    alAbrirAutenticacion('registro-agencia');
+                  }}
+                  className="boton boton-primario"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  Registrarse como Prestador
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                <button
+                  onClick={() => {
+                    setMenuMovilAbierto(false);
+                    alCambiarVista(usuarioActual.rol || 'agencia');
+                  }}
+                  className="boton boton-contorno"
+                  style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  <LayoutDashboard size={16} />
+                  <span>{obtenerEtiquetaPanel()}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuMovilAbierto(false);
+                    cerrarSesion();
+                  }}
+                  className="boton boton-texto"
+                  style={{ color: 'var(--color-peligro)', width: '100%', justifyContent: 'center' }}
+                >
+                  <LogOut size={16} />
+                  <span>Cerrar sesión</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </header>
