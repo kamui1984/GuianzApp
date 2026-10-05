@@ -1,0 +1,170 @@
+[
+  {
+    "tour_id": "f313a240-e563-4136-b9fa-4f70acabd6a8",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "3",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "f313a240-e563-4136-b9fa-4f70acabd6a8",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "3",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "f313a240-e563-4136-b9fa-4f70acabd6a8",
+    "especialidad_id": 3
+  },
+  {
+    "tour_id": "3",
+    "especialidad_id": 3
+  },
+  {
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "4",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "4",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "especialidad_id": 3
+  },
+  {
+    "tour_id": "4",
+    "especialidad_id": 3
+  },
+  {
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "especialidad_id": 5
+  },
+  {
+    "tour_id": "4",
+    "especialidad_id": 5
+  },
+  {
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "especialidad_id": 4
+  },
+  {
+    "tour_id": "4",
+    "especialidad_id": 4
+  },
+  {
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "especialidad_id": 6
+  },
+  {
+    "tour_id": "4",
+    "especialidad_id": 6
+  },
+  {
+    "tour_id": "fcb629ae-74ea-446c-89df-f8a07f1e76f4",
+    "especialidad_id": 11
+  },
+  {
+    "tour_id": "5",
+    "especialidad_id": 11
+  },
+  {
+    "tour_id": "fcb629ae-74ea-446c-89df-f8a07f1e76f4",
+    "especialidad_id": 12
+  },
+  {
+    "tour_id": "5",
+    "especialidad_id": 12
+  },
+  {
+    "tour_id": "fcb629ae-74ea-446c-89df-f8a07f1e76f4",
+    "especialidad_id": 13
+  },
+  {
+    "tour_id": "5",
+    "especialidad_id": 13
+  },
+  {
+    "tour_id": "47b48f77-e6bd-419f-8aa5-a4a5d56c47d1",
+    "especialidad_id": 5
+  },
+  {
+    "tour_id": "6",
+    "especialidad_id": 5
+  },
+  {
+    "tour_id": "47b48f77-e6bd-419f-8aa5-a4a5d56c47d1",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "6",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "47b48f77-e6bd-419f-8aa5-a4a5d56c47d1",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "6",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "7",
+    "especialidad_id": 1
+  },
+  {
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "7",
+    "especialidad_id": 2
+  },
+  {
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "especialidad_id": 3
+  },
+  {
+    "tour_id": "7",
+    "especialidad_id": 3
+  },
+  {
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "especialidad_id": 6
+  },
+  {
+    "tour_id": "7",
+    "especialidad_id": 6
+  },
+  {
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "especialidad_id": 9
+  },
+  {
+    "tour_id": "7",
+    "especialidad_id": 9
+  },
+  {
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "especialidad_id": 10
+  },
+  {
+    "tour_id": "7",
+    "especialidad_id": 10
+  }
+]

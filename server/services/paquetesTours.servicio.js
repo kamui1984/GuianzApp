@@ -22,6 +22,8 @@ const leerLocal = (archivo) => {
 
 const guardarLocal = (archivo, datos) => {
   try {
+    const dir = path.dirname(archivo);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(archivo, JSON.stringify(datos, null, 2), 'utf8');
   } catch (err) {
     console.warn(`Error al guardar en ${archivo}:`, err.message);

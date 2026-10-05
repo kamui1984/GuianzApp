@@ -1,0 +1,242 @@
+[
+  {
+    "id": "prog-f313a240-e563-4136-b9fa-4f70acabd6a8-1790628043805-0",
+    "tour_id": "f313a240-e563-4136-b9fa-4f70acabd6a8",
+    "guia_id": null,
+    "fecha": "2026-10-15",
+    "hora_inicio": "09:00:00",
+    "cupos_maximos": 10,
+    "cupos_disponibles": 10,
+    "estado": "Disponible"
+  },
+  {
+    "id": "prog-f313a240-e563-4136-b9fa-4f70acabd6a8-1790628043805-0",
+    "tour_id": "3",
+    "guia_id": null,
+    "fecha": "2026-10-15",
+    "hora_inicio": "09:00:00",
+    "cupos_maximos": 10,
+    "cupos_disponibles": 10,
+    "estado": "Disponible"
+  },
+  {
+    "id": "prog-88fdbd48-e01f-44db-af53-4afbb8dc0a1e-1790632260019-0",
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "guia_id": null,
+    "fecha": "2026-10-01",
+    "hora_inicio": "15:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790632391069",
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "15:00:00",
+    "cupos_maximos": 15,
+    "cupos_disponibles": 15,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790632450948",
+    "tour_id": "88fdbd48-e01f-44db-af53-4afbb8dc0a1e",
+    "guia_id": null,
+    "fecha": "2026-09-29",
+    "hora_inicio": "09:00:00",
+    "cupos_maximos": 11,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "prog-88fdbd48-e01f-44db-af53-4afbb8dc0a1e-1790632260019-0",
+    "tour_id": "4",
+    "guia_id": null,
+    "fecha": "2026-10-01",
+    "hora_inicio": "15:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790632391069",
+    "tour_id": "4",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "15:00:00",
+    "cupos_maximos": 15,
+    "cupos_disponibles": 15,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790632450948",
+    "tour_id": "4",
+    "guia_id": null,
+    "fecha": "2026-09-29",
+    "hora_inicio": "09:00:00",
+    "cupos_maximos": 11,
+    "cupos_disponibles": 11,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790633300542",
+    "tour_id": "fcb629ae-74ea-446c-89df-f8a07f1e76f4",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "09:00:00",
+    "cupos_maximos": 15,
+    "cupos_disponibles": 9,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790633300542",
+    "tour_id": "5",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "09:00:00",
+    "cupos_maximos": 15,
+    "cupos_disponibles": 12,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790639533955",
+    "tour_id": "47b48f77-e6bd-419f-8aa5-a4a5d56c47d1",
+    "guia_id": null,
+    "fecha": "2026-09-28",
+    "hora_inicio": "13:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790639544779",
+    "tour_id": "47b48f77-e6bd-419f-8aa5-a4a5d56c47d1",
+    "guia_id": null,
+    "fecha": "2026-09-29",
+    "hora_inicio": "13:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790639547579",
+    "tour_id": "47b48f77-e6bd-419f-8aa5-a4a5d56c47d1",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "13:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790639533955",
+    "tour_id": "6",
+    "guia_id": null,
+    "fecha": "2026-09-28",
+    "hora_inicio": "13:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790639544779",
+    "tour_id": "6",
+    "guia_id": null,
+    "fecha": "2026-09-29",
+    "hora_inicio": "13:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790639547579",
+    "tour_id": "6",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "13:00:00",
+    "cupos_maximos": 5,
+    "cupos_disponibles": 5,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651618551",
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "guia_id": null,
+    "fecha": "2026-09-29",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651624839",
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651629287",
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "guia_id": null,
+    "fecha": "2026-10-01",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651633814",
+    "tour_id": "08092eec-c1e4-4545-b5f9-8d97fc95bb60",
+    "guia_id": null,
+    "fecha": "2026-10-02",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651618551",
+    "tour_id": "7",
+    "guia_id": null,
+    "fecha": "2026-09-29",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651624839",
+    "tour_id": "7",
+    "guia_id": null,
+    "fecha": "2026-09-30",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651629287",
+    "tour_id": "7",
+    "guia_id": null,
+    "fecha": "2026-10-01",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  },
+  {
+    "id": "temp-1790651633814",
+    "tour_id": "7",
+    "guia_id": null,
+    "fecha": "2026-10-02",
+    "hora_inicio": "10:00:00",
+    "cupos_maximos": 6,
+    "cupos_disponibles": 6,
+    "estado": "Disponible"
+  }
+]
