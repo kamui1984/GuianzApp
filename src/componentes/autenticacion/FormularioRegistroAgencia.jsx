@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Building2, Mail, Lock, ShieldCheck, FileUp, Loader2 } from 'lucide-react';
+import { Building2, Mail, Lock, ShieldCheck, FileUp, Loader2, Scale } from 'lucide-react';
 import { servicioAutenticacion } from '../../api/autenticacionServicio';
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
+import { ModalTerminosCondiciones } from '../comunes/ModalTerminosCondiciones';
 
 export const FormularioRegistroAgencia = ({ alCompletar }) => {
   const { mostrarNotificacion } = useAutenticacion();
@@ -10,6 +11,8 @@ export const FormularioRegistroAgencia = ({ alCompletar }) => {
   const [contrasena, setContrasena] = useState('');
   const [numeroRnt, setNumeroRnt] = useState('');
   const [archivoRnt, setArchivoRnt] = useState(null);
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [modalTerminosAbierto, setModalTerminosAbierto] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState('');
 
@@ -17,6 +20,11 @@ export const FormularioRegistroAgencia = ({ alCompletar }) => {
     e.preventDefault();
     if (!archivoRnt) {
       setErrorMensaje('Debes adjuntar el certificado de Registro Nacional de Turismo (RNT).');
+      return;
+    }
+
+    if (!aceptaTerminos) {
+      setErrorMensaje('Debes aceptar los Términos y Condiciones y declarar contar con RNT activo y pólizas vigentes.');
       return;
     }
 
@@ -30,6 +38,7 @@ export const FormularioRegistroAgencia = ({ alCompletar }) => {
       datosForm.append('contrasena', contrasena);
       datosForm.append('numeroRnt', numeroRnt);
       datosForm.append('rntDocument', archivoRnt);
+      datosForm.append('aceptaTerminos', 'true');
 
       const respuesta = await servicioAutenticacion.registrarAgencia(datosForm);
       mostrarNotificacion(respuesta.mensaje || 'Registro recibido para validación.');
@@ -136,9 +145,54 @@ export const FormularioRegistroAgencia = ({ alCompletar }) => {
         <span className="texto-ayuda">Documento expedido por la Cámara de Comercio.</span>
       </div>
 
+      {/* Checkbox Términos y Condiciones para Agencias */}
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.65rem',
+          fontSize: '0.82rem',
+          color: '#d1d5db',
+          lineHeight: 1.45,
+          marginTop: '0.85rem',
+          marginBottom: '0.85rem',
+          cursor: 'pointer'
+        }}
+      >
+        <input
+          type="checkbox"
+          required
+          checked={aceptaTerminos}
+          onChange={(e) => setAceptaTerminos(e.target.checked)}
+          style={{ marginTop: '2px', accentColor: '#0ea5e9', width: '16px', height: '16px' }}
+        />
+        <span>
+          Declaro contar con Registro Nacional de Turismo (RNT) activo y pólizas de seguro vigentes. He leído y acepto los{' '}
+          <button
+            type="button"
+            onClick={(ev) => {
+              ev.preventDefault();
+              setModalTerminosAbierto(true);
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: '#38bdf8',
+              fontWeight: 700,
+              textDecoration: 'underline',
+              cursor: 'pointer'
+            }}
+          >
+            Términos y Condiciones para Prestadores
+          </button>{' '}
+          y la Política de Tratamiento de Datos (Ley 1581 de 2012).
+        </span>
+      </label>
+
       <button
         type="submit"
-        disabled={cargando}
+        disabled={cargando || !aceptaTerminos}
         className="boton boton-primario"
         style={{ width: '100%', marginTop: '0.5rem', padding: '0.8rem' }}
       >
@@ -154,6 +208,13 @@ export const FormularioRegistroAgencia = ({ alCompletar }) => {
           </>
         )}
       </button>
+
+      {/* Modal de Términos y Condiciones */}
+      <ModalTerminosCondiciones
+        abierto={modalTerminosAbierto}
+        alCerrar={() => setModalTerminosAbierto(false)}
+        rolInicial="turistas"
+      />
     </form>
   );
 };

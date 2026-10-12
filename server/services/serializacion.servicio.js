@@ -125,15 +125,22 @@ const serializarPerfilRevision = async (perfil) => {
  */
 const serializarReserva = (reserva, paquete = null, guia = null) => ({
   id: reserva.id,
+  codigoReserva:
+    reserva.codigo_reserva ||
+    reserva.codigoReserva ||
+    `#RES-${String(reserva.id || '').substring(0, 8).toUpperCase()}`,
   idPaquete: reserva.id_paquete || reserva.idPaquete,
   tituloPaquete: paquete?.titulo || reserva.titulo_paquete || reserva.tituloPaquete || 'Experiencia Turística',
   descripcionTour: reserva.descripcion_tour || reserva.descripcionTour || paquete?.descripcion || '',
   idAgencia: reserva.id_agencia || reserva.idAgencia,
   nombreAgencia: paquete?.nombreAgencia || reserva.nombre_agencia || reserva.nombreAgencia || 'Agencia Operadora',
+  rntAgencia: reserva.rnt_agencia || reserva.rntAgencia || paquete?.numeroRnt || 'RNT-Activo',
   telefonoAgencia: reserva.telefono_agencia || reserva.telefonoAgencia || '3001234567',
   correoAgencia: reserva.correo_agencia || reserva.correoAgencia || '',
   idGuiaAsignado: reserva.id_guia_asignado || reserva.idGuiaAsignado || null,
   nombreGuiaAsignado: guia?.nombreCompleto || reserva.nombre_guia_asignado || reserva.nombreGuiaAsignado || null,
+  rntGuia: reserva.rnt_guia || reserva.rntGuia || (guia?.numeroRnt || guia?.tarjetaProfesional) || null,
+  fechaAsignacionGuia: reserva.fecha_asignacion_guia || reserva.fechaAsignacionGuia || null,
   idTurista: reserva.id_turista || reserva.idTurista || null,
   nombreTitular: reserva.nombre_titular || reserva.nombreTitular,
   correoContacto: reserva.correo_contacto || reserva.correoContacto,
@@ -143,7 +150,21 @@ const serializarReserva = (reserva, paquete = null, guia = null) => ({
   cantidadPersonas: Number(reserva.cantidad_personas || reserva.cantidadPersonas || 1),
   precioTotal: Number(reserva.precio_total || reserva.precioTotal || 0),
   duracion: reserva.duracion || paquete?.duracion || '3.5 horas',
-  estado: reserva.estado || 'confirmada',
+  estado: reserva.estado || 'en espera de confirmacion',
+  aceptacionTerminosTurista: reserva.aceptacion_terminos_turista ?? reserva.aceptacionTerminosTurista ?? true,
+  fechaAceptacionTerminos:
+    reserva.fecha_aceptacion_terminos ||
+    reserva.fechaAceptacionTerminos ||
+    reserva.creado_en ||
+    reserva.creadoEn,
+  versionTerminos: reserva.version_terminos || reserva.versionTerminos || 'v1.0-co',
+  condicionesSnapshot: reserva.condiciones_snapshot || reserva.condicionesSnapshot || {
+    responsable_servicio: paquete?.nombreAgencia || reserva.nombre_agencia || 'Agencia Operadora',
+    rnt_responsable: reserva.rnt_agencia || paquete?.numeroRnt || 'RNT Registrado',
+    politica_cancelacion: paquete?.politicaCancelacion || 'Cancelación según políticas oficiales de la agencia.'
+  },
+  historialEvidencias: reserva.historial_evidencias || reserva.historialEvidencias || [],
+  especialidades: reserva.especialidades || paquete?.especialidades || [],
   creadoEn: reserva.creado_en || reserva.creadoEn || new Date().toISOString()
 });
 

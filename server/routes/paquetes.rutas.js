@@ -11,6 +11,7 @@ const {
   listarReservasAgencia,
   asignarGuiaReserva,
   desasignarGuiaReserva,
+  confirmarReservaControlador,
   eliminarReservaControlador
 } = require('../controllers/paquetes.controlador');
 const { requerirAutenticacion, requerirRol } = require('../middlewares/autenticacion.middleware');
@@ -18,6 +19,7 @@ const { cargaArchivos } = require('../middlewares/cargaArchivos.middleware');
 
 // Rutas de gestión de tours vendidos y asignación de guías (antes de /:id)
 router.get('/reservas/agencia', requerirAutenticacion, requerirRol('agencia'), listarReservasAgencia);
+router.post('/reservas/:id/confirmar', requerirAutenticacion, requerirRol('agencia'), confirmarReservaControlador);
 router.post('/reservas/:id/asignar-guia', requerirAutenticacion, requerirRol('agencia'), asignarGuiaReserva);
 router.post('/reservas/:id/desasignar-guia', requerirAutenticacion, requerirRol('agencia'), desasignarGuiaReserva);
 router.delete('/reservas/:id', requerirAutenticacion, requerirRol('agencia'), eliminarReservaControlador);

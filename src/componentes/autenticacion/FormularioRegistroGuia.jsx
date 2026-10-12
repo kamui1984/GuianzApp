@@ -15,6 +15,7 @@ import {
 import { servicioAutenticacion } from '../../api/autenticacionServicio';
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 import { SelectorEspecialidades } from '../comunes/SelectorEspecialidades';
+import { ModalTerminosCondiciones } from '../comunes/ModalTerminosCondiciones';
 
 export const FormularioRegistroGuia = ({ alCompletar }) => {
   const { mostrarNotificacion } = useAutenticacion();
@@ -34,6 +35,8 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
   const [especialidadesIds, setEspecialidadesIds] = useState([]);
   const [archivoRnt, setArchivoRnt] = useState(null);
   const [archivoTarjeta, setArchivoTarjeta] = useState(null);
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [modalTerminosAbierto, setModalTerminosAbierto] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState('');
 
@@ -49,6 +52,11 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
       return;
     }
 
+    if (!aceptaTerminos) {
+      setErrorMensaje('Debes aceptar los Términos y Condiciones para Guías Profesionales de GuianzApp.');
+      return;
+    }
+
     setErrorMensaje('');
     setCargando(true);
 
@@ -58,6 +66,7 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
       datosForm.append('correo', correo);
       datosForm.append('contrasena', contrasena);
       datosForm.append('numeroRnt', numeroRnt);
+      datosForm.append('aceptaTerminos', 'true');
       datosForm.append('tarjetaProfesional', numeroRnt);
       datosForm.append('telefonoPrincipal', telefonoPrincipal);
       datosForm.append('tieneWhatsapp', tieneWhatsapp);
@@ -310,9 +319,54 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
         <span className="texto-ayuda">Emitida por el Consejo Profesional de Guías de Turismo.</span>
       </div>
 
+      {/* Checkbox Términos y Condiciones para Guías */}
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.65rem',
+          fontSize: '0.82rem',
+          color: '#d1d5db',
+          lineHeight: 1.45,
+          marginTop: '0.85rem',
+          marginBottom: '0.85rem',
+          cursor: 'pointer'
+        }}
+      >
+        <input
+          type="checkbox"
+          required
+          checked={aceptaTerminos}
+          onChange={(e) => setAceptaTerminos(e.target.checked)}
+          style={{ marginTop: '2px', accentColor: '#0ea5e9', width: '16px', height: '16px' }}
+        />
+        <span>
+          Declaro contar con tarjeta profesional y RNT activo. He leído y acepto los{' '}
+          <button
+            type="button"
+            onClick={(ev) => {
+              ev.preventDefault();
+              setModalTerminosAbierto(true);
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: '#38bdf8',
+              fontWeight: 700,
+              textDecoration: 'underline',
+              cursor: 'pointer'
+            }}
+          >
+            Términos y Condiciones para Guías Profesionales
+          </button>{' '}
+          de GuianzApp y el régimen de autonomía en la prestación del servicio.
+        </span>
+      </label>
+
       <button
         type="submit"
-        disabled={cargando}
+        disabled={cargando || !aceptaTerminos}
         className="boton boton-primario"
         style={{ width: '100%', marginTop: '0.75rem', padding: '0.85rem' }}
       >
@@ -328,6 +382,13 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
           </>
         )}
       </button>
+
+      {/* Modal de Términos y Condiciones */}
+      <ModalTerminosCondiciones
+        abierto={modalTerminosAbierto}
+        alCerrar={() => setModalTerminosAbierto(false)}
+        rolInicial="guias"
+      />
     </form>
   );
 };

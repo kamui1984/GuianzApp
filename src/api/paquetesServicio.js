@@ -94,6 +94,15 @@ export const servicioPaquetes = {
   },
 
   /**
+   * Confirmar formalmente una reserva por parte de la agencia operadora.
+   */
+  confirmarReserva: async (idReserva) => {
+    return solicitarApi(`/api/paquetes/reservas/${idReserva}/confirmar`, {
+      method: 'POST'
+    });
+  },
+
+  /**
    * Eliminar una reserva / tour vendido de la agencia.
    */
   eliminarReserva: async (idReserva) => {

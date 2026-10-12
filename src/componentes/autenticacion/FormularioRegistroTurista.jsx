@@ -3,17 +3,25 @@ import { User, Mail, Lock, Sparkles, Loader2 } from 'lucide-react';
 import { servicioAutenticacion } from '../../api/autenticacionServicio';
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 import { guardarTokenAutenticacion } from '../../api/clienteHttp';
+import { ModalTerminosCondiciones } from '../comunes/ModalTerminosCondiciones';
 
 export const FormularioRegistroTurista = ({ alCompletar }) => {
   const { mostrarNotificacion, recargarUsuario } = useAutenticacion();
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [modalTerminosAbierto, setModalTerminosAbierto] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState('');
 
   const manejarEnvio = async (e) => {
     e.preventDefault();
+    if (!aceptaTerminos) {
+      setErrorMensaje('Debes aceptar los Términos y Condiciones de Uso y la Política de Privacidad.');
+      return;
+    }
+
     setErrorMensaje('');
     setCargando(true);
 
@@ -21,7 +29,8 @@ export const FormularioRegistroTurista = ({ alCompletar }) => {
       const respuesta = await servicioAutenticacion.registrarTurista({
         nombreCompleto,
         correo,
-        contrasena
+        contrasena,
+        aceptaTerminos: true
       });
 
       if (respuesta.token) {
@@ -102,9 +111,54 @@ export const FormularioRegistroTurista = ({ alCompletar }) => {
         />
       </div>
 
+      {/* Checkbox Términos y Condiciones */}
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.65rem',
+          fontSize: '0.82rem',
+          color: '#d1d5db',
+          lineHeight: 1.45,
+          marginTop: '0.85rem',
+          marginBottom: '0.85rem',
+          cursor: 'pointer'
+        }}
+      >
+        <input
+          type="checkbox"
+          required
+          checked={aceptaTerminos}
+          onChange={(e) => setAceptaTerminos(e.target.checked)}
+          style={{ marginTop: '2px', accentColor: '#0ea5e9', width: '16px', height: '16px' }}
+        />
+        <span>
+          He leído y acepto los{' '}
+          <button
+            type="button"
+            onClick={(ev) => {
+              ev.preventDefault();
+              setModalTerminosAbierto(true);
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: '#38bdf8',
+              fontWeight: 700,
+              textDecoration: 'underline',
+              cursor: 'pointer'
+            }}
+          >
+            Términos y Condiciones de Uso
+          </button>{' '}
+          y la Política de Privacidad de GuianzApp (Ley 1581 de 2012 y Ley 1480 de 2011).
+        </span>
+      </label>
+
       <button
         type="submit"
-        disabled={cargando}
+        disabled={cargando || !aceptaTerminos}
         className="boton boton-primario"
         style={{ width: '100%', marginTop: '0.5rem', padding: '0.8rem' }}
       >
@@ -120,6 +174,13 @@ export const FormularioRegistroTurista = ({ alCompletar }) => {
           </>
         )}
       </button>
+
+      {/* Modal de Términos y Condiciones */}
+      <ModalTerminosCondiciones
+        abierto={modalTerminosAbierto}
+        alCerrar={() => setModalTerminosAbierto(false)}
+        rolInicial="turistas"
+      />
     </form>
   );
 };

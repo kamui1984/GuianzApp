@@ -7,6 +7,8 @@ const {
   crearReserva,
   listarReservasPorAgencia,
   asignarGuiaAReserva,
+  confirmarReserva,
+  desasignarGuiaReserva,
   eliminarReserva
 } = require('../services/reservas.servicio');
 const paquetesToursServicio = require('../services/paquetesTours.servicio');
@@ -94,6 +96,35 @@ const listarMisPaquetes = async (peticion, respuesta) => {
 };
 
 /**
+ * Validador legal de contenido para evitar que prestadores induzcan a error
+ * atribuyendo la prestación o garantía del servicio a GuianzApp (Ley 1480/2011 y Ley 2068/2020).
+ */
+const validarContenidoLegalPublicacion = (campos) => {
+  const prohibidos = [
+    /guianzapp\s+garantiza/i,
+    /garantizado\s+por\s+guianzapp/i,
+    /guianzapp\s+presta\s+(el\s+)?servicio/i,
+    /guianzapp\s+se\s+hace\s+responsable/i,
+    /respaldado\s+por\s+guianzapp/i,
+    /guianzapp\s+responde/i,
+    /guianzapp\s+opera/i
+  ];
+
+  for (const [campo, valor] of Object.entries(campos)) {
+    if (!valor || typeof valor !== 'string') continue;
+    for (const regex of prohibidos) {
+      if (regex.test(valor)) {
+        return {
+          valido: false,
+          error: `En el campo "${campo}" no se puede atribuir a GuianzApp la garantía o prestación directa del servicio. La agencia es la única y exclusiva responsable según la Ley 1480 de 2011 y la Ley 2068 de 2020.`
+        };
+      }
+    }
+  }
+  return { valido: true };
+};
+
+/**
  * Crear un nuevo paquete turístico con duración y subida de archivos.
  */
 const crearPaquete = async (peticion, respuesta) => {
@@ -117,11 +148,27 @@ const crearPaquete = async (peticion, respuesta) => {
     const duracion = peticion.body.duracion || peticion.body.duration || '3.5 horas';
     const duracionHoras = parseInt(peticion.body.duracionHoras || peticion.body.duracion) || 4;
     const politicaCancelacion = peticion.body.politicaCancelacion || peticion.body.cancellationPolicy;
+    const queIncluye = peticion.body.queIncluye || peticion.body.que_incluye || '';
+    const queNoIncluye = peticion.body.queNoIncluye || peticion.body.que_no_incluye || '';
+    const puntoEncuentro = peticion.body.puntoEncuentro || peticion.body.punto_encuentro || '';
     const rawEspecialidades = peticion.body.especialidadesIds || peticion.body.especialidades;
     const rawSalidas = peticion.body.salidas || peticion.body.programacion;
 
     if (!titulo || !descripcion || !precio) {
       return respuesta.status(400).json({ error: 'Título, descripción y precio son obligatorios.' });
+    }
+
+    // Validación preventiva de publicidad engañosa (Ley 1480 de 2011)
+    const validacionLegal = validarContenidoLegalPublicacion({
+      Título: titulo,
+      Descripción: descripcion,
+      'Qué incluye': queIncluye,
+      'Qué no incluye': queNoIncluye,
+      'Punto de encuentro': puntoEncuentro
+    });
+
+    if (!validacionLegal.valido) {
+      return respuesta.status(400).json({ error: validacionLegal.error });
     }
 
     let especialidadesIds = [];
@@ -504,11 +551,24 @@ const registrarReserva = async (peticion, respuesta) => {
       precioTotal,
       duracion,
       tituloPaquete,
-      nombreAgencia
+      nombreAgencia,
+      rntAgencia,
+      queIncluye,
+      queNoIncluye,
+      puntoEncuentro,
+      politicaCancelacion,
+      especialidades,
+      aceptaTerminos
     } = peticion.body;
 
     if (!nombreTitular || !correoContacto || !fechaReserva || !horaReserva) {
       return respuesta.status(400).json({ error: 'Nombre, correo, fecha y hora de inicio son obligatorios.' });
+    }
+
+    if (aceptaTerminos === false || String(aceptaTerminos) === 'false') {
+      return respuesta.status(400).json({
+        error: 'Debes aceptar los Términos y Condiciones de GuianzApp y las condiciones del prestador para continuar.'
+      });
     }
 
     // Descontar cupos en la tabla programacion_tours para esa fecha y hora
@@ -527,12 +587,18 @@ const registrarReserva = async (peticion, respuesta) => {
       precioTotal: Number(precioTotal || 0),
       duracion: duracion || '3.5 horas',
       tituloPaquete,
-      nombreAgencia
+      nombreAgencia,
+      rntAgencia,
+      queIncluye,
+      queNoIncluye,
+      puntoEncuentro,
+      politicaCancelacion,
+      especialidades
     });
 
     return respuesta.status(201).json({
       reserva,
-      mensaje: '¡Reserva confirmada con éxito!'
+      mensaje: '¡Reserva registrada con éxito! En espera de confirmación por parte de la agencia operadora.'
     });
   } catch (error) {
     console.error('Error al registrar reserva:', error);
@@ -639,10 +705,11 @@ const eliminarReservaControlador = async (peticion, respuesta) => {
 /**
  * Desasignar un guía de un tour vendido y liberar su disponibilidad.
  */
-const desasignarGuiaReserva = async (peticion, respuesta) => {
+const desasignarGuiaReservaControlador = async (peticion, respuesta) => {
   try {
     const idReserva = peticion.params.id;
-    const reservaActualizada = await asignarGuiaAReserva(idReserva, null, null);
+    const idAgencia = peticion.usuario?.auth?.id;
+    const reservaActualizada = await desasignarGuiaReserva(idReserva, idAgencia);
     return respuesta.json({
       reserva: reservaActualizada,
       mensaje: 'El guía ha sido desasignado del tour exitosamente y su disponibilidad ha sido liberada.'
@@ -650,6 +717,24 @@ const desasignarGuiaReserva = async (peticion, respuesta) => {
   } catch (error) {
     console.error('Error al desasignar guía de reserva:', error);
     return respuesta.status(500).json({ error: error.message || 'Error al desasignar el guía.' });
+  }
+};
+
+/**
+ * Confirmar formalmente una reserva por parte de la agencia operadora.
+ */
+const confirmarReservaControlador = async (peticion, respuesta) => {
+  try {
+    const idReserva = peticion.params.id;
+    const idAgencia = peticion.usuario?.auth?.id;
+    const reservaConfirmada = await confirmarReserva(idReserva, idAgencia);
+    return respuesta.json({
+      reserva: reservaConfirmada,
+      mensaje: '¡Reserva confirmada exitosamente por la agencia!'
+    });
+  } catch (error) {
+    console.error('Error al confirmar reserva:', error);
+    return respuesta.status(500).json({ error: error.message || 'Error al confirmar la reserva.' });
   }
 };
 
@@ -663,7 +748,8 @@ module.exports = {
   registrarReserva,
   listarReservasAgencia,
   asignarGuiaReserva,
-  desasignarGuiaReserva,
+  desasignarGuiaReserva: desasignarGuiaReservaControlador,
+  confirmarReservaControlador,
   eliminarReservaControlador
 };
 

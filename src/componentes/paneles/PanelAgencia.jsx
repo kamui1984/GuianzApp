@@ -8,6 +8,7 @@ import { InsigniaEstado } from '../comunes/InsigniaEstado';
 import { Modal } from '../comunes/Modal';
 import { SelectorEspecialidades } from '../comunes/SelectorEspecialidades';
 import { ConfiguradorProgramacionTour } from './ConfiguradorProgramacionTour';
+import { ModalEvidenciaReserva } from '../comunes/ModalEvidenciaReserva';
 import {
   Package,
   Plus,
@@ -34,7 +35,8 @@ import {
   Tag,
   MessageCircle,
   Eye,
-  FileText
+  FileText,
+  Scale
 } from 'lucide-react';
 
 export const PanelAgencia = () => {
@@ -53,12 +55,21 @@ export const PanelAgencia = () => {
   const [precio, setPrecio] = useState('');
   const [duracion, setDuracion] = useState('3.5 horas');
   const [politicaCancelacion, setPoliticaCancelacion] = useState('');
+  const [queIncluye, setQueIncluye] = useState('');
+  const [queNoIncluye, setQueNoIncluye] = useState('');
+  const [puntoEncuentro, setPuntoEncuentro] = useState('');
+  const [declaraResponsabilidad, setDeclaraResponsabilidad] = useState(false);
   const [especialidadesIds, setEspecialidadesIds] = useState([]);
   const [salidasTour, setSalidasTour] = useState([]);
   const [archivosNuevos, setArchivosNuevos] = useState([]);
   const [archivosEliminados, setArchivosEliminados] = useState([]);
   const [guardandoPaquete, setGuardandoPaquete] = useState(false);
   const [errorModal, setErrorModal] = useState('');
+
+  // Estados para Evidencias y Trazabilidad Legal de Reservas
+  const [reservaParaEvidencia, setReservaParaEvidencia] = useState(null);
+  const [modalEvidenciaAbierto, setModalEvidenciaAbierto] = useState(false);
+  const [confirmandoReservaId, setConfirmandoReservaId] = useState(null);
 
   // Estados para Modal de Asignación de Guía
   const [modalAsignarGuiaAbierto, setModalAsignarGuiaAbierto] = useState(false);
@@ -106,6 +117,10 @@ export const PanelAgencia = () => {
     setPrecio('');
     setDuracion('3.5 horas');
     setPoliticaCancelacion('Cancelación gratuita hasta 24 horas antes del tour.');
+    setQueIncluye('Servicio de guianza turística profesional, recorrido guiado.');
+    setQueNoIncluye('Gastos personales no especificados.');
+    setPuntoEncuentro('Punto central de Bogotá (a coordinar tras la reserva).');
+    setDeclaraResponsabilidad(false);
     setEspecialidadesIds([]);
     setSalidasTour([]);
     setArchivosNuevos([]);
@@ -120,7 +135,11 @@ export const PanelAgencia = () => {
     setDescripcion(paquete.descripcion);
     setPrecio(String(paquete.precio));
     setDuracion(paquete.duracion || '3.5 horas');
-    setPoliticaCancelacion(paquete.politicaCancelacion || '');
+    setPoliticaCancelacion(paquete.politicaCancelacion || 'Cancelación gratuita hasta 24 horas antes del tour.');
+    setQueIncluye(paquete.queIncluye || 'Servicio de guianza turística profesional.');
+    setQueNoIncluye(paquete.queNoIncluye || 'Gastos personales no especificados.');
+    setPuntoEncuentro(paquete.puntoEncuentro || 'Punto acordado de inicio.');
+    setDeclaraResponsabilidad(true);
     setEspecialidadesIds(paquete.especialidadesIds || []);
     // Filtrar cualquier salida precargada/por defecto (def-) para que la agencia solo vea y gestione sus horarios reales
     const salidasConfiguradas = (paquete.salidas || paquete.programacion || []).filter(
@@ -136,6 +155,26 @@ export const PanelAgencia = () => {
   const manejarGuardarPaquete = async (e) => {
     e.preventDefault();
     setErrorModal('');
+
+    // Validación preventiva de publicidad engañosa (Ley 1480 de 2011)
+    const textoCompleto = `${titulo} ${descripcion} ${queIncluye} ${queNoIncluye} ${puntoEncuentro}`.toLowerCase();
+    if (
+      textoCompleto.includes('guianzapp garantiza') ||
+      textoCompleto.includes('garantizado por guianzapp') ||
+      textoCompleto.includes('guianzapp presta') ||
+      textoCompleto.includes('respaldado por guianzapp')
+    ) {
+      setErrorModal(
+        'No está permitido atribuir a GuianzApp la garantía o prestación directa del servicio. La agencia es la única y exclusiva responsable ante el consumidor según la Ley 1480 de 2011 y la Ley 2068 de 2020.'
+      );
+      return;
+    }
+
+    if (!declaraResponsabilidad) {
+      setErrorModal('Debes declarar bajo juramento la veracidad y asunción de responsabilidad legal sobre el tour.');
+      return;
+    }
+
     setGuardandoPaquete(true);
 
     try {
@@ -146,6 +185,9 @@ export const PanelAgencia = () => {
       datosForm.append('duracion', duracion);
       datosForm.append('duracionHoras', parseInt(duracion) || 4);
       datosForm.append('politicaCancelacion', politicaCancelacion);
+      datosForm.append('queIncluye', queIncluye);
+      datosForm.append('queNoIncluye', queNoIncluye);
+      datosForm.append('puntoEncuentro', puntoEncuentro);
       datosForm.append('especialidadesIds', JSON.stringify(especialidadesIds));
       datosForm.append('salidas', JSON.stringify(salidasTour));
 
@@ -170,6 +212,21 @@ export const PanelAgencia = () => {
       setErrorModal(error.message || 'No se pudo guardar el paquete.');
     } finally {
       setGuardandoPaquete(false);
+    }
+  };
+
+  const manejarConfirmarReserva = async (idReserva) => {
+    setConfirmandoReservaId(idReserva);
+    try {
+      const resp = await servicioPaquetes.confirmarReserva(idReserva);
+      mostrarNotificacion('¡Reserva confirmada exitosamente!');
+      setReservas((prev) =>
+        prev.map((r) => (r.id === idReserva ? resp.reserva || { ...r, estado: 'confirmada' } : r))
+      );
+    } catch (err) {
+      mostrarNotificacion(err.message || 'Error al confirmar la reserva.');
+    } finally {
+      setConfirmandoReservaId(null);
     }
   };
 
@@ -851,14 +908,32 @@ export const PanelAgencia = () => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
                       <div>
-                        <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: 600 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                          <span style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 800 }}>
+                            {reserva.codigoReserva || `#RES-${String(reserva.id || '').substring(0, 8).toUpperCase()}`}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.74rem',
+                              fontWeight: 700,
+                              padding: '0.15rem 0.55rem',
+                              borderRadius: '9999px',
+                              backgroundColor: reserva.estado === 'confirmada' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                              color: reserva.estado === 'confirmada' ? '#059669' : '#d97706',
+                              border: reserva.estado === 'confirmada' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(245, 158, 11, 0.4)'
+                            }}
+                          >
+                            {reserva.estado === 'confirmada' ? '● Confirmada' : '⏱ En espera de confirmación'}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: '0.82rem', color: '#4b5563', fontWeight: 600 }}>
                           Tour: {reserva.tituloPaquete}
                         </span>
-                        <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{reserva.nombreTitular}</h3>
+                        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0.2rem 0 0 0' }}>{reserva.nombreTitular}</h3>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '0.8rem', color: '#9ca3af', display: 'block' }}>Total pagado</span>
-                        <strong style={{ fontSize: '1.2rem', color: '#ffffff' }}>
+                        <span style={{ fontSize: '0.8rem', color: '#6b7280', display: 'block' }}>Total acordado</span>
+                        <strong style={{ fontSize: '1.2rem', color: 'var(--color-primario)' }}>
                           {formatearPrecio(reserva.precioTotal)}
                         </strong>
                       </div>
@@ -911,12 +986,47 @@ export const PanelAgencia = () => {
                         <span style={{ fontSize: '0.88rem' }}>
                           Guía Asignado:{' '}
                           <strong>
-                            {reserva.nombreGuiaAsignado || 'Sin guía asignado aún'}
+                            {reserva.nombreGuiaAsignado ? (
+                              <span>{reserva.nombreGuiaAsignado} <span style={{ fontSize: '0.75rem', color: '#10b981' }}>({reserva.rntGuia || 'Tarjeta Profesional'})</span></span>
+                            ) : (
+                              'Pendiente por asignar'
+                            )}
                           </strong>
                         </span>
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                        {reserva.estado !== 'confirmada' && (
+                          <button
+                            onClick={() => manejarConfirmarReserva(reserva.id)}
+                            disabled={confirmandoReservaId === reserva.id}
+                            className="boton boton-pequeno"
+                            style={{
+                              gap: '0.35rem',
+                              backgroundColor: '#059669',
+                              color: '#FFFFFF',
+                              fontWeight: 700
+                            }}
+                            title="Confirmar la reserva y cupos"
+                          >
+                            <CheckCircle size={14} />
+                            <span>{confirmandoReservaId === reserva.id ? 'Confirmando...' : 'Confirmar Reserva'}</span>
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => {
+                            setReservaParaEvidencia(reserva);
+                            setModalEvidenciaAbierto(true);
+                          }}
+                          className="boton boton-contorno boton-pequeno"
+                          style={{ gap: '0.35rem', borderColor: '#0284c7', color: '#0284c7' }}
+                          title="Consultar cadena de custodia y expediente de la reserva"
+                        >
+                          <Scale size={14} />
+                          <span>Evidencia Legal</span>
+                        </button>
+
                         <button
                           onClick={() => abrirModalAsignarGuia(reserva)}
                           className="boton boton-primario boton-pequeno"
@@ -1114,6 +1224,26 @@ export const PanelAgencia = () => {
         anchoMaximo="640px"
       >
         <form onSubmit={manejarGuardarPaquete}>
+          {/* Aviso Legal de Responsabilidad para Agencias */}
+          <div
+            style={{
+              backgroundColor: 'var(--color-primario-claro)',
+              border: '1px solid rgba(23, 74, 91, 0.25)',
+              borderRadius: '10px',
+              padding: '0.85rem 1rem',
+              marginBottom: '1rem',
+              fontSize: '0.82rem',
+              lineHeight: 1.45,
+              color: 'var(--texto-principal)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, color: 'var(--color-primario)', marginBottom: '0.25rem' }}>
+              <Scale size={15} />
+              <span>Aviso Legal de Responsabilidad (Ley 1480 de 2011 & Ley 2068 de 2020)</span>
+            </div>
+            La agencia prestadora es la única y exclusiva responsable directa ante el turista por los precios, horarios, cancelaciones, pólizas de asistencia y la ejecución material del servicio. GuianzApp opera exclusivamente como plataforma tecnológica y tiene prohibido avalar información engañosa.
+          </div>
+
           {errorModal && (
             <div
               style={{
@@ -1146,11 +1276,48 @@ export const PanelAgencia = () => {
             <label className="etiqueta-formulario">Descripción detallada</label>
             <textarea
               required
-              rows={4}
+              rows={3}
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-              placeholder="Describe el itinerario, puntos de interés, qué incluye y qué recomendaciones se deben tener..."
+              placeholder="Describe el itinerario y puntos de interés del recorrido..."
               className="area-texto-formulario"
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="grupo-formulario">
+              <label className="etiqueta-formulario">¿Qué incluye el tour? (Obligatorio)</label>
+              <textarea
+                required
+                rows={2}
+                value={queIncluye}
+                onChange={(e) => setQueIncluye(e.target.value)}
+                placeholder="Ej: Guía certificado bilingüe, refrigerio típico, seguro de asistencia médica..."
+                className="area-texto-formulario"
+              />
+            </div>
+
+            <div className="grupo-formulario">
+              <label className="etiqueta-formulario">¿Qué NO incluye? / Exclusiones</label>
+              <textarea
+                rows={2}
+                value={queNoIncluye}
+                onChange={(e) => setQueNoIncluye(e.target.value)}
+                placeholder="Ej: Transporte hasta el punto de encuentro, compras personales, propinas..."
+                className="area-texto-formulario"
+              />
+            </div>
+          </div>
+
+          <div className="grupo-formulario">
+            <label className="etiqueta-formulario">Punto de encuentro e inicio</label>
+            <input
+              type="text"
+              required
+              value={puntoEncuentro}
+              onChange={(e) => setPuntoEncuentro(e.target.value)}
+              placeholder="Ej: Plazoleta del Chorro de Quevedo frente a la ermita"
+              className="campo-formulario"
             />
           </div>
 
@@ -1182,15 +1349,44 @@ export const PanelAgencia = () => {
           </div>
 
           <div className="grupo-formulario">
-            <label className="etiqueta-formulario">Política de Cancelación</label>
+            <label className="etiqueta-formulario">Política de Cancelación y Reembolso (Obligatoria)</label>
             <input
               type="text"
+              required
               value={politicaCancelacion}
               onChange={(e) => setPoliticaCancelacion(e.target.value)}
-              placeholder="Ej: Cancelación con 24h de anticipación"
+              placeholder="Ej: Cancelación gratuita hasta 24 horas antes del tour. Retracto según Ley 1480."
               className="campo-formulario"
             />
           </div>
+
+          {/* Declaración Legal de Responsabilidad */}
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.65rem',
+              padding: '0.85rem',
+              backgroundColor: 'var(--fondo-secundario)',
+              borderRadius: '10px',
+              border: '1px solid var(--borde-sutil)',
+              cursor: 'pointer',
+              fontSize: '0.84rem',
+              lineHeight: 1.4,
+              marginBottom: '1.25rem'
+            }}
+          >
+            <input
+              type="checkbox"
+              required
+              checked={declaraResponsabilidad}
+              onChange={(e) => setDeclaraResponsabilidad(e.target.checked)}
+              style={{ marginTop: '2px', width: '16px', height: '16px', accentColor: 'var(--color-primario)' }}
+            />
+            <span>
+              <strong>Declaración Legal de la Agencia:</strong> Declaro bajo la gravedad de juramento que la información aquí consignada es veraz, que mi agencia cuenta con RNT activo y pólizas exigidas, y que la agencia asume la total responsabilidad por la prestación del tour frente a los turistas, manteniendo indemne a GuianzApp.
+            </span>
+          </label>
 
           {/* Selector de Categorías y Especialidades Requeridas (tour_especialidades) */}
           <SelectorEspecialidades
@@ -2157,6 +2353,12 @@ export const PanelAgencia = () => {
           </div>
         </form>
       </Modal>
+      {/* Modal de Evidencia y Trazabilidad Legal de la Reserva */}
+      <ModalEvidenciaReserva
+        reserva={reservaParaEvidencia}
+        abierto={modalEvidenciaAbierto}
+        alCerrar={() => setModalEvidenciaAbierto(false)}
+      />
     </div>
   );
 };

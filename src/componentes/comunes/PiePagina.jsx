@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ShieldCheck, MapPin, Mail, Phone, Heart } from 'lucide-react';
+import { ModalTerminosCondiciones } from './ModalTerminosCondiciones';
 
 export const PiePagina = () => {
+  const [modalTerminosAbierto, setModalTerminosAbierto] = useState(false);
   return (
     <footer
       style={{
@@ -111,11 +113,29 @@ export const PiePagina = () => {
             © {new Date().getFullYear()} GuianzApp · Bogotá se conecta. Tú la descubres.
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <span style={{ cursor: 'pointer' }}>Términos del Servicio</span>
-            <span style={{ cursor: 'pointer' }}>Privacidad y Datos</span>
+            <button
+              type="button"
+              onClick={() => setModalTerminosAbierto(true)}
+              style={{ background: 'none', border: 'none', color: '#FFD480', cursor: 'pointer', padding: 0, fontSize: '0.85rem', textDecoration: 'underline' }}
+            >
+              Términos del Servicio & Marco Legal (Colombia)
+            </button>
+            <button
+              type="button"
+              onClick={() => setModalTerminosAbierto(true)}
+              style={{ background: 'none', border: 'none', color: '#A0B0B8', cursor: 'pointer', padding: 0, fontSize: '0.85rem' }}
+            >
+              Privacidad y Habeas Data
+            </button>
           </div>
         </div>
       </div>
+
+      <ModalTerminosCondiciones
+        abierto={modalTerminosAbierto}
+        alCerrar={() => setModalTerminosAbierto(false)}
+        rolInicial="general"
+      />
     </footer>
   );
 };

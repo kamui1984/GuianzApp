@@ -6,6 +6,7 @@ import { Cargando } from '../comunes/Cargando';
 import { InsigniaEstado } from '../comunes/InsigniaEstado';
 import { Modal } from '../comunes/Modal';
 import { SelectorEspecialidades } from '../comunes/SelectorEspecialidades';
+import { ModalEvidenciaReserva } from '../comunes/ModalEvidenciaReserva';
 import {
   Compass,
   Calendar,
@@ -31,7 +32,8 @@ import {
   ShieldCheck,
   FileText,
   Tag,
-  Sparkles
+  Sparkles,
+  Scale
 } from 'lucide-react';
 
 export const PanelGuia = () => {
@@ -41,6 +43,8 @@ export const PanelGuia = () => {
   const [toursAsignados, setToursAsignados] = useState([]);
   const [perfilGuia, setPerfilGuia] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [tourParaEvidencia, setTourParaEvidencia] = useState(null);
+  const [modalEvidenciaAbierto, setModalEvidenciaAbierto] = useState(false);
 
   // Estados para modal de disponibilidad
   const [modalDisponibilidadAbierto, setModalDisponibilidadAbierto] = useState(false);
@@ -730,8 +734,32 @@ export const PanelGuia = () => {
                         </div>
                       </div>
 
-                      {/* Acciones Rápidas para el Guía (WhatsApp directo y Correo) */}
+                      {/* Acciones Rápidas para el Guía (WhatsApp directo, Correo y Evidencia Legal) */}
                       <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTourParaEvidencia(tour);
+                            setModalEvidenciaAbierto(true);
+                          }}
+                          className="boton boton-contorno boton-pequeno"
+                          style={{
+                            fontSize: '0.82rem',
+                            padding: '0.45rem 0.9rem',
+                            borderRadius: '8px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            borderColor: '#0284c7',
+                            color: '#0284c7',
+                            cursor: 'pointer'
+                          }}
+                          title="Consultar cadena de custodia, RNT y condiciones del tour"
+                        >
+                          <Scale size={15} />
+                          <span>Ver Evidencia y Términos del Tour</span>
+                        </button>
+
                         <a
                           href={`https://wa.me/57${String(tour.telefonoAgencia || '3001234567').replace(/\D/g, '')}?text=${encodeURIComponent(
                             `Hola ${tour.nombreAgencia || 'Agencia'}, te escribe tu guía asignado para el tour "${tour.tituloPaquete}" programado para el ${tour.fechaReserva} a las ${tour.horaReserva}. Quedo atento a las indicaciones previas.`
@@ -1264,6 +1292,12 @@ export const PanelGuia = () => {
           </div>
         </form>
       </Modal>
+      {/* Modal de Evidencia y Trazabilidad Legal para el Guía */}
+      <ModalEvidenciaReserva
+        reserva={tourParaEvidencia}
+        abierto={modalEvidenciaAbierto}
+        alCerrar={() => setModalEvidenciaAbierto(false)}
+      />
     </div>
   );
 };

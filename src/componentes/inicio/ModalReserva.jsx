@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../comunes/Modal';
+import { ModalTerminosCondiciones } from '../comunes/ModalTerminosCondiciones';
+import { ModalEvidenciaReserva } from '../comunes/ModalEvidenciaReserva';
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -14,7 +16,8 @@ import {
   ChevronRight,
   Tag,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  Scale
 } from 'lucide-react';
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 import { servicioPaquetes } from '../../api/paquetesServicio';
@@ -36,6 +39,10 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
   const [telefonoContacto, setTelefonoContacto] = useState('');
   const [cargando, setCargando] = useState(false);
   const [reservaConfirmada, setReservaConfirmada] = useState(false);
+  const [reservaRegistrada, setReservaRegistrada] = useState(null);
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [modalTerminosAbierto, setModalTerminosAbierto] = useState(false);
+  const [modalEvidenciaAbierto, setModalEvidenciaAbierto] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState('');
 
   // Cargar programación de salidas al abrir el modal para el paquete
@@ -173,11 +180,16 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
       return;
     }
 
+    if (!aceptaTerminos) {
+      setErrorMensaje('Debes leer y aceptar los términos y condiciones de GuianzApp y las condiciones del servicio de la agencia para continuar.');
+      return;
+    }
+
     setErrorMensaje('');
     setCargando(true);
 
     try {
-      await servicioPaquetes.registrarReserva({
+      const respuesta = await servicioPaquetes.registrarReserva({
         idPaquete: paquete.id,
         idAgencia: paquete.idAgencia,
         nombreTitular,
@@ -189,11 +201,30 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
         precioTotal: totalCalculado,
         duracion: paquete.duracion || '3.5 horas',
         tituloPaquete: paquete.titulo,
-        nombreAgencia: paquete.nombreAgencia
+        nombreAgencia: paquete.nombreAgencia,
+        rntAgencia: paquete.numeroRnt || 'RNT-Activo',
+        queIncluye: paquete.queIncluye || '',
+        queNoIncluye: paquete.queNoIncluye || '',
+        puntoEncuentro: paquete.puntoEncuentro || '',
+        politicaCancelacion: paquete.politicaCancelacion || 'Cancelación según políticas oficiales de la agencia.',
+        especialidades: (paquete.especialidades || []).map((e) => e.subcategoria || e.nombre || e),
+        aceptaTerminos: true
       });
 
+      setReservaRegistrada(respuesta.reserva || {
+        tituloPaquete: paquete.titulo,
+        nombreAgencia: paquete.nombreAgencia,
+        rntAgencia: paquete.numeroRnt,
+        fechaReserva,
+        horaReserva,
+        duracion: paquete.duracion || '3.5 horas',
+        nombreTitular,
+        precioTotal: totalCalculado,
+        estado: 'en espera de confirmacion',
+        especialidades: paquete.especialidades
+      });
       setReservaConfirmada(true);
-      mostrarNotificacion('¡Reserva confirmada con éxito! La agencia ha recibido tu solicitud.');
+      mostrarNotificacion('¡Solicitud de reserva registrada con éxito! En espera de confirmación por la agencia.');
     } catch (error) {
       setErrorMensaje(error.message || 'No se pudo completar la reserva.');
     } finally {
@@ -250,6 +281,14 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+              <span style={{ color: 'var(--texto-secundario)' }}>Estado de la reserva:</span>
+              <strong style={{ color: '#d97706' }}>⏱ En espera de confirmación por la agencia</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+              <span style={{ color: 'var(--texto-secundario)' }}>Operador responsable:</span>
+              <strong style={{ color: 'var(--texto-principal)' }}>{paquete.nombreAgencia} (RNT: {paquete.numeroRnt || 'Validado'})</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span style={{ color: 'var(--texto-secundario)' }}>Fecha programada:</span>
               <strong style={{ color: 'var(--texto-principal)' }}>{fechaReserva}</strong>
             </div>
@@ -258,20 +297,26 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
               <strong style={{ color: 'var(--color-primario)' }}>{horaReserva}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-              <span style={{ color: 'var(--texto-secundario)' }}>Duración estimada:</span>
-              <strong style={{ color: 'var(--texto-principal)' }}>{paquete.duracion || '3.5 horas'}</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span style={{ color: 'var(--texto-secundario)' }}>Asistentes:</span>
               <strong style={{ color: 'var(--texto-principal)' }}>{cantidadPersonas} personas</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--borde-sutil)', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
-              <span style={{ color: 'var(--texto-secundario)' }}>Total pagado / acordado:</span>
+              <span style={{ color: 'var(--texto-secundario)' }}>Total acordado:</span>
               <strong style={{ color: 'var(--color-primario)', fontSize: '1.15rem', fontFamily: 'var(--fuente-titulos)', fontWeight: 800 }}>
                 {formatearPrecio(totalCalculado)}
               </strong>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setModalEvidenciaAbierto(true)}
+            className="boton boton-contorno"
+            style={{ width: '100%', marginBottom: '0.75rem', gap: '0.5rem' }}
+          >
+            <Scale size={16} />
+            <span>Ver Expediente y Trazabilidad Legal de la Reserva</span>
+          </button>
 
           <button onClick={reiniciarYCerrar} className="boton boton-primario" style={{ width: '100%' }}>
             Entendido, volver al inicio
@@ -653,13 +698,84 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
             </div>
           </div>
 
+          {/* Bloque Legal Obligatorio: Información del Prestador (Ley 1480/2011 & Ley 2068/2020) */}
+          <div
+            style={{
+              backgroundColor: 'var(--fondo-secundario)',
+              borderRadius: '12px',
+              border: '1px solid var(--borde-sutil)',
+              padding: '1rem',
+              marginBottom: '1.25rem',
+              fontSize: '0.84rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: 'var(--color-primario)', fontWeight: 800 }}>
+              <Scale size={16} />
+              <span>Información del prestador</span>
+            </div>
+            <p style={{ margin: '0 0 0.5rem 0', color: 'var(--texto-principal)', lineHeight: 1.5 }}>
+              El servicio turístico seleccionado es ofrecido por <strong>{paquete.nombreAgencia}</strong>, prestador turístico identificado con RNT <strong>{paquete.numeroRnt || 'Validado'}</strong>.
+            </p>
+            <p style={{ margin: '0 0 0.5rem 0', color: 'var(--texto-secundario)', lineHeight: 1.45, fontSize: '0.8rem' }}>
+              GuianzApp actúa como plataforma tecnológica que facilita la publicación, reserva y coordinación entre usuarios y prestadores turísticos.
+            </p>
+            <p style={{ margin: 0, color: 'var(--texto-secundario)', lineHeight: 1.45, fontSize: '0.8rem' }}>
+              Las condiciones particulares del servicio, su ejecución, calidad, cumplimiento y demás obligaciones relacionadas con la prestación corresponden al prestador indicado en la reserva, sin perjuicio de las obligaciones legales propias de GuianzApp como plataforma.
+            </p>
+
+            {/* Checkbox Obligatorio */}
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.65rem',
+                marginTop: '0.85rem',
+                paddingTop: '0.75rem',
+                borderTop: '1px solid var(--borde-sutil)',
+                cursor: 'pointer',
+                fontSize: '0.86rem',
+                color: 'var(--texto-principal)'
+              }}
+            >
+              <input
+                type="checkbox"
+                required
+                checked={aceptaTerminos}
+                onChange={(e) => setAceptaTerminos(e.target.checked)}
+                style={{ marginTop: '2px', width: '16px', height: '16px', accentColor: 'var(--color-primario)' }}
+              />
+              <span>
+                He leído y acepto las condiciones del servicio y los{' '}
+                <button
+                  type="button"
+                  onClick={(ev) => {
+                    ev.preventDefault();
+                    setModalTerminosAbierto(true);
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: 'var(--color-primario)',
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                    cursor: 'pointer'
+                  }}
+                >
+                  términos y condiciones de GuianzApp
+                </button>
+                .
+              </span>
+            </label>
+          </div>
+
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button type="button" onClick={alCerrar} className="boton boton-contorno" style={{ flex: 1 }}>
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={cargando || !fechaReserva || !horaReserva}
+              disabled={cargando || !fechaReserva || !horaReserva || !aceptaTerminos}
               className="boton boton-primario"
               style={{ flex: 2, padding: '0.85rem' }}
             >
@@ -675,6 +791,20 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
           </div>
         </form>
       )}
+
+      {/* Modal de Términos y Condiciones Legales */}
+      <ModalTerminosCondiciones
+        abierto={modalTerminosAbierto}
+        alCerrar={() => setModalTerminosAbierto(false)}
+        rolInicial="turistas"
+      />
+
+      {/* Modal de Evidencia y Trazabilidad Legal de la Reserva */}
+      <ModalEvidenciaReserva
+        reserva={reservaRegistrada}
+        abierto={modalEvidenciaAbierto}
+        alCerrar={() => setModalEvidenciaAbierto(false)}
+      />
     </Modal>
   );
 };
