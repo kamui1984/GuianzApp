@@ -6,6 +6,7 @@ const rutasPaquetes = require('./paquetes.rutas');
 const rutasGuias = require('./guias.rutas');
 const rutasAdministracion = require('./administracion.rutas');
 const rutasEspecialidades = require('./especialidades.rutas');
+const rutasCalificaciones = require('./calificaciones.rutas');
 
 // Controladores para rutas heredadas / aliases de compatibilidad
 const {
@@ -25,6 +26,7 @@ router.use('/paquetes', rutasPaquetes);
 router.use('/guias', rutasGuias);
 router.use('/administracion', rutasAdministracion);
 router.use('/especialidades', rutasEspecialidades);
+router.use('/evaluaciones', rutasCalificaciones);
 
 // Aliases para retrocompatibilidad total con endpoints anteriores
 router.post('/autenticacion/registro', cargaArchivos.single('rntDocument'), registrarAgencia);

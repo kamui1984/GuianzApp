@@ -3,12 +3,15 @@ import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 import { servicioPaquetes } from '../../api/paquetesServicio';
 import { servicioGuias } from '../../api/guiasServicio';
 import { servicioAdministracion } from '../../api/administracionServicio';
+import { servicioCalificaciones } from '../../api/calificacionesServicio';
 import { Cargando } from '../comunes/Cargando';
 import { InsigniaEstado } from '../comunes/InsigniaEstado';
 import { Modal } from '../comunes/Modal';
 import { SelectorEspecialidades } from '../comunes/SelectorEspecialidades';
 import { ConfiguradorProgramacionTour } from './ConfiguradorProgramacionTour';
 import { ModalEvidenciaReserva } from '../comunes/ModalEvidenciaReserva';
+import { ListaResenasPrestador } from '../evaluaciones/ListaResenasPrestador';
+import { InsigniaRanking } from '../evaluaciones/InsigniaRanking';
 import {
   Package,
   Plus,
@@ -36,15 +39,17 @@ import {
   MessageCircle,
   Eye,
   FileText,
-  Scale
+  Scale,
+  Star
 } from 'lucide-react';
 
 export const PanelAgencia = () => {
   const { usuarioActual, mostrarNotificacion, recargarUsuario } = useAutenticacion();
-  const [pestanaActiva, setPestanaActiva] = useState('paquetes'); // 'paquetes' | 'reservas' | 'guias'
+  const [pestanaActiva, setPestanaActiva] = useState('paquetes'); // 'paquetes' | 'reservas' | 'guias' | 'calificaciones'
   const [paquetes, setPaquetes] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [guias, setGuias] = useState([]);
+  const [rankingAgencia, setRankingAgencia] = useState(null);
   const [cargando, setCargando] = useState(true);
 
   // Estados para Modal de Crear/Editar Paquete
@@ -91,14 +96,18 @@ export const PanelAgencia = () => {
   const cargarDatos = async () => {
     setCargando(true);
     try {
-      const [misPaquetes, listaReservas, listaGuias] = await Promise.all([
+      const [misPaquetes, listaReservas, listaGuias, ranking] = await Promise.all([
         servicioPaquetes.listarMisPaquetes().catch(() => []),
         servicioPaquetes.listarReservasAgencia().catch(() => []),
-        servicioGuias.listarGuiasPublicos().catch(() => [])
+        servicioGuias.listarGuiasPublicos().catch(() => []),
+        usuarioActual?.id ? servicioCalificaciones.obtenerRankingAgencia(usuarioActual.id).catch(() => null) : Promise.resolve(null)
       ]);
       setPaquetes(misPaquetes);
       setReservas(listaReservas);
       setGuias(listaGuias);
+      if (ranking) {
+        setRankingAgencia(ranking);
+      }
     } catch (error) {
       console.error('Error al cargar datos de agencia:', error);
     } finally {
@@ -601,11 +610,12 @@ export const PanelAgencia = () => {
               <Building2 size={28} />
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 800 }}>
                   {usuarioActual?.nombreAgencia || 'Mi Agencia'}
                 </h1>
                 <InsigniaEstado estado={usuarioActual?.estado} />
+                <InsigniaRanking ranking={rankingAgencia} tipo="agencia" />
               </div>
               <p style={{ color: '#9ca3af', fontSize: '0.88rem' }}>
                 RNT: <strong>{usuarioActual?.numeroRnt || 'En validación'}</strong> · {usuarioActual?.correo}
@@ -718,6 +728,14 @@ export const PanelAgencia = () => {
           >
             <Users size={17} />
             <span>Directorio de Guías ({guias.length})</span>
+          </button>
+          <button
+            onClick={() => setPestanaActiva('calificaciones')}
+            className={`boton ${pestanaActiva === 'calificaciones' ? 'boton-primario' : 'boton-contorno'}`}
+            style={{ gap: '0.5rem' }}
+          >
+            <Star size={17} />
+            <span>Calificaciones de Tours ({rankingAgencia?.totalEvaluaciones || 0})</span>
           </button>
         </div>
 
@@ -1074,7 +1092,7 @@ export const PanelAgencia = () => {
               </div>
             )}
           </div>
-        ) : (
+        ) : pestanaActiva === 'guias' ? (
           /* Pestaña: Directorio de Guías */
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
             {guias.map((guia) => (
@@ -1213,7 +1231,15 @@ export const PanelAgencia = () => {
               </div>
             ))}
           </div>
-        )}
+        ) : pestanaActiva === 'calificaciones' ? (
+          <ListaResenasPrestador
+            rankingData={rankingAgencia}
+            tipoPrestador="agencia"
+            idPrestador={usuarioActual?.id}
+            nombrePrestador={usuarioActual?.nombreAgencia || 'Agencia'}
+            alActualizar={cargarDatos}
+          />
+        ) : null}
       </div>
 
       {/* Modal de Crear / Editar Paquete */}

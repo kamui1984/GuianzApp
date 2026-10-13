@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 import { servicioGuias } from '../../api/guiasServicio';
 import { servicioAdministracion } from '../../api/administracionServicio';
+import { servicioCalificaciones } from '../../api/calificacionesServicio';
 import { Cargando } from '../comunes/Cargando';
 import { InsigniaEstado } from '../comunes/InsigniaEstado';
 import { Modal } from '../comunes/Modal';
 import { SelectorEspecialidades } from '../comunes/SelectorEspecialidades';
 import { ModalEvidenciaReserva } from '../comunes/ModalEvidenciaReserva';
+import { ListaResenasPrestador } from '../evaluaciones/ListaResenasPrestador';
+import { InsigniaRanking } from '../evaluaciones/InsigniaRanking';
 import {
   Compass,
   Calendar,
@@ -33,15 +36,17 @@ import {
   FileText,
   Tag,
   Sparkles,
-  Scale
+  Scale,
+  Star
 } from 'lucide-react';
 
 export const PanelGuia = () => {
   const { usuarioActual, mostrarNotificacion, recargarUsuario } = useAutenticacion();
-  const [pestanaActiva, setPestanaActiva] = useState('disponibilidad'); // 'disponibilidad' | 'tours-asignados' | 'perfil'
+  const [pestanaActiva, setPestanaActiva] = useState('disponibilidad'); // 'disponibilidad' | 'tours-asignados' | 'perfil' | 'calificaciones'
   const [disponibilidades, setDisponibilidades] = useState([]);
   const [toursAsignados, setToursAsignados] = useState([]);
   const [perfilGuia, setPerfilGuia] = useState(null);
+  const [rankingGuia, setRankingGuia] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [tourParaEvidencia, setTourParaEvidencia] = useState(null);
   const [modalEvidenciaAbierto, setModalEvidenciaAbierto] = useState(false);
@@ -87,13 +92,17 @@ export const PanelGuia = () => {
   const cargarDatos = async () => {
     setCargando(true);
     try {
-      const [listaDisp, tours, perfil] = await Promise.all([
+      const [listaDisp, tours, perfil, ranking] = await Promise.all([
         servicioGuias.listarDisponibilidad().catch(() => []),
         servicioGuias.listarToursAsignados().catch(() => []),
-        servicioGuias.obtenerPerfil().catch(() => null)
+        servicioGuias.obtenerPerfil().catch(() => null),
+        usuarioActual?.id ? servicioCalificaciones.obtenerRankingGuia(usuarioActual.id).catch(() => null) : Promise.resolve(null)
       ]);
       setDisponibilidades(listaDisp);
       setToursAsignados(tours);
+      if (ranking) {
+        setRankingGuia(ranking);
+      }
       if (perfil) {
         setPerfilGuia(perfil);
         setNombreCompleto(perfil.nombreCompleto || '');
@@ -305,11 +314,12 @@ export const PanelGuia = () => {
               </div>
             )}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 800 }}>
                   {perfilGuia?.nombreCompleto || usuarioActual?.nombreCompleto || 'Mi Perfil de Guía'}
                 </h1>
                 <InsigniaEstado estado={usuarioActual?.estado} />
+                <InsigniaRanking ranking={rankingGuia} tipo="guia" />
               </div>
               <p style={{ color: '#9ca3af', fontSize: '0.88rem' }}>
                 RNT Guía: <strong>{perfilGuia?.numeroRnt || usuarioActual?.numeroRnt || 'En validación'}</strong> · {usuarioActual?.correo}
@@ -389,6 +399,14 @@ export const PanelGuia = () => {
           >
             <Edit2 size={17} />
             <span>Mi Perfil & Foto de Rostro</span>
+          </button>
+          <button
+            onClick={() => setPestanaActiva('calificaciones')}
+            className={`boton ${pestanaActiva === 'calificaciones' ? 'boton-primario' : 'boton-contorno'}`}
+            style={{ gap: '0.5rem' }}
+          >
+            <Star size={17} />
+            <span>Mis Calificaciones ({rankingGuia?.totalEvaluaciones || 0})</span>
           </button>
         </div>
 
@@ -812,7 +830,7 @@ export const PanelGuia = () => {
               </div>
             )}
           </div>
-        ) : (
+        ) : pestanaActiva === 'perfil' ? (
           /* Formulario de Perfil Profesional y Foto de Rostro */
           <div
             style={{
@@ -1052,7 +1070,15 @@ export const PanelGuia = () => {
               </button>
             </form>
           </div>
-        )}
+        ) : pestanaActiva === 'calificaciones' ? (
+          <ListaResenasPrestador
+            rankingData={rankingGuia}
+            tipoPrestador="guia"
+            idPrestador={usuarioActual?.id}
+            nombrePrestador={perfilGuia?.nombreCompleto || usuarioActual?.nombreCompleto}
+            alActualizar={cargarDatos}
+          />
+        ) : null}
       </div>
 
       {/* Modal de Disponibilidad con soporte para Periodos Largos */}

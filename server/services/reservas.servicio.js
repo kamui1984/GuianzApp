@@ -432,10 +432,28 @@ const eliminarReserva = async (idReserva, idAgencia = null) => {
   return true;
 };
 
+/**
+ * Listar reservas de un turista autenticado por su ID o correo.
+ */
+const listarReservasPorTurista = async (idTurista, correo = '') => {
+  const listaLocal = leerReservasLocal();
+  const idStr = String(idTurista || '').trim();
+  const correoNorm = (correo || '').toLowerCase().trim();
+
+  return listaLocal
+    .filter((r) => {
+      const idMatch = idStr && String(r.id_turista || r.idTurista || '').trim() === idStr;
+      const correoMatch = correoNorm && String(r.correo_contacto || r.correoContacto || '').toLowerCase().trim() === correoNorm;
+      return idMatch || correoMatch;
+    })
+    .map((r) => serializarReserva(r));
+};
+
 module.exports = {
   crearReserva,
   listarReservasPorAgencia,
   listarReservasPorGuia,
+  listarReservasPorTurista,
   asignarGuiaAReserva,
   confirmarReserva,
   desasignarGuiaReserva,

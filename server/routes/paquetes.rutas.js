@@ -9,6 +9,7 @@ const {
   eliminarPaquete,
   registrarReserva,
   listarReservasAgencia,
+  listarReservasTurista,
   asignarGuiaReserva,
   desasignarGuiaReserva,
   confirmarReservaControlador,
@@ -18,6 +19,7 @@ const { requerirAutenticacion, requerirRol } = require('../middlewares/autentica
 const { cargaArchivos } = require('../middlewares/cargaArchivos.middleware');
 
 // Rutas de gestión de tours vendidos y asignación de guías (antes de /:id)
+router.get('/reservas/turista', requerirAutenticacion, listarReservasTurista);
 router.get('/reservas/agencia', requerirAutenticacion, requerirRol('agencia'), listarReservasAgencia);
 router.post('/reservas/:id/confirmar', requerirAutenticacion, requerirRol('agencia'), confirmarReservaControlador);
 router.post('/reservas/:id/asignar-guia', requerirAutenticacion, requerirRol('agencia'), asignarGuiaReserva);

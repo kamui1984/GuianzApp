@@ -54,27 +54,28 @@ export const TarjetaPaquete = ({ paquete, alVerDetalles, alReservar, indice = 0 
           <span>RNT: {paquete.numeroRnt || 'Validado'}</span>
         </div>
 
-        {/* Rating simulado */}
+        {/* Ranking del Tour */}
         <div
           style={{
             position: 'absolute',
             bottom: '12px',
             right: '12px',
-            backgroundColor: 'rgba(23, 74, 91, 0.9)',
+            backgroundColor: 'rgba(23, 74, 91, 0.92)',
             backdropFilter: 'blur(8px)',
             color: '#FFFFFF',
-            padding: '0.25rem 0.6rem',
-            borderRadius: '6px',
+            padding: '0.25rem 0.65rem',
+            borderRadius: '8px',
             fontSize: '0.78rem',
             fontWeight: 800,
             display: 'flex',
             alignItems: 'center',
-            gap: '0.3rem',
+            gap: '0.35rem',
             boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
           }}
+          title="Ranking de la experiencia del tour"
         >
-          <Star size={13} color="#FFD480" fill="#FFD480" />
-          <span>4.9</span>
+          <Star size={13} color="#C6A15B" fill="#C6A15B" />
+          <span>Tour {paquete.calificacionPromedio || '4.8'}</span>
         </div>
       </div>
 

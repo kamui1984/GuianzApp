@@ -17,6 +17,7 @@ import { ModalAutenticacion } from './componentes/autenticacion/ModalAutenticaci
 import { PanelAgencia } from './componentes/paneles/PanelAgencia';
 import { PanelGuia } from './componentes/paneles/PanelGuia';
 import { PanelAdministrador } from './componentes/paneles/PanelAdministrador';
+import { PanelTurista } from './componentes/paneles/PanelTurista';
 import { InstaladorPWA } from './componentes/comunes/InstaladorPWA';
 import { AvisoConexion } from './componentes/comunes/AvisoConexion';
 import { BarraNavegacionMovil } from './componentes/comunes/BarraNavegacionMovil';
@@ -274,49 +275,13 @@ export const Aplicacion = () => {
             {esGuia && <PanelGuia />}
             {esAdministrador && <PanelAdministrador />}
             {!esAgencia && !esGuia && !esAdministrador && (
-              <div style={{ padding: '3rem 0 5rem' }}>
-                <div className="contenedor contenedor-estrecho">
-                  <div
-                    style={{
-                      backgroundColor: '#FFFFFF',
-                      borderRadius: '16px',
-                      border: '1px solid var(--borde-sutil)',
-                      boxShadow: 'var(--sombra-media)',
-                      padding: '2.5rem',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '60px',
-                        height: '60px',
-                        borderRadius: '50%',
-                        backgroundColor: 'var(--color-primario-claro)',
-                        color: 'var(--color-primario)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '0 auto 1.25rem'
-                      }}
-                    >
-                      <Sparkles size={28} />
-                    </div>
-                    <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--color-primario)', fontFamily: 'var(--fuente-titulos)' }}>
-                      ¡Hola, {usuarioActual?.nombreCompleto || 'Viajero'}!
-                    </h2>
-                    <p style={{ color: 'var(--texto-secundario)', fontSize: '0.95rem', marginBottom: '2rem' }}>
-                      Bienvenido a tu panel de experiencias turísticas en Bogotá. Explora el catálogo y disfruta de recorridos certificados con agencias y guías con RNT.
-                    </p>
-                    <button
-                      onClick={() => setVistaActual('inicio')}
-                      className="boton boton-primario"
-                      style={{ padding: '0.85rem 1.75rem' }}
-                    >
-                      Explorar Paquetes Disponibles
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <PanelTurista
+                alExplorarTours={() => setVistaActual('inicio')}
+                alReportarIncidente={(reserva) => {
+                  setVistaActual('inicio');
+                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }}
+              />
             )}
           </div>
         )}

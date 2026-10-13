@@ -6,6 +6,7 @@ const { subirArchivo, eliminarArchivos } = require('../services/almacenamiento.s
 const {
   crearReserva,
   listarReservasPorAgencia,
+  listarReservasPorTurista,
   asignarGuiaAReserva,
   confirmarReserva,
   desasignarGuiaReserva,
@@ -738,6 +739,21 @@ const confirmarReservaControlador = async (peticion, respuesta) => {
   }
 };
 
+/**
+ * Listar las reservas contratadas por el turista autenticado.
+ */
+const listarReservasTuristaControlador = async (peticion, respuesta) => {
+  try {
+    const idTurista = peticion.usuario?.auth?.id || peticion.usuario?.perfil?.id;
+    const correoTurista = peticion.usuario?.auth?.email;
+    const reservas = await listarReservasPorTurista(idTurista, correoTurista);
+    return respuesta.json({ reservas });
+  } catch (error) {
+    console.error('Error al listar reservas de turista:', error);
+    return respuesta.status(500).json({ error: 'Error al consultar reservas del viajero.' });
+  }
+};
+
 module.exports = {
   explorarPaquetes,
   listarMisPaquetes,
@@ -747,6 +763,7 @@ module.exports = {
   eliminarPaquete,
   registrarReserva,
   listarReservasAgencia,
+  listarReservasTurista: listarReservasTuristaControlador,
   asignarGuiaReserva,
   desasignarGuiaReserva: desasignarGuiaReservaControlador,
   confirmarReservaControlador,
