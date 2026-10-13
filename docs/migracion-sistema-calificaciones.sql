@@ -3,6 +3,18 @@
 -- Dimensiones independientes: Experiencia del Tour vs Desempeño del Guía
 -- ==============================================================================
 
+-- 0. HABILITAR EL VALOR 'turista' EN EL ENUM rol_usuario (Evita error 22P02 al registrar turistas)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type t 
+        JOIN pg_enum e ON t.oid = e.enumtypid 
+        WHERE t.typname = 'rol_usuario' AND e.enumlabel = 'turista'
+    ) THEN
+        ALTER TYPE rol_usuario ADD VALUE 'turista';
+    END IF;
+END $$;
+
 -- 1. TABLA: evaluaciones_servicios (Reseñas con doble dimensión independiente)
 CREATE TABLE IF NOT EXISTS public.evaluaciones_servicios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

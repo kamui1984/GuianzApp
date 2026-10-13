@@ -96,15 +96,31 @@ export const PanelAgencia = () => {
   const cargarDatos = async () => {
     setCargando(true);
     try {
-      const [misPaquetes, listaReservas, listaGuias, ranking] = await Promise.all([
-        servicioPaquetes.listarMisPaquetes().catch(() => []),
-        servicioPaquetes.listarReservasAgencia().catch(() => []),
-        servicioGuias.listarGuiasPublicos().catch(() => []),
-        usuarioActual?.id ? servicioCalificaciones.obtenerRankingAgencia(usuarioActual.id).catch(() => null) : Promise.resolve(null)
-      ]);
-      setPaquetes(misPaquetes);
-      setReservas(listaReservas);
-      setGuias(listaGuias);
+      const promesas = [
+        servicioPaquetes.listarMisPaquetes().catch((e) => {
+          console.warn('Error al cargar paquetes de agencia:', e.message);
+          return [];
+        }),
+        servicioPaquetes.listarReservasAgencia().catch((e) => {
+          console.warn('Error al cargar reservas de agencia:', e.message);
+          return [];
+        }),
+        servicioGuias.listarGuiasPublicos().catch((e) => {
+          console.warn('Error al consultar guías públicos:', e.message);
+          return [];
+        }),
+        usuarioActual?.id && typeof servicioCalificaciones.obtenerRankingAgencia === 'function'
+          ? servicioCalificaciones.obtenerRankingAgencia(usuarioActual.id).catch((e) => {
+              console.warn('Aviso ranking agencia:', e.message);
+              return null;
+            })
+          : Promise.resolve(null)
+      ];
+
+      const [misPaquetes, listaReservas, listaGuias, ranking] = await Promise.all(promesas);
+      setPaquetes(Array.isArray(misPaquetes) ? misPaquetes : []);
+      setReservas(Array.isArray(listaReservas) ? listaReservas : []);
+      setGuias(Array.isArray(listaGuias) ? listaGuias : []);
       if (ranking) {
         setRankingAgencia(ranking);
       }
@@ -117,7 +133,7 @@ export const PanelAgencia = () => {
 
   useEffect(() => {
     cargarDatos();
-  }, []);
+  }, [usuarioActual?.id]);
 
   const abrirCrearPaquete = () => {
     setPaqueteEnEdicion(null);

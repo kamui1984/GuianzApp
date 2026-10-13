@@ -32,6 +32,13 @@ export const servicioCalificaciones = {
   },
 
   /**
+   * Consultar ranking acumulado y comentarios de una Agencia.
+   */
+  obtenerRankingAgencia: async (idAgencia) => {
+    return solicitarApi(`/api/evaluaciones/agencia/${idAgencia}`);
+  },
+
+  /**
    * Consultar evaluaciones realizadas por el turista autenticado.
    */
   listarMisEvaluaciones: async () => {

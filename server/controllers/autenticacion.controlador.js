@@ -278,6 +278,11 @@ const registrarTurista = async (peticion, respuesta) => {
 
     if (errorPerfil) {
       await clienteSupabaseAdmin.auth.admin.deleteUser(idUsuario);
+      if (errorPerfil.code === '22P02' || errorPerfil.message?.includes('rol_usuario')) {
+        return respuesta.status(500).json({
+          error: 'En Supabase falta habilitar el rol turista en el enum rol_usuario. Ejecuta en el SQL Editor: ALTER TYPE rol_usuario ADD VALUE \'turista\';'
+        });
+      }
       throw errorPerfil;
     }
 

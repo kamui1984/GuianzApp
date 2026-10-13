@@ -4,6 +4,7 @@ const {
   crearEvaluacion,
   obtenerRankingTour,
   obtenerRankingGuia,
+  obtenerRankingAgencia,
   listarMisEvaluaciones,
   responderEvaluacion,
   reportarEvaluacion,
@@ -14,6 +15,7 @@ const { requerirAutenticacion } = require('../middlewares/autenticacion.middlewa
 // Rutas públicas de consulta de rankings
 router.get('/paquete/:idPaquete', obtenerRankingTour);
 router.get('/guia/:idGuia', obtenerRankingGuia);
+router.get('/agencia/:idAgencia', obtenerRankingAgencia);
 
 // Rutas protegidas para turistas
 router.post('/', requerirAutenticacion, crearEvaluacion);

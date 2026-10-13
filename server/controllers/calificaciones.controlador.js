@@ -154,10 +154,24 @@ const completarReserva = async (peticion, respuesta) => {
   }
 };
 
+/**
+ * 7. Obtener ranking y comentarios de la Agencia
+ */
+const obtenerRankingAgencia = async (peticion, respuesta) => {
+  try {
+    const idAgencia = peticion.params.idAgencia;
+    const datos = await calificacionesServicio.obtenerRankingAgencia(idAgencia);
+    return respuesta.json(datos);
+  } catch (error) {
+    return respuesta.status(500).json({ error: 'Error al consultar ranking de la agencia.' });
+  }
+};
+
 module.exports = {
   crearEvaluacion,
   obtenerRankingTour,
   obtenerRankingGuia,
+  obtenerRankingAgencia,
   listarMisEvaluaciones,
   responderEvaluacion,
   reportarEvaluacion,

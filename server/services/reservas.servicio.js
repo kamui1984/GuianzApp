@@ -116,15 +116,36 @@ const crearReserva = async (datosReserva) => {
  */
 const listarReservasPorAgencia = async (idAgencia) => {
   const idBuscado = String(idAgencia || '').trim();
-  const listaLocal = leerReservasLocal();
+  let reservasSupabase = [];
 
-  // Filtrar reservas que coincidan con la agencia o devolver todas si la agencia es la única activa
-  const coincidentes = listaLocal.filter((r) => {
+  try {
+    const { data, error } = await clienteSupabaseAdmin
+      .from('reservas')
+      .select('*')
+      .order('creado_en', { ascending: false });
+
+    if (data && !error) {
+      reservasSupabase = data.filter((r) => {
+        const agenciaRes = String(r.id_agencia || r.idAgencia || '').trim();
+        return !agenciaRes || agenciaRes === idBuscado;
+      });
+    }
+  } catch (err) {
+    console.warn('Aviso: Consultando reservas locales por:', err.message);
+  }
+
+  const listaLocal = leerReservasLocal();
+  const coincidentesLocal = listaLocal.filter((r) => {
     const agenciaReserva = String(r.id_agencia || r.idAgencia || '').trim();
     return !agenciaReserva || agenciaReserva === idBuscado;
   });
 
-  return coincidentes.map((r) => serializarReserva(r));
+  const mapa = new Map();
+  coincidentesLocal.forEach((r) => mapa.set(String(r.id), r));
+  reservasSupabase.forEach((r) => mapa.set(String(r.id), r));
+
+  const combinadas = Array.from(mapa.values());
+  return combinadas.map((r) => serializarReserva(r));
 };
 
 /**
@@ -132,12 +153,35 @@ const listarReservasPorAgencia = async (idAgencia) => {
  */
 const listarReservasPorGuia = async (idGuia) => {
   const idBuscado = String(idGuia || '').trim();
-  const listaLocal = leerReservasLocal();
+  let reservasSupabase = [];
 
-  const asignadas = listaLocal.filter((r) => {
+  try {
+    const { data, error } = await clienteSupabaseAdmin
+      .from('reservas')
+      .select('*')
+      .order('creado_en', { ascending: false });
+
+    if (data && !error) {
+      reservasSupabase = data.filter((r) => {
+        const guiaRes = String(r.id_guia_asignado || r.idGuiaAsignado || '').trim();
+        return guiaRes === idBuscado;
+      });
+    }
+  } catch (err) {
+    console.warn('Aviso: Consultando reservas locales para guía:', err.message);
+  }
+
+  const listaLocal = leerReservasLocal();
+  const asignadasLocal = listaLocal.filter((r) => {
     const guiaReserva = String(r.id_guia_asignado || r.idGuiaAsignado || '').trim();
     return guiaReserva === idBuscado;
   });
+
+  const mapa = new Map();
+  asignadasLocal.forEach((r) => mapa.set(String(r.id), r));
+  reservasSupabase.forEach((r) => mapa.set(String(r.id), r));
+
+  const asignadas = Array.from(mapa.values());
 
   const enriquecidas = await Promise.all(
     asignadas.map(async (r) => {
