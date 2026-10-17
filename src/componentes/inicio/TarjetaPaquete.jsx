@@ -26,7 +26,9 @@ export const TarjetaPaquete = ({ paquete, alVerDetalles, alReservar, indice = 0 
         <img
           src={urlImagen}
           alt={paquete.titulo}
-          loading="lazy"
+          loading={indice === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={indice === 0 ? 'high' : 'auto'}
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
           onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}

@@ -51,5 +51,25 @@ export const servicioAutenticacion = {
    */
   obtenerUsuarioActual: async () => {
     return solicitarApi('/api/autenticacion/usuario-actual');
+  },
+
+  /**
+   * Solicitar recuperación de contraseña por correo.
+   */
+  solicitarRecuperacionClave: async (correo) => {
+    return solicitarApi('/api/autenticacion/recuperar-clave', {
+      method: 'POST',
+      body: JSON.stringify({ correo, email: correo })
+    });
+  },
+
+  /**
+   * Restablecer la contraseña.
+   */
+  restablecerContrasena: async ({ correo, nuevaContrasena, token }) => {
+    return solicitarApi('/api/autenticacion/restablecer-clave', {
+      method: 'POST',
+      body: JSON.stringify({ correo, nuevaContrasena, token })
+    });
   }
 };

@@ -5,7 +5,9 @@ const {
   registrarGuia,
   registrarTurista,
   iniciarSesion,
-  obtenerUsuarioActual
+  obtenerUsuarioActual,
+  solicitarRecuperacionClave,
+  restablecerContrasena
 } = require('../controllers/autenticacion.controlador');
 const { requerirAutenticacion } = require('../middlewares/autenticacion.middleware');
 const { cargaArchivos } = require('../middlewares/cargaArchivos.middleware');
@@ -23,6 +25,8 @@ router.post(
 );
 router.post('/registro-turista', registrarTurista);
 router.post('/inicio-sesion', validarEsquema(esquemaInicioSesion), iniciarSesion);
+router.post('/recuperar-clave', solicitarRecuperacionClave);
+router.post('/restablecer-clave', restablecerContrasena);
 
 // Ruta protegida para validar sesión
 router.get('/usuario-actual', requerirAutenticacion, obtenerUsuarioActual);

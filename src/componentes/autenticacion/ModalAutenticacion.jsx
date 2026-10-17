@@ -4,73 +4,90 @@ import { FormularioInicioSesion } from './FormularioInicioSesion';
 import { FormularioRegistroAgencia } from './FormularioRegistroAgencia';
 import { FormularioRegistroGuia } from './FormularioRegistroGuia';
 import { FormularioRegistroTurista } from './FormularioRegistroTurista';
+import { FormularioRecuperarClave } from './FormularioRecuperarClave';
 import { User, Building2, Compass, Sparkles } from 'lucide-react';
 
 export const ModalAutenticacion = ({ abierto, alCerrar, modoInicial = 'iniciar-sesion' }) => {
-  const [pestanaPrincipal, setPestanaPrincipal] = useState('iniciar-sesion'); // 'iniciar-sesion' | 'registro'
+  const [pestanaPrincipal, setPestanaPrincipal] = useState('iniciar-sesion'); // 'iniciar-sesion' | 'registro' | 'recuperar-clave'
   const [tipoRegistro, setTipoRegistro] = useState('turista'); // 'turista' | 'agencia' | 'guia'
 
   useEffect(() => {
     if (modoInicial === 'registro') {
       setPestanaPrincipal('registro');
+    } else if (modoInicial === 'recuperar-clave') {
+      setPestanaPrincipal('recuperar-clave');
     } else {
       setPestanaPrincipal('iniciar-sesion');
     }
   }, [modoInicial, abierto]);
 
-  const tituloModal = pestanaPrincipal === 'iniciar-sesion' ? 'Iniciar Sesión en GuianzApp' : 'Crear Cuenta en GuianzApp';
+  const obtenerTituloModal = () => {
+    if (pestanaPrincipal === 'recuperar-clave') return 'Recuperar Contraseña';
+    if (pestanaPrincipal === 'registro') return 'Crear Cuenta en GuianzApp';
+    return 'Iniciar Sesión en GuianzApp';
+  };
 
   return (
-    <Modal abierto={abierto} alCerrar={alCerrar} titulo={tituloModal} anchoMaximo="540px">
-      {/* Selector de pestañas principales: Iniciar Sesión / Registrarse */}
-      <div
-        style={{
-          display: 'flex',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          padding: '4px',
-          borderRadius: '10px',
-          marginBottom: '1.5rem',
-          border: '1px solid rgba(255, 255, 255, 0.08)'
-        }}
-      >
-        <button
-          onClick={() => setPestanaPrincipal('iniciar-sesion')}
+    <Modal abierto={abierto} alCerrar={alCerrar} titulo={obtenerTituloModal()} anchoMaximo="540px">
+      {/* Selector de pestañas principales: Iniciar Sesión / Registrarse (Oculto en recuperación de clave) */}
+      {pestanaPrincipal !== 'recuperar-clave' && (
+        <div
           style={{
-            flex: 1,
-            padding: '0.6rem',
-            border: 'none',
-            borderRadius: '8px',
-            backgroundColor: pestanaPrincipal === 'iniciar-sesion' ? '#0ea5e9' : 'transparent',
-            color: pestanaPrincipal === 'iniciar-sesion' ? '#ffffff' : '#9ca3af',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
+            display: 'flex',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            padding: '4px',
+            borderRadius: '10px',
+            marginBottom: '1.5rem',
+            border: '1px solid rgba(255, 255, 255, 0.08)'
           }}
         >
-          Iniciar Sesión
-        </button>
-        <button
-          onClick={() => setPestanaPrincipal('registro')}
-          style={{
-            flex: 1,
-            padding: '0.6rem',
-            border: 'none',
-            borderRadius: '8px',
-            backgroundColor: pestanaPrincipal === 'registro' ? '#0ea5e9' : 'transparent',
-            color: pestanaPrincipal === 'registro' ? '#ffffff' : '#9ca3af',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-        >
-          Registrarse
-        </button>
-      </div>
+          <button
+            onClick={() => setPestanaPrincipal('iniciar-sesion')}
+            style={{
+              flex: 1,
+              padding: '0.6rem',
+              border: 'none',
+              borderRadius: '8px',
+              backgroundColor: pestanaPrincipal === 'iniciar-sesion' ? '#0ea5e9' : 'transparent',
+              color: pestanaPrincipal === 'iniciar-sesion' ? '#ffffff' : '#9ca3af',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Iniciar Sesión
+          </button>
+          <button
+            onClick={() => setPestanaPrincipal('registro')}
+            style={{
+              flex: 1,
+              padding: '0.6rem',
+              border: 'none',
+              borderRadius: '8px',
+              backgroundColor: pestanaPrincipal === 'registro' ? '#0ea5e9' : 'transparent',
+              color: pestanaPrincipal === 'registro' ? '#ffffff' : '#9ca3af',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Registrarse
+          </button>
+        </div>
+      )}
 
-      {pestanaPrincipal === 'iniciar-sesion' ? (
-        <FormularioInicioSesion alCompletar={alCerrar} />
+      {pestanaPrincipal === 'recuperar-clave' ? (
+        <FormularioRecuperarClave
+          alVolverAInicioSesion={() => setPestanaPrincipal('iniciar-sesion')}
+          alCompletar={alCerrar}
+        />
+      ) : pestanaPrincipal === 'iniciar-sesion' ? (
+        <FormularioInicioSesion
+          alCompletar={alCerrar}
+          alRecuperarClave={() => setPestanaPrincipal('recuperar-clave')}
+        />
       ) : (
         <div>
           {/* Selector de tipo de cuenta */}

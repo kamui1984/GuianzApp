@@ -142,6 +142,10 @@ export const CarruselZonas = ({ alSeleccionarZona, categoriaSeleccionada = 'todo
                   <img
                     src={zona.imagen}
                     alt={zona.titulo}
+                    loading="lazy"
+                    decoding="async"
+                    width="64"
+                    height="64"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>

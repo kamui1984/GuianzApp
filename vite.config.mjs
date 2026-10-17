@@ -18,7 +18,7 @@ export default defineConfig({
         short_name: 'GuianzApp',
         description: 'Explora y reserva paquetes turísticos en Bogotá con agencias y guías certificados con Registro Nacional de Turismo (RNT).',
         theme_color: '#174A5B',
-        background_color: '#F8FAFC',
+        background_color: '#FFFFFF',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',

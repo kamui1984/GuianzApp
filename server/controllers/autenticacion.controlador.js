@@ -356,10 +356,95 @@ const obtenerUsuarioActual = (peticion, respuesta) => {
   return respuesta.json({ usuario, user: usuario });
 };
 
+/**
+ * Solicitar enlace o código de recuperación de contraseña.
+ */
+const solicitarRecuperacionClave = async (peticion, respuesta) => {
+  try {
+    const correo = (peticion.body.correo || peticion.body.email || '').toLowerCase().trim();
+
+    if (!correo) {
+      return respuesta.status(400).json({ error: 'Ingresa tu correo electrónico registrado.' });
+    }
+
+    const urlRedireccion = process.env.URL_RECUPERACION_CLAVE || 'https://guianzapp.bogotapp.com/#restablecer-clave';
+
+    const { error: errorReset } = await clienteSupabaseAuth.auth.resetPasswordForEmail(correo, {
+      redirectTo: urlRedireccion
+    });
+
+    if (errorReset) {
+      console.warn('Aviso en resetPasswordForEmail:', errorReset.message);
+    }
+
+    return respuesta.json({
+      exito: true,
+      mensaje: 'Si el correo está registrado en GuianzApp, recibirás las instrucciones para restablecer tu contraseña. Revisa también tu bandeja de spam.'
+    });
+  } catch (error) {
+    console.error('Error en solicitarRecuperacionClave:', error);
+    return respuesta.status(500).json({ error: 'Ocurrió un error al procesar la solicitud de recuperación.' });
+  }
+};
+
+/**
+ * Restablecer la contraseña.
+ */
+const restablecerContrasena = async (peticion, respuesta) => {
+  try {
+    const nuevaContrasena = peticion.body.nuevaContrasena || peticion.body.password || peticion.body.contrasena;
+    const correo = (peticion.body.correo || peticion.body.email || '').toLowerCase().trim();
+    const token = peticion.body.token || peticion.headers.authorization?.replace('Bearer ', '');
+
+    if (!nuevaContrasena || nuevaContrasena.length < 8) {
+      return respuesta.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+    }
+
+    if (token) {
+      const { data: usuarioToken } = await clienteSupabaseAuth.auth.getUser(token);
+      if (usuarioToken?.user) {
+        const { error: errorUpdate } = await clienteSupabaseAdmin.auth.admin.updateUserById(usuarioToken.user.id, {
+          password: nuevaContrasena
+        });
+        if (errorUpdate) throw errorUpdate;
+
+        return respuesta.json({
+          exito: true,
+          mensaje: 'Tu contraseña ha sido actualizada exitosamente. Ya puedes iniciar sesión.'
+        });
+      }
+    }
+
+    if (correo) {
+      const { data: listaUsuarios } = await clienteSupabaseAdmin.auth.admin.listUsers();
+      const usuarioEncontrado = listaUsuarios?.users?.find((u) => u.email?.toLowerCase() === correo);
+
+      if (usuarioEncontrado) {
+        const { error: errorUpdate } = await clienteSupabaseAdmin.auth.admin.updateUserById(usuarioEncontrado.id, {
+          password: nuevaContrasena
+        });
+        if (errorUpdate) throw errorUpdate;
+
+        return respuesta.json({
+          exito: true,
+          mensaje: 'Contraseña actualizada con éxito. Inicia sesión con tu nueva clave.'
+        });
+      }
+    }
+
+    return respuesta.status(400).json({ error: 'No se pudo verificar la cuenta para actualizar la contraseña.' });
+  } catch (error) {
+    console.error('Error en restablecerContrasena:', error);
+    return respuesta.status(500).json({ error: 'Error al actualizar la contraseña.' });
+  }
+};
+
 module.exports = {
   registrarAgencia,
   registrarGuia,
   registrarTurista,
   iniciarSesion,
-  obtenerUsuarioActual
+  obtenerUsuarioActual,
+  solicitarRecuperacionClave,
+  restablecerContrasena
 };

@@ -54,11 +54,12 @@ function Resize-ImageFile {
     Write-Host "Generado: $TargetPath"
 }
 
-Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "pwa-192x192.png") -Size 192 -BackgroundHex $null
-Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "pwa-512x512.png") -Size 512 -BackgroundHex $null
+# Generación con fondo blanco (#FFFFFF) para garantizar máximo contraste y legibilidad en launcher móvil
+Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "pwa-192x192.png") -Size 192 -BackgroundHex "#FFFFFF"
+Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "pwa-512x512.png") -Size 512 -BackgroundHex "#FFFFFF"
 Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "apple-touch-icon.png") -Size 180 -BackgroundHex "#FFFFFF"
-Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "maskable-icon-512x512.png") -Size 512 -BackgroundHex "#174A5B"
-Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "favicon-32x32.png") -Size 32 -BackgroundHex $null
-Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path (Join-Path $PSScriptRoot "..\public") "favicon.ico") -Size 48 -BackgroundHex $null
+Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "maskable-icon-512x512.png") -Size 512 -BackgroundHex "#FFFFFF"
+Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path $outputDir "favicon-32x32.png") -Size 32 -BackgroundHex "#FFFFFF"
+Resize-ImageFile -SourcePath $logoFile.FullName -TargetPath (Join-Path (Join-Path $PSScriptRoot "..\public") "favicon.ico") -Size 48 -BackgroundHex "#FFFFFF"
 
 Write-Host "TODOS LOS ICONOS PWA GENERADOS EXITOSAMENTE"

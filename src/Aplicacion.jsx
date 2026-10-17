@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useAutenticacion } from './contextos/ContextoAutenticacion';
 import { servicioPaquetes } from './api/paquetesServicio';
 import { BarraNavegacion } from './componentes/comunes/BarraNavegacion';
@@ -14,10 +14,12 @@ import { SeccionPrestadores } from './componentes/inicio/SeccionPrestadores';
 import { ModalDetallePaquete } from './componentes/inicio/ModalDetallePaquete';
 import { ModalReserva } from './componentes/inicio/ModalReserva';
 import { ModalAutenticacion } from './componentes/autenticacion/ModalAutenticacion';
-import { PanelAgencia } from './componentes/paneles/PanelAgencia';
-import { PanelGuia } from './componentes/paneles/PanelGuia';
-import { PanelAdministrador } from './componentes/paneles/PanelAdministrador';
-import { PanelTurista } from './componentes/paneles/PanelTurista';
+
+// Code-splitting para optimizar el rendimiento y bundle inicial en móviles (PageSpeed)
+const PanelAgencia = lazy(() => import('./componentes/paneles/PanelAgencia').then((m) => ({ default: m.PanelAgencia })));
+const PanelGuia = lazy(() => import('./componentes/paneles/PanelGuia').then((m) => ({ default: m.PanelGuia })));
+const PanelAdministrador = lazy(() => import('./componentes/paneles/PanelAdministrador').then((m) => ({ default: m.PanelAdministrador })));
+const PanelTurista = lazy(() => import('./componentes/paneles/PanelTurista').then((m) => ({ default: m.PanelTurista })));
 import { InstaladorPWA } from './componentes/comunes/InstaladorPWA';
 import { AvisoConexion } from './componentes/comunes/AvisoConexion';
 import { BarraNavegacionMovil } from './componentes/comunes/BarraNavegacionMovil';
@@ -134,6 +136,14 @@ export const Aplicacion = () => {
     };
 
     obtenerPaquetes();
+  }, []);
+
+  // Detectar enlace de recuperación de contraseña en la URL
+  useEffect(() => {
+    const hash = window.location.hash || '';
+    if (hash.includes('restablecer-clave') || hash.includes('type=recovery')) {
+      abrirModalAutenticacion('recuperar-clave');
+    }
   }, []);
 
   // Filtrado reactivo de paquetes
@@ -271,18 +281,20 @@ export const Aplicacion = () => {
         ) : (
           /* Vista de Panel según Rol */
           <div>
-            {esAgencia && <PanelAgencia />}
-            {esGuia && <PanelGuia />}
-            {esAdministrador && <PanelAdministrador />}
-            {!esAgencia && !esGuia && !esAdministrador && (
-              <PanelTurista
-                alExplorarTours={() => setVistaActual('inicio')}
-                alReportarIncidente={(reserva) => {
-                  setVistaActual('inicio');
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                }}
-              />
-            )}
+            <Suspense fallback={<Cargando mensaje="Cargando panel de gestión..." />}>
+              {esAgencia && <PanelAgencia />}
+              {esGuia && <PanelGuia />}
+              {esAdministrador && <PanelAdministrador />}
+              {!esAgencia && !esGuia && !esAdministrador && (
+                <PanelTurista
+                  alExplorarTours={() => setVistaActual('inicio')}
+                  alReportarIncidente={(reserva) => {
+                    setVistaActual('inicio');
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                  }}
+                />
+              )}
+            </Suspense>
           </div>
         )}
       </main>

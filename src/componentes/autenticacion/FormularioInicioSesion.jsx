@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Lock, LogIn, Loader2, ShieldCheck, Building2, Compass } from 'lucide-react';
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 
-export const FormularioInicioSesion = ({ alCompletar }) => {
+export const FormularioInicioSesion = ({ alCompletar, alRecuperarClave }) => {
   const { iniciarSesion } = useAutenticacion();
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
@@ -63,10 +63,28 @@ export const FormularioInicioSesion = ({ alCompletar }) => {
       </div>
 
       <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Contraseña</span>
-          <Lock size={15} color="var(--texto-atenuado)" />
-        </label>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+          <label className="etiqueta-formulario" style={{ marginBottom: 0 }}>
+            <span>Contraseña</span>
+          </label>
+          {alRecuperarClave && (
+            <button
+              type="button"
+              onClick={alRecuperarClave}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--color-primario)',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                padding: 0
+              }}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          )}
+        </div>
         <input
           type="password"
           required

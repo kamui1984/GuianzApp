@@ -43,10 +43,10 @@
   --borde-destacado: #174A5B;
   --borde-dorado: #C6A15B;
 
-  /* Texto */
+  /* Texto (Contraste optimizado para WCAG AA > 4.5:1 en pantallas móviles) */
   --texto-principal: #1E2933;          /* Carbón */
-  --texto-secundario: #53626C;         /* Gris Piedra */
-  --texto-atenuado: #64727A;
+  --texto-secundario: #3E4C56;         /* Gris Pizarra Oscuro (Ratio > 5.2:1) */
+  --texto-atenuado: #4A5862;           /* Gris Piedra Firme (Ratio > 4.6:1) */
   --texto-enlace: #174A5B;
 
   /* Estados */
