@@ -68,9 +68,63 @@ class PaquetesToursServicio {
   }
 
   /**
-   * Obtener programación de salidas disponibles para un tour determinado.
+   * Helper para normalizar horas a formato HH:mm (24 horas) para comparaciones precisas
    */
-  async obtenerProgramacion(tourId) {
+  normalizarHora(h) {
+    if (!h) return '';
+    const str = String(h).trim().toLowerCase();
+    const esPM = str.includes('pm') || str.includes('p.m.');
+    const esAM = str.includes('am') || str.includes('a.m.');
+    const numeros = str.replace(/[^0-9:]/g, '').split(':');
+    let hora = parseInt(numeros[0] || '0', 10);
+    const min = parseInt(numeros[1] || '0', 10);
+    if (esPM && hora < 12) hora += 12;
+    if (esAM && hora === 12) hora = 0;
+    return `${String(hora).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+  }
+
+  /**
+   * Helper para determinar si una fecha y hora están vigentes en hora local de Bogotá (UTC-5)
+   */
+  esSalidaVigente(fechaStr, horaStr) {
+    if (!fechaStr) return false;
+    const ahora = new Date();
+    const formatoCol = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Bogota',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).formatToParts(ahora);
+
+    const anioActual = formatoCol.find((p) => p.type === 'year')?.value;
+    const mesActual = formatoCol.find((p) => p.type === 'month')?.value;
+    const diaActual = formatoCol.find((p) => p.type === 'day')?.value;
+    const hoyStr = `${anioActual}-${mesActual}-${diaActual}`;
+
+    if (fechaStr < hoyStr) return false;
+    if (fechaStr > hoyStr) return true;
+
+    // Si es hoy, validar la hora
+    if (!horaStr) return false;
+    const horaActualNum = parseInt(formatoCol.find((p) => p.type === 'hour')?.value || '0', 10);
+    const minActualNum = parseInt(formatoCol.find((p) => p.type === 'minute')?.value || '0', 10);
+
+    const horaSalidaNorm = this.normalizarHora(horaStr);
+    const [hSal, mSal] = horaSalidaNorm.split(':').map((n) => parseInt(n, 10));
+
+    if (hSal > horaActualNum) return true;
+    if (hSal === horaActualNum && mSal > minActualNum) return true;
+    return false;
+  }
+
+  /**
+   * Obtener programación de salidas disponibles para un tour determinado.
+   * Filtra fechas/horas pasadas y descuenta cupos según las reservas confirmadas o activas.
+   */
+  async obtenerProgramacion(tourId, soloVigentes = true) {
     const tourIdStr = String(tourId);
     const idNumerico = await this.resolverTourIdNumerico(tourId);
     let salidas = [];
@@ -130,16 +184,114 @@ class PaquetesToursServicio {
       }
     }
 
-    return salidasUnicas.map((s) => ({
-      id: s.id,
-      tourId: s.tour_id,
-      guiaId: s.guia_id || null,
-      fecha: s.fecha,
-      horaInicio: s.hora_inicio || s.horaInicio,
-      cuposMaximos: Number(s.cupos_maximos || s.cuposMaximos || 15),
-      cuposDisponibles: Number(s.cupos_disponibles ?? s.cuposDisponibles ?? s.cupos_maximos ?? s.cuposMaximos ?? 15),
-      estado: s.estado || 'Disponible'
-    }));
+    // Obtener identificadores complementarios del tour (UUID, ID numérico y título)
+    let idUuid = tourIdStr.length === 36 ? tourIdStr : null;
+    let tituloTourNorm = '';
+
+    try {
+      if (idUuid) {
+        const { data: p } = await clienteSupabaseAdmin
+          .from('paquetes')
+          .select('id, titulo')
+          .eq('id', idUuid)
+          .maybeSingle();
+        if (p?.titulo) {
+          tituloTourNorm = p.titulo.toLowerCase().trim();
+        }
+      } else if (idNumerico) {
+        const { data: pt } = await clienteSupabaseAdmin
+          .from('paquetes_tours')
+          .select('id, nombre_tour')
+          .eq('id', idNumerico)
+          .maybeSingle();
+        if (pt?.nombre_tour) {
+          tituloTourNorm = pt.nombre_tour.toLowerCase().trim();
+          const { data: paqMatch } = await clienteSupabaseAdmin
+            .from('paquetes')
+            .select('id')
+            .eq('titulo', pt.nombre_tour)
+            .maybeSingle();
+          if (paqMatch?.id) {
+            idUuid = paqMatch.id;
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Consultar reservas activas para descontar cupos en tiempo real
+    const rutaArchivoReservas = path.join(rutaDirectorioData, 'reservas.json');
+    let reservasActivas = leerLocal(rutaArchivoReservas);
+    try {
+      const { data: supaRes } = await clienteSupabaseAdmin
+        .from('reservas')
+        .select('*');
+      if (supaRes && supaRes.length > 0) {
+        const mapaReservas = new Map();
+        reservasActivas.forEach((r) => mapaReservas.set(String(r.id), r));
+        supaRes.forEach((r) => mapaReservas.set(String(r.id), r));
+        reservasActivas = Array.from(mapaReservas.values());
+      }
+    } catch (e) {
+      // Usar reservas locales
+    }
+
+    const normFecha = (f) => String(f || '').split('T')[0].split(' ')[0].trim();
+
+    // Filtrar salidas vigentes y descontar cupos
+    const resultado = [];
+    for (const s of salidasUnicas) {
+      const horaStr = s.hora_inicio || s.horaInicio;
+      if (soloVigentes && !this.esSalidaVigente(s.fecha, horaStr)) {
+        // Ignorar salidas con fecha y hora en el pasado para que el turista no pueda verlas ni reservarlas
+        continue;
+      }
+
+      const horaSalidaNorm = this.normalizarHora(horaStr);
+      const cuposMaximos = Number(s.cupos_maximos || s.cuposMaximos || 15);
+      const fechaSalidaNorm = normFecha(s.fecha);
+
+      // Calcular cupos ya reservados para este tour, fecha y hora
+      const cuposReservados = reservasActivas
+        .filter((r) => {
+          const idPaqueteRes = String(r.id_paquete || r.idPaquete || '').trim();
+          const tituloResNorm = String(r.titulo_paquete || r.tituloPaquete || '').toLowerCase().trim();
+
+          const coincideTour =
+            (idUuid && idPaqueteRes === idUuid) ||
+            (idNumerico && idPaqueteRes === String(idNumerico)) ||
+            (idPaqueteRes === tourIdStr) ||
+            (tituloTourNorm && tituloResNorm && tituloTourNorm === tituloResNorm);
+
+          if (!coincideTour) return false;
+
+          const fechaResNorm = normFecha(r.fecha_reserva || r.fechaReserva);
+          if (fechaResNorm !== fechaSalidaNorm) return false;
+
+          const horaResNorm = this.normalizarHora(r.hora_reserva || r.horaReserva);
+          if (horaResNorm && horaSalidaNorm && horaResNorm !== horaSalidaNorm) return false;
+
+          const estado = (r.estado || '').toLowerCase().trim();
+          return estado !== 'cancelada' && estado !== 'rechazada';
+        })
+        .reduce((total, r) => total + (Number(r.cantidad_personas || r.cantidadPersonas) || 1), 0);
+
+      const cuposDisponibles = Math.max(0, cuposMaximos - cuposReservados);
+      const estado = cuposDisponibles === 0 ? 'Completo' : (s.estado || 'Disponible');
+
+      resultado.push({
+        id: s.id,
+        tourId: s.tour_id,
+        guiaId: s.guia_id || null,
+        fecha: s.fecha,
+        horaInicio: horaStr,
+        cuposMaximos,
+        cuposDisponibles,
+        cuposReservados,
+        estado
+      });
+    }
+
+    return resultado;
   }
 
   /**
@@ -296,37 +448,62 @@ class PaquetesToursServicio {
 
   /**
    * Reducir cupos de una salida cuando se confirma una reserva.
+   * Actualiza tanto en la base de datos Supabase como en el archivo local.
    */
   async descontarCupos(tourId, fecha, horaInicio, cantidadPersonas = 1) {
     const cant = Number(cantidadPersonas || 1);
+    const tourIdStr = String(tourId);
     const tourIdInt = await this.resolverTourIdNumerico(tourId);
-    let locales = leerLocal(rutaArchivoProgLocal);
+    const horaNorm = this.normalizarHora(horaInicio);
+    const fechaNorm = String(fecha || '').split('T')[0].split(' ')[0].trim();
 
-    const salida = locales.find((s) => {
-      const matchTour = String(s.tour_id) === String(tourId) || (tourIdInt && String(s.tour_id) === String(tourIdInt));
-      const matchFecha = s.fecha === fecha;
-      const matchHora = String(s.hora_inicio).includes(horaInicio.slice(0, 5)) || String(s.hora_inicio) === horaInicio;
+    // 1. Actualizar en Supabase si la salida existe allí
+    try {
+      const { data: supaSalidas, error: errSupa } = await clienteSupabaseAdmin
+        .from('programacion_tours')
+        .select('*')
+        .eq('fecha', fechaNorm);
+
+      if (!errSupa && supaSalidas && supaSalidas.length > 0) {
+        const salidaSupa = supaSalidas.find((s) => {
+          const matchTour = String(s.tour_id) === tourIdStr || (tourIdInt && String(s.tour_id) === String(tourIdInt));
+          const matchHora = this.normalizarHora(s.hora_inicio || s.horaInicio) === horaNorm;
+          return matchTour && matchHora;
+        });
+
+        if (salidaSupa) {
+          const cuposBase = Number(salidaSupa.cupos_disponibles ?? salidaSupa.cupos_maximos ?? 15);
+          const nuevosCupos = Math.max(0, cuposBase - cant);
+          const nuevoEstado = nuevosCupos === 0 ? 'Completo' : (salidaSupa.estado || 'Disponible');
+
+          await clienteSupabaseAdmin
+            .from('programacion_tours')
+            .update({
+              cupos_disponibles: nuevosCupos,
+              estado: nuevoEstado
+            })
+            .eq('id', salidaSupa.id);
+        }
+      }
+    } catch (err) {
+      console.warn('Aviso al descontar cupos en Supabase:', err.message);
+    }
+
+    // 2. Actualizar en almacenamiento local si existe
+    let locales = leerLocal(rutaArchivoProgLocal);
+    const salidaLocal = locales.find((s) => {
+      const matchTour = String(s.tour_id) === tourIdStr || (tourIdInt && String(s.tour_id) === String(tourIdInt));
+      const matchFecha = String(s.fecha || '').split('T')[0].split(' ')[0].trim() === fechaNorm;
+      const matchHora = this.normalizarHora(s.hora_inicio || s.horaInicio) === horaNorm;
       return matchTour && matchFecha && matchHora;
     });
 
-    if (salida) {
-      salida.cupos_disponibles = Math.max(0, (salida.cupos_disponibles || salida.cupos_maximos) - cant);
-      if (salida.cupos_disponibles === 0) {
-        salida.estado = 'Completo';
+    if (salidaLocal) {
+      salidaLocal.cupos_disponibles = Math.max(0, (salidaLocal.cupos_disponibles ?? salidaLocal.cupos_maximos ?? 15) - cant);
+      if (salidaLocal.cupos_disponibles === 0) {
+        salidaLocal.estado = 'Completo';
       }
       guardarLocal(rutaArchivoProgLocal, locales);
-
-      try {
-        await clienteSupabaseAdmin
-          .from('programacion_tours')
-          .update({
-            cupos_disponibles: salida.cupos_disponibles,
-            estado: salida.estado
-          })
-          .eq('id', salida.id);
-      } catch (err) {
-        // Continuar
-      }
     }
   }
 

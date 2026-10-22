@@ -30,8 +30,8 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-  # Service Worker NUNCA debe ser cacheado (permite actualizaciones inmediatas)
-  <FilesMatch "(sw\.js|registerSW\.js)$">
+  # Service Worker e index.html NUNCA deben ser cacheados (permite actualizaciones inmediatas en dispositivos)
+  <FilesMatch "(sw\.js|registerSW\.js|index\.html)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires "0"

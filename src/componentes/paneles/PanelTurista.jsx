@@ -16,7 +16,11 @@ import {
   MessageSquare,
   ShieldCheck,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  MapPin,
+  Info,
+  History,
+  Check
 } from 'lucide-react';
 
 export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
@@ -24,6 +28,7 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
   const [reservas, setReservas] = useState([]);
   const [evaluaciones, setEvaluaciones] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [pestanaActiva, setPestanaActiva] = useState('activas'); // 'activas' | 'historial'
 
   // Modal de evaluación
   const [modalEvaluacionAbierto, setModalEvaluacionAbierto] = useState(false);
@@ -75,6 +80,26 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
       mostrarNotificacion(err.message || 'Error al completar tour.', 'error');
     }
   };
+
+  // Clasificar reservas en Activas/Próximas vs Historial de Realizadas
+  const hoyStr = new Date().toISOString().split('T')[0];
+  const esFechaPasada = (f) => f && f < hoyStr;
+
+  const reservasActivas = reservas.filter((res) => {
+    const evaluacionHecha = mapaEvaluaciones[res.id] || mapaEvaluaciones[res.codigo_reserva];
+    const esCompletada = res.estado === 'completada' || Boolean(evaluacionHecha);
+    const fechaPasada = esFechaPasada(res.fecha_reserva || res.fechaReserva);
+    return !esCompletada && !fechaPasada;
+  });
+
+  const reservasHistorial = reservas.filter((res) => {
+    const evaluacionHecha = mapaEvaluaciones[res.id] || mapaEvaluaciones[res.codigo_reserva];
+    const esCompletada = res.estado === 'completada' || Boolean(evaluacionHecha);
+    const fechaPasada = esFechaPasada(res.fecha_reserva || res.fechaReserva);
+    return esCompletada || fechaPasada;
+  });
+
+  const reservasAMostrar = pestanaActiva === 'activas' ? reservasActivas : reservasHistorial;
 
   return (
     <div style={{ padding: '2.5rem 0 5rem' }}>
@@ -129,7 +154,7 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                 </span>
               </div>
               <p style={{ color: 'var(--texto-secundario)', fontSize: '0.9rem', marginTop: '0.3rem' }}>
-                Gestiona tus reservas, califica de forma separada la experiencia del tour y el desempeño de tus guías en Bogotá.
+                Gestiona tus reservas, consulta el punto de encuentro exacto, revisa tu historial y califica tus experiencias en Bogotá.
               </p>
             </div>
           </div>
@@ -158,19 +183,94 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
           <Cargando mensaje="Cargando tus experiencias y reservas..." />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {/* Listado de Reservas del Turista */}
+            {/* Pestañas de Navegación: Próximas vs Historial de Realizadas */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primario)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Calendar size={20} color="var(--color-dorado)" />
-                  <span>Mis Tours y Reservas</span>
-                </h3>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '1rem',
+                  marginBottom: '1.25rem'
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.5rem', backgroundColor: '#E2E8F0', padding: '4px', borderRadius: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPestanaActiva('activas')}
+                    style={{
+                      padding: '0.55rem 1.1rem',
+                      borderRadius: '9px',
+                      border: 'none',
+                      backgroundColor: pestanaActiva === 'activas' ? '#FFFFFF' : 'transparent',
+                      color: pestanaActiva === 'activas' ? 'var(--color-primario)' : 'var(--texto-secundario)',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      boxShadow: pestanaActiva === 'activas' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <Calendar size={16} />
+                    <span>Tours Próximos y Activos</span>
+                    <span
+                      style={{
+                        backgroundColor: pestanaActiva === 'activas' ? 'var(--color-primario)' : 'rgba(0,0,0,0.1)',
+                        color: pestanaActiva === 'activas' ? '#FFFFFF' : 'inherit',
+                        fontSize: '0.72rem',
+                        padding: '1px 7px',
+                        borderRadius: '10px'
+                      }}
+                    >
+                      {reservasActivas.length}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPestanaActiva('historial')}
+                    style={{
+                      padding: '0.55rem 1.1rem',
+                      borderRadius: '9px',
+                      border: 'none',
+                      backgroundColor: pestanaActiva === 'historial' ? '#FFFFFF' : 'transparent',
+                      color: pestanaActiva === 'historial' ? 'var(--color-primario)' : 'var(--texto-secundario)',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      boxShadow: pestanaActiva === 'historial' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <History size={16} />
+                    <span>Historial de Tours Realizados</span>
+                    <span
+                      style={{
+                        backgroundColor: pestanaActiva === 'historial' ? 'var(--color-primario)' : 'rgba(0,0,0,0.1)',
+                        color: pestanaActiva === 'historial' ? '#FFFFFF' : 'inherit',
+                        fontSize: '0.72rem',
+                        padding: '1px 7px',
+                        borderRadius: '10px'
+                      }}
+                    >
+                      {reservasHistorial.length}
+                    </span>
+                  </button>
+                </div>
+
                 <span style={{ fontSize: '0.84rem', color: 'var(--texto-secundario)' }}>
-                  Total: {reservas.length} reserva{reservas.length === 1 ? '' : 's'}
+                  Total en cuenta: {reservas.length} reserva{reservas.length === 1 ? '' : 's'}
                 </span>
               </div>
 
-              {reservas.length === 0 ? (
+              {reservasAMostrar.length === 0 ? (
                 <div
                   style={{
                     backgroundColor: '#FFFFFF',
@@ -182,10 +282,12 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                 >
                   <Compass size={44} color="var(--color-dorado)" style={{ margin: '0 auto 1rem' }} />
                   <h4 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-primario)', marginBottom: '0.4rem' }}>
-                    Aún no tienes reservas activas
+                    {pestanaActiva === 'activas' ? 'No tienes tours próximos agendados' : 'Aún no registras historial de tours anteriores'}
                   </h4>
                   <p style={{ color: 'var(--texto-secundario)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto 1.5rem' }}>
-                    Explora nuestro catálogo de Bogotá Colonial, Monserrate, Distrito Graffiti o rutas del café y reserva con agencias formales.
+                    {pestanaActiva === 'activas'
+                      ? 'Explora nuestro catálogo de Bogotá Colonial, Monserrate, Distrito Graffiti o rutas del café y reserva con agencias formales.'
+                      : 'Aquí aparecerán todos los recorridos que hayas completado o tomado en fechas anteriores.'}
                   </p>
                   <button onClick={alExplorarTours} className="boton boton-primario">
                     Explorar Paquetes Disponibles
@@ -193,8 +295,9 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  {reservas.map((res) => {
+                  {reservasAMostrar.map((res) => {
                     const evaluacionHecha = mapaEvaluaciones[res.id] || mapaEvaluaciones[res.codigo_reserva];
+                    const fechaPasada = esFechaPasada(res.fecha_reserva || res.fechaReserva);
                     const esCompletada = res.estado === 'completada' || Boolean(evaluacionHecha);
                     const tieneGuia = Boolean(res.id_guia_asignado || res.nombre_guia_asignado);
 
@@ -214,7 +317,7 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
                           <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                               <span
                                 style={{
                                   fontSize: '0.8rem',
@@ -227,11 +330,16 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                               >
                                 {res.codigo_reserva || `#RES-${res.id.slice(0, 6)}`}
                               </span>
-                              <span style={{ fontSize: '0.8rem', color: 'var(--texto-secundario)' }}>
-                                Fecha: {res.fecha_reserva || res.fechaReserva} · {res.hora_reserva || res.horaReserva}
+                              <span style={{ fontSize: '0.82rem', color: 'var(--texto-secundario)', fontWeight: 600 }}>
+                                📅 Fecha: {res.fecha_reserva || res.fechaReserva} · ⏰ {res.hora_reserva || res.horaReserva}
                               </span>
+                              {fechaPasada && !esCompletada && (
+                                <span style={{ fontSize: '0.72rem', backgroundColor: '#FEF3C7', color: '#B45309', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>
+                                  Fecha de tour transcurrida
+                                </span>
+                              )}
                             </div>
-                            <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--texto-principal)', margin: '0.3rem 0 0' }}>
+                            <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--texto-principal)', margin: '0.35rem 0 0' }}>
                               {res.titulo_paquete || res.tituloPaquete || 'Tour Bogotá'}
                             </h4>
                           </div>
@@ -263,7 +371,7 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                         <div
                           style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                             gap: '0.75rem',
                             backgroundColor: 'var(--fondo-principal)',
                             padding: '0.85rem 1rem',
@@ -291,13 +399,73 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
 
                           <div>
                             <span style={{ color: 'var(--texto-atenuado)', display: 'block', fontSize: '0.74rem', textTransform: 'uppercase', fontWeight: 700 }}>
-                              Personas & Valor:
+                              Asistentes & Valor:
                             </span>
                             <span>{res.cantidad_personas || res.cantidadPersonas || 1} personas · ${(res.precio_total || res.precioTotal || 0).toLocaleString('es-CO')}</span>
                           </div>
                         </div>
 
-                        {/* Sección de Calificación */}
+                        {/* Punto Exacto de Encuentro */}
+                        {res.punto_encuentro && (
+                          <div
+                            style={{
+                              backgroundColor: 'rgba(23, 74, 91, 0.05)',
+                              border: '1px solid rgba(23, 74, 91, 0.12)',
+                              borderRadius: '10px',
+                              padding: '0.85rem 1rem',
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: '0.65rem'
+                            }}
+                          >
+                            <MapPin size={18} color="var(--color-primario)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                            <div>
+                              <span style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-primario)', display: 'block', letterSpacing: '0.5px' }}>
+                                Punto Exacto de Encuentro:
+                              </span>
+                              <p style={{ margin: '0.2rem 0 0', fontSize: '0.86rem', color: 'var(--texto-principal)', fontWeight: 600 }}>
+                                {res.punto_encuentro}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Recomendaciones e Inclusiones */}
+                        {(res.recomendaciones || res.que_incluye) && (
+                          <div
+                            style={{
+                              backgroundColor: '#FFFBEB',
+                              border: '1px solid #FDE68A',
+                              borderRadius: '10px',
+                              padding: '0.85rem 1rem',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '0.5rem'
+                            }}
+                          >
+                            {res.recomendaciones && (
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
+                                <Info size={17} color="#D97706" style={{ marginTop: '2px', flexShrink: 0 }} />
+                                <div>
+                                  <span style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: '#B45309', display: 'block' }}>
+                                    Recomendaciones para el Tour:
+                                  </span>
+                                  <p style={{ margin: '0.15rem 0 0', fontSize: '0.83rem', color: '#78350F' }}>
+                                    {res.recomendaciones}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            {res.que_incluye && (
+                              <div style={{ fontSize: '0.8rem', color: '#92400E', borderTop: '1px dashed #FDE68A', paddingTop: '0.4rem', marginTop: '0.2rem' }}>
+                                <strong>Incluye:</strong> {res.que_incluye}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Sección de Calificación y Acciones */}
                         <div
                           style={{
                             borderTop: '1px solid var(--borde-sutil)',
@@ -330,7 +498,11 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                           ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--texto-atenuado)', fontSize: '0.82rem' }}>
                               <Clock size={15} />
-                              <span>La evaluación se habilitará una vez se realice o complete el recorrido.</span>
+                              <span>
+                                {fechaPasada
+                                  ? 'La fecha programada ya pasó. Puedes marcarlo como realizado para calificarlo.'
+                                  : 'Puedes marcar el tour como realizado una vez lo hayas tomado para evaluarlo.'}
+                              </span>
                             </div>
                           )}
 
@@ -346,14 +518,14 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                               </button>
                             )}
 
-                            {!evaluacionHecha && !esCompletada && res.estado === 'confirmada' && (
+                            {!evaluacionHecha && !esCompletada && (
                               <button
                                 onClick={() => manejarCompletarReserva(res.id)}
                                 className="boton boton-contorno boton-pequeno"
-                                style={{ fontSize: '0.78rem' }}
-                                title="Si ya realizaste el tour, márcalo como completado para calificar"
+                                style={{ fontSize: '0.78rem', gap: '0.35rem' }}
+                                title="Si ya tomaste o finalizó este recorrido, márcalo como realizado para calificar"
                               >
-                                <CheckCircle2 size={13} />
+                                <CheckCircle2 size={14} color="var(--color-primario)" />
                                 <span>Marcar como Realizado</span>
                               </button>
                             )}

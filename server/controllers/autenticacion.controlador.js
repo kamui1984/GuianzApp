@@ -4,6 +4,7 @@ const { clienteSupabaseAuth, clienteSupabaseAdmin } = require('../config/supabas
 const { serializarUsuario } = require('../services/serializacion.servicio');
 const { subirArchivo } = require('../services/almacenamiento.servicio');
 const perfilGuiasServicio = require('../services/perfilGuias.servicio');
+const { notificarRegistroAlAdministrador } = require('../services/correo.servicio');
 
 /**
  * Registro para empresas u operadores turísticos (Agencias).
@@ -78,6 +79,15 @@ const registrarAgencia = async (peticion, respuesta) => {
       if (errorPerfil) throw errorPerfil;
 
       const usuario = serializarUsuario(datosAuth.user, perfil);
+
+      // Notificar al administrador por correo sobre nueva solicitud de registro
+      notificarRegistroAlAdministrador({
+        tipo: 'agencia',
+        nombre: nombreAgencia,
+        correo: correoNormalizado,
+        numeroRnt
+      }).catch((e) => console.warn('Aviso notificación admin agencia:', e.message));
+
       return respuesta.status(201).json({
         usuario,
         mensaje: 'Registro recibido. Tu solicitud de agencia ha sido enviada para validación y activación.'
@@ -216,6 +226,15 @@ const registrarGuia = async (peticion, respuesta) => {
       );
 
       const usuario = serializarUsuario(datosAuth.user, perfil);
+
+      // Notificar al administrador por correo sobre nueva solicitud de registro de guía
+      notificarRegistroAlAdministrador({
+        tipo: 'guia',
+        nombre: nombreCompleto,
+        correo: correoNormalizado,
+        numeroRnt: numeroRnt || 'Adjunto para validación'
+      }).catch((e) => console.warn('Aviso notificación admin guía:', e.message));
+
       return respuesta.status(201).json({
         usuario,
         mensaje: 'Registro del guía recibido. La documentación quedará en revisión antes de activar tu perfil.'

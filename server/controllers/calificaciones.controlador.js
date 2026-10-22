@@ -120,7 +120,21 @@ const completarReserva = async (peticion, respuesta) => {
   try {
     const idReserva = peticion.params.id;
     const reservas = leerReservasLocal();
-    const indice = reservas.findIndex((r) => String(r.id) === String(idReserva));
+    let indice = reservas.findIndex((r) => String(r.id) === String(idReserva));
+
+    if (indice === -1) {
+      try {
+        const { data: supaRes } = await clienteSupabaseAdmin
+          .from('reservas')
+          .select('*')
+          .eq('id', idReserva)
+          .maybeSingle();
+        if (supaRes) {
+          reservas.unshift(supaRes);
+          indice = 0;
+        }
+      } catch (e) {}
+    }
 
     if (indice === -1) {
       return respuesta.status(404).json({ error: 'No se encontró la reserva.' });

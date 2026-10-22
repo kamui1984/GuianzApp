@@ -487,7 +487,8 @@ const actualizarPaquete = async (peticion, respuesta) => {
 const obtenerProgramacionTour = async (peticion, respuesta) => {
   try {
     const idPaquete = peticion.params.id;
-    const salidas = await paquetesToursServicio.obtenerProgramacion(idPaquete);
+    const soloVigentes = peticion.query.todas !== 'true';
+    const salidas = await paquetesToursServicio.obtenerProgramacion(idPaquete, soloVigentes);
     return respuesta.json({
       programacion: salidas,
       salidas

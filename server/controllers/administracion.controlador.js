@@ -8,6 +8,17 @@ const auditoriaServicio = require('../services/auditoria.servicio');
 const reportesServicio = require('../services/reportes.servicio');
 const especialidadesServicio = require('../services/especialidades.servicio');
 const { leerReservasLocal } = require('../services/reservas.servicio');
+const { notificarOperadorAccionAdmin } = require('../services/correo.servicio');
+
+const obtenerCorreoUsuario = async (userId) => {
+  try {
+    const { data: usuarioAuth } = await clienteSupabaseAdmin.auth.admin.getUserById(userId);
+    return usuarioAuth?.user?.email || null;
+  } catch (e) {
+    return null;
+  }
+};
+
 
 /**
  * 1. Resumen ejecutivo de indicadores de la plataforma y tareas pendientes
@@ -226,6 +237,19 @@ const aprobarPerfil = async (peticion, respuesta) => {
     });
 
     const perfilSerializado = serializarUsuario({ id: data.id, email: '' }, data);
+
+    // Notificar al prestador por correo electrónico
+    obtenerCorreoUsuario(idObjetivo).then((correoOperador) => {
+      if (correoOperador) {
+        notificarOperadorAccionAdmin({
+          correo: correoOperador,
+          nombre: nombrePrestador,
+          rol: data.rol,
+          accion: 'aprobado'
+        }).catch((e) => console.warn('Aviso correo operador aprobado:', e.message));
+      }
+    });
+
     return respuesta.json({
       perfil: perfilSerializado,
       profile: perfilSerializado,
@@ -281,6 +305,20 @@ const rechazarPerfil = async (peticion, respuesta) => {
     });
 
     const perfilSerializado = serializarUsuario({ id: data.id, email: '' }, data);
+
+    // Notificar al prestador por correo electrónico
+    obtenerCorreoUsuario(idObjetivo).then((correoOperador) => {
+      if (correoOperador) {
+        notificarOperadorAccionAdmin({
+          correo: correoOperador,
+          nombre: nombrePrestador,
+          rol: data.rol,
+          accion: 'rechazado',
+          motivo: motivoRechazo
+        }).catch((e) => console.warn('Aviso correo operador rechazado:', e.message));
+      }
+    });
+
     return respuesta.json({
       perfil: perfilSerializado,
       profile: perfilSerializado,
@@ -326,6 +364,19 @@ const solicitarCorreccionesPerfil = async (peticion, respuesta) => {
       entidadNombre: nombrePrestador,
       motivo: observaciones,
       detalles: { rol: data.rol }
+    });
+
+    // Notificar al prestador por correo electrónico
+    obtenerCorreoUsuario(idObjetivo).then((correoOperador) => {
+      if (correoOperador) {
+        notificarOperadorAccionAdmin({
+          correo: correoOperador,
+          nombre: nombrePrestador,
+          rol: data.rol,
+          accion: 'solicitud_correccion',
+          motivo: observaciones
+        }).catch((e) => console.warn('Aviso correo operador correcciones:', e.message));
+      }
     });
 
     return respuesta.json({
@@ -380,6 +431,19 @@ const suspenderPerfil = async (peticion, respuesta) => {
       detalles: { rol: data.rol }
     });
 
+    // Notificar al prestador por correo electrónico
+    obtenerCorreoUsuario(idObjetivo).then((correoOperador) => {
+      if (correoOperador) {
+        notificarOperadorAccionAdmin({
+          correo: correoOperador,
+          nombre: nombrePrestador,
+          rol: data.rol,
+          accion: 'suspendido',
+          motivo: motivoSuspension
+        }).catch((e) => console.warn('Aviso correo operador suspendido:', e.message));
+      }
+    });
+
     return respuesta.json({
       mensaje: `El perfil de "${nombrePrestador}" ha sido suspendido justificadamente.`
     });
@@ -430,6 +494,19 @@ const reactivarPerfil = async (peticion, respuesta) => {
       entidadNombre: nombrePrestador,
       motivo: motivoReactivacion,
       detalles: { rol: data.rol }
+    });
+
+    // Notificar al prestador por correo electrónico
+    obtenerCorreoUsuario(idObjetivo).then((correoOperador) => {
+      if (correoOperador) {
+        notificarOperadorAccionAdmin({
+          correo: correoOperador,
+          nombre: nombrePrestador,
+          rol: data.rol,
+          accion: 'reactivado',
+          motivo: motivoReactivacion
+        }).catch((e) => console.warn('Aviso correo operador reactivado:', e.message));
+      }
     });
 
     return respuesta.json({
@@ -554,6 +631,21 @@ const cambiarEstadoUsuario = async (peticion, respuesta) => {
       motivo: justificacion,
       detalles: { rol: data.rol, nuevoEstado: estadoDb }
     });
+
+    if (data.rol === 'agencia' || data.rol === 'guia') {
+      obtenerCorreoUsuario(idObjetivo).then((correoOperador) => {
+        if (correoOperador) {
+          const accion = estadoDb === 'bloqueado' ? 'suspendido' : 'reactivado';
+          notificarOperadorAccionAdmin({
+            correo: correoOperador,
+            nombre: nombreUsuario,
+            rol: data.rol,
+            accion,
+            motivo: justificacion
+          }).catch((e) => console.warn('Aviso correo cambiar estado usuario:', e.message));
+        }
+      });
+    }
 
     return respuesta.json({
       mensaje: `Cuenta de "${nombreUsuario}" actualizada a estado "${estadoDb}" justificadamente.`

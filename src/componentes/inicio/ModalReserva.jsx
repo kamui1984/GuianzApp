@@ -22,6 +22,40 @@ import {
 import { useAutenticacion } from '../../contextos/ContextoAutenticacion';
 import { servicioPaquetes } from '../../api/paquetesServicio';
 
+/**
+ * Helper para validar si una fecha y hora están vigentes respecto a la hora local
+ */
+const esSalidaVigente = (fechaStr, horaStr) => {
+  if (!fechaStr) return false;
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+  const dia = String(hoy.getDate()).padStart(2, '0');
+  const hoyStr = `${anio}-${mes}-${dia}`;
+
+  if (fechaStr < hoyStr) return false;
+  if (fechaStr > hoyStr) return true;
+
+  if (!horaStr) return false;
+  const horasAct = hoy.getHours();
+  const minsAct = hoy.getMinutes();
+
+  let h = 0;
+  let m = 0;
+  const str = String(horaStr).trim().toLowerCase();
+  const esPM = str.includes('pm') || str.includes('p.m.');
+  const esAM = str.includes('am') || str.includes('a.m.');
+  const nums = str.replace(/[^0-9:]/g, '').split(':');
+  h = parseInt(nums[0] || '0', 10);
+  m = parseInt(nums[1] || '0', 10);
+  if (esPM && h < 12) h += 12;
+  if (esAM && h === 12) h = 0;
+
+  if (h > horasAct) return true;
+  if (h === horasAct && m > minsAct) return true;
+  return false;
+};
+
 export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
   const { usuarioActual, mostrarNotificacion } = useAutenticacion();
   const [salidasProgramadas, setSalidasProgramadas] = useState([]);
@@ -54,10 +88,12 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
       try {
         // Consultar programación fresca para reflejar los horarios y cupos reales definidos por la agencia
         const salidas = await servicioPaquetes.obtenerProgramacion(paquete.id);
-        const salidasValidas = (salidas || []).filter((s) => !String(s.id || '').startsWith('def-'));
+        const salidasValidas = (salidas || [])
+          .filter((s) => !String(s.id || '').startsWith('def-'))
+          .filter((s) => esSalidaVigente(s.fecha, s.horaInicio || s.hora_inicio));
         setSalidasProgramadas(salidasValidas);
 
-        // Seleccionar automáticamente la primera fecha con disponibilidad
+        // Seleccionar automáticamente la primera fecha vigente con disponibilidad
         const primeraConCupos = salidasValidas.find(
           (s) => (s.cuposDisponibles ?? s.cupos_disponibles ?? s.cuposMaximos) > 0 && s.estado !== 'Completo'
         );
@@ -82,25 +118,30 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
     cargarHorarios();
   }, [paquete, abierto]);
 
-  // Mapa de fechas que tienen salidas programadas (declarado al nivel superior)
+  // Mapa de fechas que tienen salidas programadas vigentes
   const mapaFechasSalidas = useMemo(() => {
     const mapa = {};
     (salidasProgramadas || []).forEach((s) => {
-      if (!mapa[s.fecha]) mapa[s.fecha] = [];
-      mapa[s.fecha].push(s);
+      const hStr = s.horaInicio || s.hora_inicio;
+      if (esSalidaVigente(s.fecha, hStr)) {
+        if (!mapa[s.fecha]) mapa[s.fecha] = [];
+        mapa[s.fecha].push(s);
+      }
     });
     return mapa;
   }, [salidasProgramadas]);
 
-  // Salidas del día actualmente seleccionado en el calendario
+  // Salidas vigentes del día actualmente seleccionado en el calendario
   const salidasDelDiaSeleccionado = useMemo(() => {
     if (!fechaReserva) return [];
-    return mapaFechasSalidas[fechaReserva] || [];
+    return (mapaFechasSalidas[fechaReserva] || []).filter((s) =>
+      esSalidaVigente(s.fecha, s.horaInicio || s.hora_inicio)
+    );
   }, [fechaReserva, mapaFechasSalidas]);
 
   if (!paquete) return null;
 
-  const totalCalculado = (paquete.precio || 0) * cantidadPersonas;
+  const totalCalculado = (paquete.precio || 0) * (Number(cantidadPersonas) || 1);
 
   const formatearPrecio = (valor) => {
     return new Intl.NumberFormat('es-CO', {
@@ -197,7 +238,7 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
         telefonoContacto,
         fechaReserva,
         horaReserva,
-        cantidadPersonas,
+        cantidadPersonas: Number(cantidadPersonas) || 1,
         precioTotal: totalCalculado,
         duracion: paquete.duracion || '3.5 horas',
         tituloPaquete: paquete.titulo,
@@ -468,9 +509,15 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
                     return <div key={`vacio-${idx}`} style={{ height: '36px' }} />;
                   }
 
-                  const tieneSalidas = Boolean(mapaFechasSalidas[celda.fechaStr]);
+                  const hoy = new Date();
+                  const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+                  const esPasada = celda.fechaStr < hoyStr;
+
+                  const salidasDia = (mapaFechasSalidas[celda.fechaStr] || []).filter((s) =>
+                    esSalidaVigente(s.fecha, s.horaInicio || s.hora_inicio)
+                  );
+                  const tieneSalidas = !esPasada && salidasDia.length > 0;
                   const esSeleccionado = fechaReserva === celda.fechaStr;
-                  const salidasDia = mapaFechasSalidas[celda.fechaStr] || [];
                   const hayCupos = salidasDia.some(
                     (s) => (s.cuposDisponibles ?? s.cupos_disponibles ?? s.cuposMaximos) > 0 && s.estado !== 'Completo'
                   );
@@ -479,8 +526,9 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
                     <button
                       key={celda.fechaStr}
                       type="button"
-                      disabled={!tieneSalidas}
+                      disabled={!tieneSalidas || !hayCupos}
                       onClick={() => seleccionarDia(celda.fechaStr)}
+                      title={esPasada ? 'Fecha no disponible (ha pasado)' : !tieneSalidas ? 'Sin salidas programadas' : !hayCupos ? 'Cupos agotados' : 'Salidas disponibles'}
                       style={{
                         height: '38px',
                         borderRadius: '8px',
@@ -499,16 +547,17 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
                           : tieneSalidas
                           ? 'var(--texto-principal)'
                           : 'rgba(0,0,0,0.25)',
-                        cursor: tieneSalidas ? 'pointer' : 'not-allowed',
+                        cursor: tieneSalidas && hayCupos ? 'pointer' : 'not-allowed',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         position: 'relative',
-                        transition: 'all 0.15s ease'
+                        transition: 'all 0.15s ease',
+                        opacity: esPasada ? 0.35 : 1
                       }}
                     >
-                      <span style={{ fontSize: '0.84rem', fontWeight: tieneSalidas ? 700 : 400 }}>{celda.dia}</span>
+                      <span style={{ fontSize: '0.84rem', fontWeight: tieneSalidas ? 700 : 400, textDecoration: esPasada ? 'line-through' : 'none' }}>{celda.dia}</span>
                       {tieneSalidas && (
                         <div
                           style={{
@@ -615,7 +664,24 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
                 min={1}
                 max={salidaSeleccionada ? Math.min(20, salidaSeleccionada.cuposDisponibles ?? salidaSeleccionada.cupos_disponibles ?? 20) : 20}
                 value={cantidadPersonas}
-                onChange={(e) => setCantidadPersonas(Math.max(1, parseInt(e.target.value) || 1))}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '') {
+                    setCantidadPersonas('');
+                    return;
+                  }
+                  const num = parseInt(val, 10);
+                  if (!isNaN(num)) {
+                    const maxPermitido = salidaSeleccionada ? Math.min(20, salidaSeleccionada.cuposDisponibles ?? salidaSeleccionada.cupos_disponibles ?? 20) : 20;
+                    setCantidadPersonas(Math.max(1, Math.min(maxPermitido, num)));
+                  }
+                }}
+                onBlur={() => {
+                  if (!cantidadPersonas || Number(cantidadPersonas) < 1) {
+                    setCantidadPersonas(1);
+                  }
+                }}
+                placeholder="1"
                 className="campo-formulario"
               />
             </div>

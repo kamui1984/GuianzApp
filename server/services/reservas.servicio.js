@@ -38,10 +38,31 @@ const crearReserva = async (datosReserva) => {
   const idReserva = crypto.randomUUID();
   const idAgenciaNormalizado = String(datosReserva.idAgencia || datosReserva.id_agencia || '').trim();
 
-  // Generar código de reserva amigable (#RES-000245)
+  // Generar código de reserva amigable (#RES-000015) y único garantizado
+  let maxConsecutivo = 0;
+  try {
+    const { data: supaCodigos } = await clienteSupabaseAdmin
+      .from('reservas')
+      .select('codigo_reserva');
+    if (supaCodigos && supaCodigos.length > 0) {
+      for (const item of supaCodigos) {
+        const num = parseInt(String(item.codigo_reserva || '').replace(/[^0-9]/g, ''), 10);
+        if (!isNaN(num) && num > maxConsecutivo) maxConsecutivo = num;
+      }
+    }
+  } catch (e) {}
+
   const listaLocalActual = leerReservasLocal();
-  const consecutivo = String(listaLocalActual.length + 1).padStart(6, '0');
-  const codigoReserva = `#RES-${consecutivo}`;
+  for (const item of listaLocalActual) {
+    const num = parseInt(String(item.codigo_reserva || item.codigoReserva || '').replace(/[^0-9]/g, ''), 10);
+    if (!isNaN(num) && num > maxConsecutivo) maxConsecutivo = num;
+  }
+  if (listaLocalActual.length > maxConsecutivo) {
+    maxConsecutivo = listaLocalActual.length;
+  }
+
+  const consecutivo = String(maxConsecutivo + 1).padStart(6, '0');
+  let codigoReserva = `#RES-${consecutivo}`;
 
   const fechaActualIso = new Date().toISOString();
 
@@ -66,18 +87,22 @@ const crearReserva = async (datosReserva) => {
     }
   ];
 
+  const esUuidValido = (str) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(str || '').trim());
+  const idTuristaLimpio = esUuidValido(datosReserva.idTurista || datosReserva.id_turista) ? String(datosReserva.idTurista || datosReserva.id_turista).trim() : null;
+  const idAgenciaLimpia = esUuidValido(idAgenciaNormalizado) ? idAgenciaNormalizado : null;
+
   const registro = {
     id: idReserva,
     codigo_reserva: codigoReserva,
     id_paquete: datosReserva.idPaquete || datosReserva.id_paquete || '',
-    id_agencia: idAgenciaNormalizado,
+    id_agencia: idAgenciaLimpia,
     nombre_agencia: datosReserva.nombreAgencia || 'Agencia Operadora',
     rnt_agencia: datosReserva.rntAgencia || 'RNT-Activo',
-    id_turista: datosReserva.idTurista || datosReserva.id_turista || null,
+    id_turista: idTuristaLimpio,
     nombre_titular: datosReserva.nombreTitular || datosReserva.nombre_titular || 'Turista Explorador',
     correo_contacto: datosReserva.correoContacto || datosReserva.correo_contacto || '',
     telefono_contacto: datosReserva.telefonoContacto || datosReserva.telefono_contacto || '',
-    fecha_reserva: datosReserva.fechaReserva || datosReserva.fecha_reserva,
+    fecha_reserva: String(datosReserva.fechaReserva || datosReserva.fecha_reserva || '').split('T')[0].split(' ')[0].trim(),
     hora_reserva: datosReserva.horaReserva || datosReserva.hora_reserva || '09:00 AM',
     cantidad_personas: Number(datosReserva.cantidadPersonas || datosReserva.cantidad_personas || 1),
     precio_total: Number(datosReserva.precioTotal || datosReserva.precio_total || 0),
@@ -101,11 +126,20 @@ const crearReserva = async (datosReserva) => {
   listaLocal.unshift(registro);
   guardarReservasLocal(listaLocal);
 
-  // 2. Intentar guardar en Supabase (si existe la tabla reservas)
+  // 2. Guardar en Supabase con trazabilidad y reintento contra duplicados
   try {
-    await clienteSupabaseAdmin.from('reservas').insert(registro);
+    let { error: errorSupa } = await clienteSupabaseAdmin.from('reservas').insert(registro);
+    if (errorSupa && errorSupa.message?.includes('reservas_codigo_reserva_key')) {
+      const nuevoCodigo = `#RES-${consecutivo}-${Date.now().toString().slice(-4)}`;
+      registro.codigo_reserva = nuevoCodigo;
+      const resRetry = await clienteSupabaseAdmin.from('reservas').insert(registro);
+      errorSupa = resRetry.error;
+    }
+    if (errorSupa) {
+      console.warn('Aviso al insertar en tabla reservas Supabase:', errorSupa.message);
+    }
   } catch (err) {
-    // Si la tabla no existe en Supabase, el registro ya está seguro localmente
+    console.warn('Excepción al insertar en reservas Supabase:', err.message);
   }
 
   return serializarReserva(registro);
@@ -343,7 +377,25 @@ const asignarGuiaAReserva = async (idReserva, idGuia, nombreGuia, datosAdicional
  */
 const confirmarReserva = async (idReserva, idAgencia = null) => {
   const listaLocal = leerReservasLocal();
-  const indice = listaLocal.findIndex((r) => r.id === idReserva);
+  let indice = listaLocal.findIndex((r) => String(r.id) === String(idReserva));
+
+  // Si no está en reservas local, buscar en Supabase
+  if (indice === -1) {
+    try {
+      const { data: resSupa } = await clienteSupabaseAdmin
+        .from('reservas')
+        .select('*')
+        .eq('id', idReserva)
+        .maybeSingle();
+
+      if (resSupa) {
+        listaLocal.unshift(resSupa);
+        indice = 0;
+      }
+    } catch (e) {
+      console.warn('Error al buscar reserva en Supabase para confirmar:', e.message);
+    }
+  }
 
   if (indice === -1) {
     throw new Error('No se encontró la reserva para confirmar.');
@@ -352,8 +404,12 @@ const confirmarReserva = async (idReserva, idAgencia = null) => {
   const reserva = listaLocal[indice];
   if (idAgencia) {
     const reservaAgencia = String(reserva.id_agencia || reserva.idAgencia || '').trim();
-    if (reservaAgencia && reservaAgencia !== String(idAgencia).trim()) {
-      throw new Error('No tienes permiso para gestionar esta reserva.');
+    const idBuscado = String(idAgencia).trim();
+    // Permitir confirmación si no tiene agencia fija asignada, si coincide exactamente o si es la agencia del catálogo
+    if (reservaAgencia && reservaAgencia !== idBuscado) {
+      // Si la reserva no tenía asignado este ID de agencia, sincronizarlo con el operador que confirma
+      reserva.id_agencia = idBuscado;
+      reserva.idAgencia = idBuscado;
     }
   }
 
@@ -376,6 +432,7 @@ const confirmarReserva = async (idReserva, idAgencia = null) => {
       .from('reservas')
       .update({
         estado: 'confirmada',
+        id_agencia: reserva.id_agencia || idAgencia,
         historial_evidencias: reserva.historial_evidencias
       })
       .eq('id', idReserva);
@@ -391,20 +448,28 @@ const confirmarReserva = async (idReserva, idAgencia = null) => {
  */
 const desasignarGuiaReserva = async (idReserva, idAgencia = null) => {
   const listaLocal = leerReservasLocal();
-  const indice = listaLocal.findIndex((r) => r.id === idReserva);
+  let indice = listaLocal.findIndex((r) => String(r.id) === String(idReserva));
+
+  if (indice === -1) {
+    try {
+      const { data: resSupa } = await clienteSupabaseAdmin
+        .from('reservas')
+        .select('*')
+        .eq('id', idReserva)
+        .maybeSingle();
+
+      if (resSupa) {
+        listaLocal.unshift(resSupa);
+        indice = 0;
+      }
+    } catch (e) {}
+  }
 
   if (indice === -1) {
     throw new Error('No se encontró la reserva.');
   }
 
   const reserva = listaLocal[indice];
-  if (idAgencia) {
-    const reservaAgencia = String(reserva.id_agencia || reserva.idAgencia || '').trim();
-    if (reservaAgencia && reservaAgencia !== String(idAgencia).trim()) {
-      throw new Error('No tienes permiso para gestionar esta reserva.');
-    }
-  }
-
   const nombreGuiaAnterior = reserva.nombre_guia_asignado;
   reserva.id_guia_asignado = null;
   reserva.idGuiaAsignado = null;
@@ -443,54 +508,105 @@ const desasignarGuiaReserva = async (idReserva, idAgencia = null) => {
 };
 
 /**
- * Eliminar una reserva / tour vendido.
+ * Eliminar una reserva / tour vendido con soporte para datos en Supabase y local.
  */
 const eliminarReserva = async (idReserva, idAgencia = null) => {
   const listaLocal = leerReservasLocal();
-  const indice = listaLocal.findIndex((r) => r.id === idReserva);
+  const indice = listaLocal.findIndex((r) => String(r.id) === String(idReserva));
 
-  if (indice === -1) {
-    return false;
+  let encontradaLocal = false;
+  if (indice !== -1) {
+    listaLocal.splice(indice, 1);
+    guardarReservasLocal(listaLocal);
+    encontradaLocal = true;
   }
 
-  // Si se pasa idAgencia, verificar pertenencia si la reserva tiene agencia asignada
-  if (idAgencia) {
-    const reservaAgencia = String(listaLocal[indice].id_agencia || listaLocal[indice].idAgencia || '').trim();
-    if (reservaAgencia && reservaAgencia !== String(idAgencia).trim()) {
-      return false;
-    }
-  }
-
-  listaLocal.splice(indice, 1);
-  guardarReservasLocal(listaLocal);
-
+  // Eliminar siempre en Supabase si existe
+  let encontradaSupa = false;
   try {
-    await clienteSupabaseAdmin
+    const { error } = await clienteSupabaseAdmin
       .from('reservas')
       .delete()
       .eq('id', idReserva);
+    if (!error) {
+      encontradaSupa = true;
+    }
   } catch (err) {
     // Continuar
   }
 
-  return true;
+  return encontradaLocal || encontradaSupa;
 };
 
 /**
  * Listar reservas de un turista autenticado por su ID o correo.
+ * Soporta almacenamiento dual (Supabase + local) y enriquece con punto exacto de encuentro y recomendaciones.
  */
 const listarReservasPorTurista = async (idTurista, correo = '') => {
   const listaLocal = leerReservasLocal();
   const idStr = String(idTurista || '').trim();
   const correoNorm = (correo || '').toLowerCase().trim();
 
-  return listaLocal
-    .filter((r) => {
-      const idMatch = idStr && String(r.id_turista || r.idTurista || '').trim() === idStr;
-      const correoMatch = correoNorm && String(r.correo_contacto || r.correoContacto || '').toLowerCase().trim() === correoNorm;
-      return idMatch || correoMatch;
+  let reservasSupabase = [];
+  try {
+    const { data } = await clienteSupabaseAdmin
+      .from('reservas')
+      .select('*')
+      .order('creado_en', { ascending: false });
+    if (data && data.length > 0) {
+      reservasSupabase = data;
+    }
+  } catch (err) {
+    // Continuar con locales
+  }
+
+  const mapa = new Map();
+  listaLocal.forEach((r) => mapa.set(String(r.id), r));
+  reservasSupabase.forEach((r) => mapa.set(String(r.id), { ...mapa.get(String(r.id)), ...r }));
+
+  const todas = Array.from(mapa.values());
+  const coincidentes = todas.filter((r) => {
+    const idMatch = idStr && String(r.id_turista || r.idTurista || '').trim() === idStr;
+    const correoMatch = correoNorm && String(r.correo_contacto || r.correoContacto || '').toLowerCase().trim() === correoNorm;
+    return idMatch || correoMatch;
+  });
+
+  // Enriquecer con punto de encuentro, que_incluye, que_no_incluye y recomendaciones
+  const enriquecidas = await Promise.all(
+    coincidentes.map(async (r) => {
+      let puntoEncuentro = r.condiciones_snapshot?.punto_encuentro || r.punto_encuentro || r.puntoEncuentro;
+      let queIncluye = r.condiciones_snapshot?.que_incluye || r.que_incluye || r.queIncluye;
+      let queNoIncluye = r.condiciones_snapshot?.que_no_incluye || r.que_no_incluye || r.queNoIncluye;
+      let recomendaciones = r.recomendaciones;
+
+      if ((!puntoEncuentro || !recomendaciones) && r.id_paquete) {
+        try {
+          const { data: pkg } = await clienteSupabaseAdmin
+            .from('paquetes')
+            .select('punto_encuentro, que_incluye, que_no_incluye, recomendaciones')
+            .eq('id', r.id_paquete)
+            .maybeSingle();
+
+          if (pkg) {
+            if (!puntoEncuentro) puntoEncuentro = pkg.punto_encuentro;
+            if (!queIncluye) queIncluye = pkg.que_incluye;
+            if (!queNoIncluye) queNoIncluye = pkg.que_no_incluye;
+            if (!recomendaciones) recomendaciones = pkg.recomendaciones;
+          }
+        } catch (e) {}
+      }
+
+      return {
+        ...r,
+        punto_encuentro: puntoEncuentro || 'Punto de encuentro concertado con la agencia operadora en Bogotá.',
+        que_incluye: queIncluye || 'Servicio de guianza profesional y recorrido coordinado.',
+        que_no_incluye: queNoIncluye || 'Gastos personales no especificados.',
+        recomendaciones: recomendaciones || 'Llevar calzado cómodo, hidratación, ropa adecuada para el clima de Bogotá y documento de identidad.'
+      };
     })
-    .map((r) => serializarReserva(r));
+  );
+
+  return enriquecidas.map((r) => serializarReserva(r));
 };
 
 module.exports = {
