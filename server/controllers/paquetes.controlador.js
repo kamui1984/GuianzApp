@@ -14,6 +14,7 @@ const {
 } = require('../services/reservas.servicio');
 const paquetesToursServicio = require('../services/paquetesTours.servicio');
 const perfilGuiasServicio = require('../services/perfilGuias.servicio');
+const calificacionesServicio = require('../services/calificaciones.servicio');
 
 /**
  * Explorar todos los paquetes turísticos para la Landing / Catálogo público.
@@ -52,12 +53,23 @@ const explorarPaquetes = async (peticion, respuesta) => {
       const nombreAgencia = agencia?.nombre_agencia || agencia?.nombre_completo || base.nombreAgencia || 'Agencia Operadora';
       const numeroRnt = agencia?.numero_rnt || base.numeroRnt || 'Validado';
 
+      let rankingTour = { promedio: 0, totalEvaluaciones: 0 };
+      try {
+        rankingTour = await calificacionesServicio.obtenerRankingTour(paquete.id, paquete.titulo);
+      } catch (errRanking) {}
+
+      const totalEvaluaciones = rankingTour?.totalEvaluaciones || 0;
+      const calificacionPromedio = totalEvaluaciones > 0 ? rankingTour.promedio : null;
+
       return {
         ...base,
         nombreAgencia,
         agencyName: nombreAgencia,
         numeroRnt,
-        rntNumber: numeroRnt
+        rntNumber: numeroRnt,
+        calificacionPromedio,
+        totalEvaluaciones,
+        rankingTour
       };
     }));
 

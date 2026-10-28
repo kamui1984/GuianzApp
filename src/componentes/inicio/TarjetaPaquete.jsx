@@ -57,28 +57,53 @@ export const TarjetaPaquete = ({ paquete, alVerDetalles, alReservar, indice = 0 
         </div>
 
         {/* Ranking del Tour */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '12px',
-            right: '12px',
-            backgroundColor: 'rgba(23, 74, 91, 0.92)',
-            backdropFilter: 'blur(8px)',
-            color: '#FFFFFF',
-            padding: '0.25rem 0.65rem',
-            borderRadius: '8px',
-            fontSize: '0.78rem',
-            fontWeight: 800,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-          }}
-          title="Ranking de la experiencia del tour"
-        >
-          <Star size={13} color="#C6A15B" fill="#C6A15B" />
-          <span>Tour {paquete.calificacionPromedio || '4.8'}</span>
-        </div>
+        {paquete.totalEvaluaciones > 0 && paquete.calificacionPromedio ? (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '12px',
+              right: '12px',
+              backgroundColor: 'rgba(23, 74, 91, 0.92)',
+              backdropFilter: 'blur(8px)',
+              color: '#FFFFFF',
+              padding: '0.25rem 0.65rem',
+              borderRadius: '8px',
+              fontSize: '0.78rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+            }}
+            title={`Calificación promedio del tour: ${Number(paquete.calificacionPromedio).toFixed(1)}/5 (${paquete.totalEvaluaciones} opiniones)`}
+          >
+            <Star size={13} color="#C6A15B" fill="#C6A15B" />
+            <span>Tour {Number(paquete.calificacionPromedio).toFixed(1)} ({paquete.totalEvaluaciones})</span>
+          </div>
+        ) : (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '12px',
+              right: '12px',
+              backgroundColor: 'rgba(23, 74, 91, 0.82)',
+              backdropFilter: 'blur(8px)',
+              color: '#FFFFFF',
+              padding: '0.25rem 0.65rem',
+              borderRadius: '8px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+            }}
+            title="Aún no registra calificaciones de viajeros"
+          >
+            <Star size={12} color="#C6A15B" />
+            <span>Nuevo</span>
+          </div>
+        )}
       </div>
 
       {/* Contenido de la Tarjeta */}

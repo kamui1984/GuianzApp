@@ -260,13 +260,17 @@ class CalificacionesServicio {
   /**
    * Obtener ranking separado y reseñas de un Tour específico
    */
-  async obtenerRankingTour(idPaquete) {
+  async obtenerRankingTour(idPaquete, tituloPaquete = null) {
     const lista = leerEvaluacionesLocal();
-    const idStr = String(idPaquete).trim();
+    const idStr = String(idPaquete || '').trim();
+    const tituloNorm = tituloPaquete ? String(tituloPaquete).trim().toLowerCase() : '';
 
-    const deEsteTour = lista.filter(
-      (ev) => String(ev.id_paquete).trim() === idStr && ev.estado_moderacion === 'visible'
-    );
+    const deEsteTour = lista.filter((ev) => {
+      if (ev.estado_moderacion !== 'visible') return false;
+      if (idStr && String(ev.id_paquete).trim() === idStr) return true;
+      if (tituloNorm && ev.titulo_paquete && String(ev.titulo_paquete).trim().toLowerCase() === tituloNorm) return true;
+      return false;
+    });
 
     const total = deEsteTour.length;
     if (total === 0) {

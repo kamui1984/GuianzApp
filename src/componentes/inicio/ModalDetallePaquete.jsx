@@ -108,8 +108,8 @@ export const ModalDetallePaquete = ({ paquete, abierto, alCerrar, alReservar }) 
           {/* Ranking del Tour Independiente */}
           <div>
             <InsigniaRanking
-              promedio={rankingTour?.promedio || 4.8}
-              totalEvaluaciones={rankingTour?.totalEvaluaciones || 0}
+              promedio={rankingTour?.promedio || paquete.calificacionPromedio || 0}
+              totalEvaluaciones={rankingTour?.totalEvaluaciones || paquete.totalEvaluaciones || 0}
               tipo="tour"
               variante="tarjeta"
             />

@@ -29,6 +29,32 @@ export const eliminarTokenAutenticacion = () => {
 };
 
 /**
+ * Determina la URL base adecuada según el entorno de ejecución:
+ * - En desarrollo local (localhost / 127.0.0.1 con Vite dev server), usa http://localhost:3000
+ * - Si la aplicación está desplegada en el mismo host de Render, usa rutas relativas ''
+ * - En producción externa (Hostinger, navegador web, PWA móvil), apunta a la API segura HTTPS de Render
+ */
+export const obtenerUrlBaseApi = () => {
+  if (typeof window !== 'undefined') {
+    const { hostname, origin } = window.location;
+
+    // Solo usar localhost si estamos en desarrollo local explícito (HMR de Vite)
+    const esLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+    if (esLocal && import.meta.env.DEV) {
+      return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    }
+
+    // Si la SPA se sirve desde el mismo origen de Render
+    if (origin && origin.includes('onrender.com')) {
+      return '';
+    }
+  }
+
+  // En producción (despliegue en Hostinger, hosting estático, etc.)
+  return 'https://guianzapp.onrender.com';
+};
+
+/**
  * Cliente HTTP unificado para realizar peticiones a la API REST.
  * @param {string} ruta - Endpoint relativo (ej: '/api/paquetes/explorar')
  * @param {object} opciones - Opciones de fetch (method, headers, body, etc.)
@@ -47,7 +73,7 @@ export const solicitarApi = async (ruta, opciones = {}) => {
   }
 
   try {
-    const urlBase = import.meta.env.VITE_API_URL || 'https://guianzapp.onrender.com';
+    const urlBase = obtenerUrlBaseApi();
     const urlDestino = ruta.startsWith('http') ? ruta : `${urlBase}${ruta}`;
 
     const respuesta = await fetch(urlDestino, {
