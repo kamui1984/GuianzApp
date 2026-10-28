@@ -81,22 +81,54 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
     }
   };
 
-  // Clasificar reservas en Activas/Próximas vs Historial de Realizadas
-  const hoyStr = new Date().toISOString().split('T')[0];
-  const esFechaPasada = (f) => f && f < hoyStr;
+  // Helper para verificar si la fecha y hora programada del tour ya transcurrió
+  const esTourTranscurrido = (res) => {
+    if (!res) return false;
+    const f = res.fecha_reserva || res.fechaReserva;
+    if (!f) return false;
+
+    const ahora = new Date();
+    const hoyStr = ahora.toISOString().split('T')[0];
+    if (f < hoyStr) return true;
+    if (f > hoyStr) return false;
+
+    // Si la fecha es exactamente HOY, verificar hora y duración estimada
+    const horaStr = (res.hora_reserva || res.horaReserva || '').trim().toUpperCase();
+    if (!horaStr) return true;
+
+    try {
+      let [tiempo, modificador] = horaStr.split(/\s+/);
+      let [horas, minutos] = (tiempo || '00:00').split(':').map(Number);
+      if (modificador === 'PM' && horas < 12) horas += 12;
+      if (modificador === 'AM' && horas === 12) horas = 0;
+
+      let duracionHoras = 2.5;
+      const durStr = String(res.duracion || '');
+      const match = durStr.match(/([0-9]+(\.[0-9]+)?)/);
+      if (match) duracionHoras = parseFloat(match[1]);
+
+      const fechaHoraFin = new Date();
+      fechaHoraFin.setHours(horas, minutos || 0, 0, 0);
+      fechaHoraFin.setTime(fechaHoraFin.getTime() + duracionHoras * 60 * 60 * 1000);
+
+      return ahora >= fechaHoraFin;
+    } catch {
+      return true;
+    }
+  };
 
   const reservasActivas = reservas.filter((res) => {
     const evaluacionHecha = mapaEvaluaciones[res.id] || mapaEvaluaciones[res.codigo_reserva];
     const esCompletada = res.estado === 'completada' || Boolean(evaluacionHecha);
-    const fechaPasada = esFechaPasada(res.fecha_reserva || res.fechaReserva);
-    return !esCompletada && !fechaPasada;
+    const transcurrido = esTourTranscurrido(res);
+    return !esCompletada && !transcurrido;
   });
 
   const reservasHistorial = reservas.filter((res) => {
     const evaluacionHecha = mapaEvaluaciones[res.id] || mapaEvaluaciones[res.codigo_reserva];
     const esCompletada = res.estado === 'completada' || Boolean(evaluacionHecha);
-    const fechaPasada = esFechaPasada(res.fecha_reserva || res.fechaReserva);
-    return esCompletada || fechaPasada;
+    const transcurrido = esTourTranscurrido(res);
+    return esCompletada || transcurrido;
   });
 
   const reservasAMostrar = pestanaActiva === 'activas' ? reservasActivas : reservasHistorial;
@@ -297,7 +329,7 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   {reservasAMostrar.map((res) => {
                     const evaluacionHecha = mapaEvaluaciones[res.id] || mapaEvaluaciones[res.codigo_reserva];
-                    const fechaPasada = esFechaPasada(res.fecha_reserva || res.fechaReserva);
+                    const fechaPasada = esTourTranscurrido(res);
                     const esCompletada = res.estado === 'completada' || Boolean(evaluacionHecha);
                     const tieneGuia = Boolean(res.id_guia_asignado || res.nombre_guia_asignado);
 
@@ -490,7 +522,7 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                                 )}
                               </span>
                             </div>
-                          ) : esCompletada ? (
+                          ) : (esCompletada || fechaPasada) ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--texto-secundario)', fontSize: '0.84rem' }}>
                               <Star size={16} color="var(--color-dorado)" />
                               <span>Tu recorrido finalizó. ¡Cuéntale a otros viajeros cómo fue tu experiencia!</span>
@@ -498,16 +530,12 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                           ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--texto-atenuado)', fontSize: '0.82rem' }}>
                               <Clock size={15} />
-                              <span>
-                                {fechaPasada
-                                  ? 'La fecha programada ya pasó. Puedes marcarlo como realizado para calificarlo.'
-                                  : 'Puedes marcar el tour como realizado una vez lo hayas tomado para evaluarlo.'}
-                              </span>
+                              <span>Puedes evaluar tu experiencia una vez culmines el recorrido programado.</span>
                             </div>
                           )}
 
                           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                            {!evaluacionHecha && esCompletada && (
+                            {!evaluacionHecha && (esCompletada || fechaPasada) && (
                               <button
                                 onClick={() => abrirEvaluar(res)}
                                 className="boton boton-primario boton-pequeno"
@@ -518,12 +546,12 @@ export const PanelTurista = ({ alExplorarTours, alReportarIncidente }) => {
                               </button>
                             )}
 
-                            {!evaluacionHecha && !esCompletada && (
+                            {!evaluacionHecha && !esCompletada && !fechaPasada && (
                               <button
                                 onClick={() => manejarCompletarReserva(res.id)}
                                 className="boton boton-contorno boton-pequeno"
                                 style={{ fontSize: '0.78rem', gap: '0.35rem' }}
-                                title="Si ya tomaste o finalizó este recorrido, márcalo como realizado para calificar"
+                                title="Si ya tomaste o finalizó este recorrido anticipadamente, márcalo como realizado para calificar"
                               >
                                 <CheckCircle2 size={14} color="var(--color-primario)" />
                                 <span>Marcar como Realizado</span>

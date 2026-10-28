@@ -1,0 +1,54 @@
+[
+  {
+    "id": "aud-seed-1",
+    "admin_id": "admin-sistema-master",
+    "admin_nombre": "Administrador GuianzApp",
+    "admin_email": "admin@guianzapp.co",
+    "accion": "aprobar_prestador",
+    "entidad_tipo": "prestador",
+    "entidad_id": "agencia-bogota-andando",
+    "entidad_nombre": "Bogotá Andando S.A.S.",
+    "motivo": "Certificado RNT 48920 verificado ante plataforma MinCIT con vigencia 2026.",
+    "detalles": {
+      "rol": "agencia",
+      "rnt": "48920",
+      "resolucion": "Cumple requisitos legales"
+    },
+    "creado_en": "2026-10-20T00:19:07.812Z"
+  },
+  {
+    "id": "aud-seed-2",
+    "admin_id": "admin-sistema-master",
+    "admin_nombre": "Administrador GuianzApp",
+    "admin_email": "admin@guianzapp.co",
+    "accion": "aprobar_prestador",
+    "entidad_tipo": "prestador",
+    "entidad_id": "guia-carlos-mendoza",
+    "entidad_nombre": "Carlos Mendoza Ruiz",
+    "motivo": "Tarjeta Profesional TP-0842 expedida por Consejo Profesional de Guías validada.",
+    "detalles": {
+      "rol": "guia",
+      "tarjeta": "TP-0842",
+      "especialidades": [
+        "Historia",
+        "Centro"
+      ]
+    },
+    "creado_en": "2026-10-21T00:19:07.813Z"
+  },
+  {
+    "id": "aud-seed-3",
+    "admin_id": "admin-sistema-master",
+    "admin_nombre": "Administrador GuianzApp",
+    "admin_email": "admin@guianzapp.co",
+    "accion": "crear_especialidad",
+    "entidad_tipo": "especialidad",
+    "entidad_id": "esp-bogota-graffiti",
+    "entidad_nombre": "Distrito Graffiti & Arte Urbano",
+    "motivo": "Incorporación al catálogo transversal solicitado por prestadores de Puente Aranda.",
+    "detalles": {
+      "categoria_macro": "Historia, Patrimonio y Cultura Urbana"
+    },
+    "creado_en": "2026-10-22T04:19:07.813Z"
+  }
+]

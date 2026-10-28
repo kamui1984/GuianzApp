@@ -120,20 +120,25 @@ const completarReserva = async (peticion, respuesta) => {
   try {
     const idReserva = peticion.params.id;
     const reservas = leerReservasLocal();
-    let indice = reservas.findIndex((r) => String(r.id) === String(idReserva));
+    let indice = reservas.findIndex((r) => String(r.id) === String(idReserva) || r.codigo_reserva === idReserva);
 
     if (indice === -1) {
       try {
-        const { data: supaRes } = await clienteSupabaseAdmin
-          .from('reservas')
-          .select('*')
-          .eq('id', idReserva)
-          .maybeSingle();
+        const query = clienteSupabaseAdmin.from('reservas').select('*');
+        const esUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(idReserva));
+        if (esUuid) {
+          query.eq('id', idReserva);
+        } else {
+          query.eq('codigo_reserva', idReserva);
+        }
+        const { data: supaRes } = await query.maybeSingle();
         if (supaRes) {
           reservas.unshift(supaRes);
           indice = 0;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Error al buscar reserva en Supabase:', e.message);
+      }
     }
 
     if (indice === -1) {
@@ -156,15 +161,18 @@ const completarReserva = async (peticion, respuesta) => {
       await clienteSupabaseAdmin
         .from('reservas')
         .update({ estado: 'completada', historial_evidencias: reserva.historial_evidencias })
-        .eq('id', idReserva);
-    } catch (e) {}
+        .eq('id', reserva.id);
+    } catch (e) {
+      console.warn('Error al actualizar reserva en Supabase:', e.message);
+    }
 
     return respuesta.json({
       reserva,
       mensaje: '¡Tour marcado como completado! Ya puedes calificar la experiencia.'
     });
   } catch (error) {
-    return respuesta.status(500).json({ error: 'Error al completar la reserva.' });
+    console.error('Error al completar la reserva:', error);
+    return respuesta.status(500).json({ error: error.message || 'Error al completar la reserva.' });
   }
 };
 

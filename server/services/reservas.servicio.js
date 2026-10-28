@@ -618,6 +618,7 @@ module.exports = {
   confirmarReserva,
   desasignarGuiaReserva,
   eliminarReserva,
-  leerReservasLocal
+  leerReservasLocal,
+  guardarReservasLocal
 };
 

@@ -155,7 +155,27 @@ class CalificacionesServicio {
 
     // 4. Buscar la reserva real
     const reservas = leerReservasLocal();
-    const indiceReserva = reservas.findIndex((r) => String(r.id) === String(idReserva) || r.codigo_reserva === idReserva);
+    let indiceReserva = reservas.findIndex((r) => String(r.id) === String(idReserva) || r.codigo_reserva === idReserva);
+
+    if (indiceReserva === -1) {
+      try {
+        const query = clienteSupabaseAdmin.from('reservas').select('*');
+        const esUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(idReserva));
+        if (esUuid) {
+          query.eq('id', idReserva);
+        } else {
+          query.eq('codigo_reserva', idReserva);
+        }
+        const { data: supaRes } = await query.maybeSingle();
+        if (supaRes) {
+          reservas.unshift(supaRes);
+          guardarReservasLocal(reservas);
+          indiceReserva = 0;
+        }
+      } catch (e) {
+        console.warn('Error al buscar reserva en Supabase para evaluacion:', e.message);
+      }
+    }
 
     if (indiceReserva === -1) {
       throw new Error('No se encontró una reserva vinculada para registrar la evaluación.');

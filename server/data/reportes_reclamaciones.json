@@ -1,0 +1,112 @@
+[
+  {
+    "id": "rep-seed-1",
+    "codigo_caso": "#REC-000101",
+    "tipo_reportante": "turista",
+    "id_reportante": "turista-demostracion-1",
+    "nombre_reportante": "Andrea Pinzón Gómez",
+    "correo_reportante": "andrea.pinzon@gmail.com",
+    "rol_afectado": "agencia",
+    "nombre_afectado": "Explora Cerros Bogotá",
+    "id_afectado": "agencia-explora-cerros",
+    "codigo_reserva": "#RES-000012",
+    "titulo_tour": "Sendero de los Cerros Orientales & Mirador Monserrate",
+    "motivo_categoria": "incumplimiento_horario",
+    "motivo_legible": "Retraso de más de 45 minutos en punto de encuentro",
+    "descripcion": "Llegamos a las 7:45 am al punto de encuentro acordado en la estación Funicular. La salida estaba programada a las 8:00 am pero el grupo no partió hasta las 8:50 am sin aviso previo por chat.",
+    "evidencias": [
+      "https://images.unsplash.com/photo-1589561084283-930aa7b1ce50?auto=format&fit=crop&w=400&q=80"
+    ],
+    "estado": "en_revision",
+    "prioridad": "media",
+    "acciones_tomadas": "Se notificó a Explora Cerros Bogotá solicitando informe de la operación de la salida. La agencia reportó cierre vial temporal en la Av. Circunvalar.",
+    "responsable_remitido": "Coordinador Operativo Explora Cerros Bogotá",
+    "resolucion_final": "",
+    "historial_seguimiento": [
+      {
+        "fecha": "2026-10-21T22:19:07.814Z",
+        "autor": "Andrea Pinzón Gómez",
+        "evento": "Reclamación interpuesta por el turista a través del portal de GuianzApp."
+      },
+      {
+        "fecha": "2026-10-22T10:19:07.814Z",
+        "autor": "Administrador GuianzApp",
+        "evento": "Caso admitido a revisión formal. Se solicitó explicación y trazabilidad a la agencia."
+      }
+    ],
+    "creado_en": "2026-10-21T22:19:07.814Z",
+    "actualizado_en": "2026-10-22T10:19:07.814Z"
+  },
+  {
+    "id": "rep-seed-2",
+    "codigo_caso": "#REC-000102",
+    "tipo_reportante": "guia",
+    "id_reportante": "guia-demostracion-2",
+    "nombre_reportante": "Carlos Mendoza Ruiz",
+    "correo_reportante": "carlos.mendoza@guianzapp.co",
+    "rol_afectado": "agencia",
+    "nombre_afectado": "Bogotá Andando S.A.S.",
+    "id_afectado": "agencia-bogota-andando",
+    "codigo_reserva": "#RES-000019",
+    "titulo_tour": "Bogotá Colonial & Secretos de La Candelaria",
+    "motivo_categoria": "cambio_unilateral_itinerario",
+    "motivo_legible": "Ampliación de grupo por encima del cupo acordado",
+    "descripcion": "La orden de servicio indicaba un aforo máximo de 10 turistas para guianza de patrimonio. Al iniciar el recorrido se sumaron 5 personas adicionales sin haber sido concertado previamente con el guía.",
+    "evidencias": [],
+    "estado": "recibido",
+    "prioridad": "alta",
+    "acciones_tomadas": "Pendiente de comunicación con el representante legal de la agencia.",
+    "responsable_remitido": "Administración GuianzApp",
+    "resolucion_final": "",
+    "historial_seguimiento": [
+      {
+        "fecha": "2026-10-22T19:19:07.814Z",
+        "autor": "Carlos Mendoza Ruiz",
+        "evento": "Reporte ingresado por el guía profesional de turismo."
+      }
+    ],
+    "creado_en": "2026-10-22T19:19:07.814Z",
+    "actualizado_en": "2026-10-22T19:19:07.814Z"
+  },
+  {
+    "id": "rep-seed-3",
+    "codigo_caso": "#REC-000098",
+    "tipo_reportante": "turista",
+    "id_reportante": "turista-demostracion-3",
+    "nombre_reportante": "Felipe Restrepo",
+    "correo_reportante": "felipe.restrepo@outlook.com",
+    "rol_afectado": "agencia",
+    "nombre_afectado": "Muros Vivos Travel",
+    "id_afectado": "agencia-muros-vivos",
+    "codigo_reserva": "#RES-000008",
+    "titulo_tour": "Distrito Graffiti & Arte Urbano Capitalino",
+    "motivo_categoria": "fuerza_mayor",
+    "motivo_legible": "Cancelación por lluvias torrenciales y reprogramación",
+    "descripcion": "El tour no pudo culminar en Puente Aranda debido a una tormenta eléctrica.",
+    "evidencias": [],
+    "estado": "resuelto",
+    "prioridad": "baja",
+    "acciones_tomadas": "La agencia acordó con el turista reprogramación para el domingo siguiente y entrega de souvenir artístico.",
+    "responsable_remitido": "Muros Vivos Travel y Turista",
+    "resolucion_final": "Ambas partes firmaron acuerdo de reprogramación satisfactoria del servicio.",
+    "historial_seguimiento": [
+      {
+        "fecha": "2026-10-20T00:19:07.814Z",
+        "autor": "Felipe Restrepo",
+        "evento": "Reporte inicial presentado."
+      },
+      {
+        "fecha": "2026-10-21T00:19:07.814Z",
+        "autor": "Administrador GuianzApp",
+        "evento": "Mediación facilitada en plataforma."
+      },
+      {
+        "fecha": "2026-10-22T00:19:07.814Z",
+        "autor": "Administrador GuianzApp",
+        "evento": "Caso cerrado con conformidad expresa del turista."
+      }
+    ],
+    "creado_en": "2026-10-20T00:19:07.814Z",
+    "actualizado_en": "2026-10-22T00:19:07.814Z"
+  }
+]

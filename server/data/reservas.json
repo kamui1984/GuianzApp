@@ -1,5 +1,60 @@
 [
   {
+    "id": "acf72766-37a3-450d-9734-0d7bf7ccae58",
+    "codigo_reserva": "#RES-000016",
+    "id_paquete": "8b472f56-d82a-4176-98a9-e2eea86b8990",
+    "id_agencia": "9c1bbde9-b5ff-4f2c-a6de-4548b59ea964",
+    "nombre_agencia": "agencia1",
+    "rnt_agencia": "16092",
+    "id_turista": null,
+    "nombre_titular": "Juan Burgos",
+    "correo_contacto": "juanburgos@test.com",
+    "telefono_contacto": "3022336655",
+    "fecha_reserva": "2026-10-22",
+    "hora_reserva": "09:00 AM",
+    "cantidad_personas": 6,
+    "precio_total": 900000,
+    "duracion": "3.5 horas",
+    "titulo_paquete": "Tour colonial",
+    "id_guia_asignado": null,
+    "nombre_guia_asignado": null,
+    "rnt_guia": null,
+    "fecha_asignacion_guia": null,
+    "estado": "completada",
+    "aceptacion_terminos_turista": true,
+    "fecha_aceptacion_terminos": "2026-10-22T04:41:37.92+00:00",
+    "version_terminos": "v1.0-co",
+    "condiciones_snapshot": {
+      "que_incluye": "Servicio de guianza turística y recorrido coordinado según paquete.",
+      "que_no_incluye": "Gastos personales o servicios no especificados en la descripción.",
+      "punto_encuentro": "Punto de encuentro concertado con la agencia.",
+      "rnt_responsable": "16092",
+      "politica_cancelacion": "Cancelación gratuita hasta 24 horas antes del tour.",
+      "responsable_servicio": "agencia1",
+      "aviso_legal_plataforma": "GuianzApp actúa exclusivamente como plataforma tecnológica que facilita la publicación, reserva y coordinación entre usuarios y prestadores turísticos (Art. 53 Ley 1480/2011). Las condiciones particulares del servicio corresponden al prestador indicado en la reserva.",
+      "especialidades_requeridas": []
+    },
+    "historial_evidencias": [
+      {
+        "fecha": "2026-10-22T04:41:37.920Z",
+        "evento": "Reserva creada y registrada",
+        "detalle": "El turista Juan Burgos aceptó los Términos y Condiciones de GuianzApp (v1.0-co) y las condiciones del prestador agencia1 (RNT 16092). Estado: En espera de confirmación."
+      },
+      {
+        "fecha": "2026-10-22T04:42:13.543Z",
+        "evento": "Reserva confirmada por la agencia",
+        "detalle": "La agencia agencia1 revisó y confirmó oficialmente la reserva y cupos del tour."
+      },
+      {
+        "fecha": "2026-10-23T03:26:24.961Z",
+        "evento": "Servicio completado",
+        "detalle": "El recorrido turístico finalizó con éxito. Servicio habilitado para evaluación del turista."
+      }
+    ],
+    "creado_en": "2026-10-22T04:41:37.92+00:00",
+    "actualizado_en": "2026-10-22T04:41:37.994435+00:00"
+  },
+  {
     "id": "d005ad68-89c2-4e46-9085-8bf115d4d5c9",
     "id_paquete": "fcb629ae-74ea-446c-89df-f8a07f1e76f4",
     "id_agencia": "9c1bbde9-b5ff-4f2c-a6de-4548b59ea964",
