@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600px', zIndex = 1000 }) => {
@@ -34,22 +35,24 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
     refFondoMouseDown.current = false;
   };
 
-  return (
+  const contenidoModal = (
     <div
       className="modal-overlay-movil"
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: '100vw',
+        height: '100vh',
         backgroundColor: 'rgba(23, 74, 91, 0.55)',
         backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
         zIndex: zIndex,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem'
+        padding: '1.25rem',
+        boxSizing: 'border-box'
       }}
       onMouseDown={manejarMouseDownFondo}
       onMouseUp={manejarMouseUpFondo}
@@ -59,7 +62,7 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
         style={{
           width: '100%',
           maxWidth: anchoMaximo,
-          maxHeight: '90vh',
+          maxHeight: '92vh',
           backgroundColor: '#FFFFFF',
           border: '1px solid var(--borde-sutil)',
           borderRadius: '16px',
@@ -71,9 +74,12 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {/* Encabezado del Modal */}
+        {/* Encabezado del Modal con posición fija/sticky */}
         <div
           style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -82,7 +88,7 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
             backgroundColor: 'var(--fondo-secundario)'
           }}
         >
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-primario)' }}>{titulo}</h3>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-primario)', margin: 0 }}>{titulo}</h3>
           <button
             onClick={alCerrar}
             style={{
@@ -97,6 +103,7 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
               justifyContent: 'center',
               transition: 'all 0.2s'
             }}
+            aria-label="Cerrar modal"
           >
             <X size={20} />
           </button>
@@ -107,4 +114,6 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(contenidoModal, document.body) : null;
 };

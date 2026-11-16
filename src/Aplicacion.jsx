@@ -112,6 +112,7 @@ export const Aplicacion = () => {
   // Estados de Modales
   const [modalAutenticacionAbierto, setModalAutenticacionAbierto] = useState(false);
   const [modoAutenticacionInicial, setModoAutenticacionInicial] = useState('iniciar-sesion');
+  const [tipoRegistroInicial, setTipoRegistroInicial] = useState('turista');
   const [paqueteSeleccionado, setPaqueteSeleccionado] = useState(null);
   const [modalDetallesAbierto, setModalDetallesAbierto] = useState(false);
   const [modalReservaAbierto, setModalReservaAbierto] = useState(false);
@@ -197,8 +198,17 @@ export const Aplicacion = () => {
     });
   }, [paquetes, busqueda, categoriaSeleccionada]);
 
-  const abrirModalAutenticacion = (modo = 'iniciar-sesion') => {
-    setModoAutenticacionInicial(modo);
+  const abrirModalAutenticacion = (modo = 'iniciar-sesion', tipo = 'turista') => {
+    if (modo === 'registro-agencia') {
+      setModoAutenticacionInicial('registro');
+      setTipoRegistroInicial('agencia');
+    } else if (modo === 'registro-guia') {
+      setModoAutenticacionInicial('registro');
+      setTipoRegistroInicial('guia');
+    } else {
+      setModoAutenticacionInicial(modo);
+      setTipoRegistroInicial(tipo || 'turista');
+    }
     setModalAutenticacionAbierto(true);
   };
 
@@ -284,9 +294,7 @@ export const Aplicacion = () => {
             {/* Mostrar llamada a prestadores solo si no está autenticado o es turista */}
             {!estaAutenticado && (
               <SeccionPrestadores
-                alRegistrarPrestador={(tipo) => {
-                  abrirModalAutenticacion('registro');
-                }}
+                alRegistrarPrestador={(tipo) => abrirModalAutenticacion('registro', tipo)}
               />
             )}
           </>
@@ -318,6 +326,7 @@ export const Aplicacion = () => {
         abierto={modalAutenticacionAbierto}
         alCerrar={() => setModalAutenticacionAbierto(false)}
         modoInicial={modoAutenticacionInicial}
+        tipoRegistroInicial={tipoRegistroInicial}
       />
 
       {paqueteSeleccionado && (

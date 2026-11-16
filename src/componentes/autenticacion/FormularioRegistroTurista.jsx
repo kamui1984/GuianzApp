@@ -80,35 +80,37 @@ export const FormularioRegistroTurista = ({ alCompletar }) => {
         />
       </div>
 
-      <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Correo electrónico</span>
-          <Mail size={15} color="#9ca3af" />
-        </label>
-        <input
-          type="email"
-          required
-          value={correo}
-          onChange={(e) => setCorreo(e.target.value)}
-          placeholder="tu@correo.com"
-          className="campo-formulario"
-        />
-      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+        <div className="grupo-formulario">
+          <label className="etiqueta-formulario">
+            <span>Correo electrónico</span>
+            <Mail size={15} color="#9ca3af" />
+          </label>
+          <input
+            type="email"
+            required
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            placeholder="tu@correo.com"
+            className="campo-formulario"
+          />
+        </div>
 
-      <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Contraseña (mínimo 6 caracteres)</span>
-          <Lock size={15} color="#9ca3af" />
-        </label>
-        <input
-          type="password"
-          required
-          minLength={6}
-          value={contrasena}
-          onChange={(e) => setContrasena(e.target.value)}
-          placeholder="••••••••"
-          className="campo-formulario"
-        />
+        <div className="grupo-formulario">
+          <label className="etiqueta-formulario">
+            <span>Contraseña (mínimo 6 caracteres)</span>
+            <Lock size={15} color="#9ca3af" />
+          </label>
+          <input
+            type="password"
+            required
+            minLength={6}
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
+            placeholder="••••••••"
+            className="campo-formulario"
+          />
+        </div>
       </div>
 
       {/* Checkbox Términos y Condiciones */}

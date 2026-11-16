@@ -32,7 +32,7 @@ export const ModalDetallePaquete = ({ paquete, abierto, alCerrar, alReservar }) 
   const urlImagen = paquete.archivos?.[0]?.url || 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1000&q=80';
 
   return (
-    <Modal abierto={abierto} alCerrar={alCerrar} titulo={paquete.titulo} anchoMaximo="720px">
+    <Modal abierto={abierto} alCerrar={alCerrar} titulo={paquete.titulo} anchoMaximo="860px">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {/* Imagen Principal */}
         <div style={{ height: '260px', width: '100%', borderRadius: '12px', overflow: 'hidden', position: 'relative' }}>

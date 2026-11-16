@@ -297,7 +297,7 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
       abierto={abierto}
       alCerrar={reiniciarYCerrar}
       titulo={reservaConfirmada ? '¡Reserva Exitosa!' : `Reservar: ${paquete.titulo}`}
-      anchoMaximo="640px"
+      anchoMaximo="760px"
     >
       {reservaConfirmada ? (
         <div style={{ textAlign: 'center', padding: '1.5rem 0' }} className="animar-aparicion">

@@ -109,23 +109,40 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
         </div>
       )}
 
-      {/* Datos básicos y credenciales */}
-      <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Nombre completo comercial</span>
-          <Compass size={15} color="#9ca3af" />
-        </label>
-        <input
-          type="text"
-          required
-          value={nombreCompleto}
-          onChange={(e) => setNombreCompleto(e.target.value)}
-          placeholder="Ej: Carlos Alberto Gómez"
-          className="campo-formulario"
-        />
+      {/* Datos básicos y credenciales en cuadrícula responsiva */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+        <div className="grupo-formulario">
+          <label className="etiqueta-formulario">
+            <span>Nombre completo comercial</span>
+            <Compass size={15} color="#9ca3af" />
+          </label>
+          <input
+            type="text"
+            required
+            value={nombreCompleto}
+            onChange={(e) => setNombreCompleto(e.target.value)}
+            placeholder="Ej: Carlos Alberto Gómez"
+            className="campo-formulario"
+          />
+        </div>
+
+        <div className="grupo-formulario">
+          <label className="etiqueta-formulario">
+            <span>Número RNT personal</span>
+            <ShieldCheck size={15} color="#fbbf24" />
+          </label>
+          <input
+            type="text"
+            required
+            value={numeroRnt}
+            onChange={(e) => setNumeroRnt(e.target.value)}
+            placeholder="Ej: 51230"
+            className="campo-formulario"
+          />
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
         <div className="grupo-formulario">
           <label className="etiqueta-formulario">
             <span>Correo electrónico</span>
@@ -156,21 +173,6 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
             className="campo-formulario"
           />
         </div>
-      </div>
-
-      <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Número RNT personal (Tarjeta Profesional)</span>
-          <ShieldCheck size={15} color="#fbbf24" />
-        </label>
-        <input
-          type="text"
-          required
-          value={numeroRnt}
-          onChange={(e) => setNumeroRnt(e.target.value)}
-          placeholder="Ej: 51230"
-          className="campo-formulario"
-        />
       </div>
 
       {/* Contacto y WhatsApp */}
@@ -287,36 +289,39 @@ export const FormularioRegistroGuia = ({ alCompletar }) => {
         />
       </div>
 
-      {/* Documentos */}
-      <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Certificado RNT (PDF o Imagen)</span>
-          <FileUp size={15} color="#38bdf8" />
-        </label>
-        <input
-          type="file"
-          required
-          accept=".pdf,image/jpeg,image/png,image/webp"
-          onChange={(e) => setArchivoRnt(e.target.files[0])}
-          className="campo-formulario"
-          style={{ padding: '0.5rem' }}
-        />
-      </div>
+      {/* Documentos en cuadrícula */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+        <div className="grupo-formulario">
+          <label className="etiqueta-formulario">
+            <span>Certificado RNT (PDF o Imagen)</span>
+            <FileUp size={15} color="#38bdf8" />
+          </label>
+          <input
+            type="file"
+            required
+            accept=".pdf,image/jpeg,image/png,image/webp"
+            onChange={(e) => setArchivoRnt(e.target.files[0])}
+            className="campo-formulario"
+            style={{ padding: '0.5rem' }}
+          />
+          <span className="texto-ayuda">Vigente ante MinComercio / RNT.</span>
+        </div>
 
-      <div className="grupo-formulario">
-        <label className="etiqueta-formulario">
-          <span>Tarjeta Profesional de Guía de Turismo</span>
-          <FileUp size={15} color="#38bdf8" />
-        </label>
-        <input
-          type="file"
-          required
-          accept=".pdf,image/jpeg,image/png,image/webp"
-          onChange={(e) => setArchivoTarjeta(e.target.files[0])}
-          className="campo-formulario"
-          style={{ padding: '0.5rem' }}
-        />
-        <span className="texto-ayuda">Emitida por el Consejo Profesional de Guías de Turismo.</span>
+        <div className="grupo-formulario">
+          <label className="etiqueta-formulario">
+            <span>Tarjeta Profesional de Guía</span>
+            <FileUp size={15} color="#38bdf8" />
+          </label>
+          <input
+            type="file"
+            required
+            accept=".pdf,image/jpeg,image/png,image/webp"
+            onChange={(e) => setArchivoTarjeta(e.target.files[0])}
+            className="campo-formulario"
+            style={{ padding: '0.5rem' }}
+          />
+          <span className="texto-ayuda">Emitida por el Consejo Profesional.</span>
+        </div>
       </div>
 
       {/* Checkbox Términos y Condiciones para Guías */}

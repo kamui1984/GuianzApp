@@ -7,28 +7,38 @@ import { FormularioRegistroTurista } from './FormularioRegistroTurista';
 import { FormularioRecuperarClave } from './FormularioRecuperarClave';
 import { User, Building2, Compass, Sparkles } from 'lucide-react';
 
-export const ModalAutenticacion = ({ abierto, alCerrar, modoInicial = 'iniciar-sesion' }) => {
+export const ModalAutenticacion = ({ abierto, alCerrar, modoInicial = 'iniciar-sesion', tipoRegistroInicial = 'turista' }) => {
   const [pestanaPrincipal, setPestanaPrincipal] = useState('iniciar-sesion'); // 'iniciar-sesion' | 'registro' | 'recuperar-clave'
-  const [tipoRegistro, setTipoRegistro] = useState('turista'); // 'turista' | 'agencia' | 'guia'
+  const [tipoRegistro, setTipoRegistro] = useState(tipoRegistroInicial || 'turista'); // 'turista' | 'agencia' | 'guia'
 
   useEffect(() => {
     if (modoInicial === 'registro') {
       setPestanaPrincipal('registro');
+      if (tipoRegistroInicial) {
+        setTipoRegistro(tipoRegistroInicial);
+      }
     } else if (modoInicial === 'recuperar-clave') {
       setPestanaPrincipal('recuperar-clave');
     } else {
       setPestanaPrincipal('iniciar-sesion');
     }
-  }, [modoInicial, abierto]);
+  }, [modoInicial, tipoRegistroInicial, abierto]);
 
-  const obtenerTituloModal = () => {
+    const obtenerTituloModal = () => {
     if (pestanaPrincipal === 'recuperar-clave') return 'Recuperar Contraseña';
     if (pestanaPrincipal === 'registro') return 'Crear Cuenta en GuianzApp';
     return 'Iniciar Sesión en GuianzApp';
   };
 
+  const obtenerAnchoModal = () => {
+    if (pestanaPrincipal !== 'registro') return '520px';
+    if (tipoRegistro === 'guia') return '860px';
+    if (tipoRegistro === 'agencia') return '820px';
+    return '660px';
+  };
+
   return (
-    <Modal abierto={abierto} alCerrar={alCerrar} titulo={obtenerTituloModal()} anchoMaximo="540px">
+    <Modal abierto={abierto} alCerrar={alCerrar} titulo={obtenerTituloModal()} anchoMaximo={obtenerAnchoModal()}>
       {/* Selector de pestañas principales: Iniciar Sesión / Registrarse (Oculto en recuperación de clave) */}
       {pestanaPrincipal !== 'recuperar-clave' && (
         <div

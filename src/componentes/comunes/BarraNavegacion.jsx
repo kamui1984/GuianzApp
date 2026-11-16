@@ -184,7 +184,7 @@ export const BarraNavegacion = ({
                     <span>Iniciar sesión</span>
                   </button>
                   <button
-                    onClick={() => alAbrirAutenticacion('registro-agencia')}
+                    onClick={() => alAbrirAutenticacion('registro', 'turista')}
                     className="boton boton-primario"
                   >
                     Registrarse
@@ -265,7 +265,7 @@ export const BarraNavegacion = ({
                 <button
                   onClick={() => {
                     setMenuMovilAbierto(false);
-                    alAbrirAutenticacion('registro-agencia');
+                    alAbrirAutenticacion('registro', 'turista');
                   }}
                   className="boton boton-primario"
                   style={{ width: '100%', justifyContent: 'center' }}
