@@ -40,7 +40,8 @@ import {
   Eye,
   FileText,
   Scale,
-  Star
+  Star,
+  Lock
 } from 'lucide-react';
 
 export const PanelAgencia = () => {
@@ -105,10 +106,13 @@ export const PanelAgencia = () => {
           console.warn('Error al cargar reservas de agencia:', e.message);
           return [];
         }),
-        servicioGuias.listarGuiasPublicos().catch((e) => {
-          console.warn('Error al consultar guías públicos:', e.message);
-          return [];
-        }),
+        // Solo consultar directorio de guías si la agencia cuenta con RNT aprobado
+        esAgenciaAprobada
+          ? servicioGuias.listarGuiasPublicos().catch((e) => {
+              console.warn('Error al consultar guías públicos:', e.message);
+              return [];
+            })
+          : Promise.resolve([]),
         usuarioActual?.id && typeof servicioCalificaciones.obtenerRankingAgencia === 'function'
           ? servicioCalificaciones.obtenerRankingAgencia(usuarioActual.id).catch((e) => {
               console.warn('Aviso ranking agencia:', e.message);
@@ -280,6 +284,10 @@ export const PanelAgencia = () => {
   };
 
   const abrirModalAsignarGuia = async (reserva) => {
+    if (!esAgenciaAprobada) {
+      mostrarNotificacion('Debes contar con RNT aprobado para asignar guías turísticos.', 'error');
+      return;
+    }
     setReservaSeleccionada(reserva);
     setMostrarTodosLosGuias(false);
     setModalAsignarGuiaAbierto(true);
@@ -652,23 +660,24 @@ export const PanelAgencia = () => {
           <div
             style={{
               padding: '1.5rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.12)',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
+              backgroundColor: '#FEE2E2',
+              border: '1px solid #EF4444',
               borderRadius: '14px',
-              color: '#fecaca',
+              color: '#991B1B',
               marginBottom: '2rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '1rem'
+              gap: '1rem',
+              boxShadow: '0 4px 14px rgba(239, 68, 68, 0.12)'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-              <AlertTriangle size={24} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <AlertTriangle size={24} color="#DC2626" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
-                <strong style={{ fontSize: '1rem', color: '#f87171', display: 'block', marginBottom: '0.3rem' }}>
+                <strong style={{ fontSize: '1rem', color: '#991B1B', display: 'block', marginBottom: '0.3rem', fontWeight: 800 }}>
                   Tu solicitud de registro ha sido rechazada por el administrador
                 </strong>
-                <p style={{ fontSize: '0.9rem', color: '#f3f4f6', lineHeight: 1.5 }}>
+                <p style={{ fontSize: '0.92rem', color: '#7F1D1D', lineHeight: 1.5, margin: 0 }}>
                   <strong>Motivo de rechazo:</strong>{' '}
                   {usuarioActual?.motivoRechazo || 'El documento RNT adjunto no coincide con la razón social o está desactualizado.'}
                 </p>
@@ -696,24 +705,24 @@ export const PanelAgencia = () => {
         {usuarioActual?.estado === 'pendiente' && (
           <div
             style={{
-              padding: '1.25rem',
-              backgroundColor: 'rgba(245, 158, 11, 0.1)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              borderRadius: '12px',
-              color: '#fef3c7',
+              padding: '1.25rem 1.5rem',
+              backgroundColor: '#FEF3C7',
+              border: '1px solid #F59E0B',
+              borderRadius: '14px',
               marginBottom: '2rem',
               display: 'flex',
               alignItems: 'flex-start',
-              gap: '0.75rem'
+              gap: '0.85rem',
+              boxShadow: '0 4px 14px rgba(245, 158, 11, 0.12)'
             }}
           >
-            <AlertCircle size={22} color="#fbbf24" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <AlertCircle size={24} color="#B45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem', color: '#fbbf24' }}>
+              <strong style={{ fontSize: '1rem', display: 'block', marginBottom: '0.35rem', color: '#92400E', fontWeight: 800 }}>
                 Tu cuenta de agencia se encuentra en revisión de RNT
               </strong>
-              <p style={{ fontSize: '0.88rem', color: '#e5e7eb' }}>
-                Nuestro equipo administrativo está validando la vigencia de tu Registro Nacional de Turismo. Podrás publicar paquetes en cuanto sea aprobada.
+              <p style={{ fontSize: '0.92rem', color: '#78350F', margin: 0, lineHeight: 1.55 }}>
+                Nuestro equipo administrativo está validando la vigencia de tu Registro Nacional de Turismo. Podrás publicar paquetes turísticos y consultar el directorio de guías en cuanto tu solicitud sea aprobada.
               </p>
             </div>
           </div>
@@ -740,10 +749,16 @@ export const PanelAgencia = () => {
           <button
             onClick={() => setPestanaActiva('guias')}
             className={`boton ${pestanaActiva === 'guias' ? 'boton-primario' : 'boton-contorno'}`}
-            style={{ gap: '0.5rem' }}
+            style={{
+              gap: '0.5rem',
+              ...(!esAgenciaAprobada && pestanaActiva !== 'guias'
+                ? { borderColor: 'rgba(245, 158, 11, 0.4)', color: 'var(--texto-secundario)' }
+                : {})
+            }}
+            title={!esAgenciaAprobada ? 'Directorio restringido hasta aprobación de RNT' : 'Directorio de Guías'}
           >
-            <Users size={17} />
-            <span>Directorio de Guías ({guias.length})</span>
+            {esAgenciaAprobada ? <Users size={17} /> : <Lock size={16} color="#d97706" />}
+            <span>Directorio de Guías {esAgenciaAprobada ? `(${guias.length})` : '(Requiere Aprobación)'}</span>
           </button>
           <button
             onClick={() => setPestanaActiva('calificaciones')}
@@ -1110,8 +1125,68 @@ export const PanelAgencia = () => {
           </div>
         ) : pestanaActiva === 'guias' ? (
           /* Pestaña: Directorio de Guías */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
-            {guias.map((guia) => (
+          !esAgenciaAprobada ? (
+            <div
+              className="animar-aparicion"
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--borde-sutil)',
+                borderRadius: '16px',
+                padding: '3rem 2rem',
+                textAlign: 'center',
+                maxWidth: '680px',
+                margin: '1rem auto 3rem',
+                boxShadow: '0 4px 20px rgba(23, 74, 91, 0.06)'
+              }}
+            >
+              <div
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(245, 158, 11, 0.14)',
+                  color: '#b45309',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1.25rem'
+                }}
+              >
+                <Lock size={32} />
+              </div>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--texto-principal)', marginBottom: '0.75rem' }}>
+                Directorio de Guías Certificados Bloqueado
+              </h3>
+              <p style={{ color: 'var(--texto-secundario)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                Para garantizar la seguridad de los guías y el estricto cumplimiento del marco legal turístico (Ley 300 de 1996 y Ley 2068 de 2020), el acceso al directorio de guías profesionales y la asignación en ruta está reservado exclusivamente para agencias con Registro Nacional de Turismo (RNT) <strong>aprobado y verificado</strong>.
+              </p>
+              <div
+                style={{
+                  padding: '1rem 1.25rem',
+                  backgroundColor: '#FEF3C7',
+                  border: '1px solid #F59E0B',
+                  borderRadius: '10px',
+                  color: '#92400E',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  textAlign: 'left'
+                }}
+              >
+                <AlertCircle size={20} color="#B45309" style={{ flexShrink: 0 }} />
+                <span>Tu cuenta de agencia se encuentra en revisión de RNT. En cuanto tu solicitud sea aprobada por el administrador, este directorio se habilitará automáticamente.</span>
+              </div>
+            </div>
+          ) : guias.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--texto-secundario)' }}>
+              <Users size={40} style={{ opacity: 0.4, marginBottom: '0.5rem' }} />
+              <p>No se encontraron guías disponibles en este momento.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {guias.map((guia) => (
               <div
                 key={guia.id}
                 style={{
@@ -1246,7 +1321,8 @@ export const PanelAgencia = () => {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          )
         ) : pestanaActiva === 'calificaciones' ? (
           <ListaResenasPrestador
             rankingData={rankingAgencia}
