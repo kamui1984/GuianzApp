@@ -138,6 +138,15 @@ export const Aplicacion = () => {
     obtenerPaquetes();
   }, []);
 
+  // Redirección dinámica inmediata según rol del usuario autenticado
+  useEffect(() => {
+    if (usuarioActual && estaAutenticado) {
+      if (usuarioActual.rol === 'agencia' || usuarioActual.rol === 'guia' || usuarioActual.rol === 'administrador') {
+        setVistaActual('panel');
+      }
+    }
+  }, [usuarioActual?.id, usuarioActual?.rol, estaAutenticado]);
+
   // Detectar enlace de recuperación de contraseña en la URL
   useEffect(() => {
     const hash = window.location.hash || '';
@@ -272,11 +281,14 @@ export const Aplicacion = () => {
 
             <SeccionBeneficios />
 
-            <SeccionPrestadores
-              alRegistrarPrestador={(tipo) => {
-                abrirModalAutenticacion('registro');
-              }}
-            />
+            {/* Mostrar llamada a prestadores solo si no está autenticado o es turista */}
+            {!estaAutenticado && (
+              <SeccionPrestadores
+                alRegistrarPrestador={(tipo) => {
+                  abrirModalAutenticacion('registro');
+                }}
+              />
+            )}
           </>
         ) : (
           /* Vista de Panel según Rol */

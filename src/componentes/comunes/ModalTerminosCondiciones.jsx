@@ -10,7 +10,8 @@ export const ModalTerminosCondiciones = ({ abierto, alCerrar, rolInicial = 'gene
       abierto={abierto}
       alCerrar={alCerrar}
       titulo="Términos y Condiciones de Uso — GuianzApp"
-      anchoMaximo="780px"
+      anchoMaximo="920px"
+      zIndex={1100}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {/* Cabecera Informativa con Marco Legal Colombiano */}
@@ -54,10 +55,10 @@ export const ModalTerminosCondiciones = ({ abierto, alCerrar, rolInicial = 'gene
         <div
           style={{
             display: 'flex',
+            flexWrap: 'wrap',
             gap: '0.5rem',
             borderBottom: '1px solid var(--borde-sutil)',
-            paddingBottom: '0.5rem',
-            overflowX: 'auto'
+            paddingBottom: '0.5rem'
           }}
         >
           <button

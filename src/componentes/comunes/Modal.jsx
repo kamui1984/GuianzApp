@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
-export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600px' }) => {
+export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600px', zIndex = 1000 }) => {
   const refFondoMouseDown = useRef(false);
 
   useEffect(() => {
@@ -43,9 +43,9 @@ export const Modal = ({ abierto, alCerrar, titulo, children, anchoMaximo = '600p
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(23, 74, 91, 0.45)',
+        backgroundColor: 'rgba(23, 74, 91, 0.55)',
         backdropFilter: 'blur(8px)',
-        zIndex: 1000,
+        zIndex: zIndex,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

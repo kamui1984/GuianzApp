@@ -1549,7 +1549,8 @@ export const PanelAgencia = () => {
         abierto={modalAsignarGuiaAbierto}
         alCerrar={() => setModalAsignarGuiaAbierto(false)}
         titulo="Asignar Guía Certificado al Tour"
-        anchoMaximo="680px"
+        anchoMaximo="880px"
+        zIndex={1000}
       >
         {reservaSeleccionada && (
           <div style={{ color: 'var(--texto-principal)' }}>
@@ -2095,7 +2096,8 @@ export const PanelAgencia = () => {
         abierto={Boolean(guiaSeleccionadoDetalle)}
         alCerrar={() => setGuiaSeleccionadoDetalle(null)}
         titulo={`Perfil del Guía: ${guiaSeleccionadoDetalle?.nombreCompleto || 'Guía'}`}
-        anchoMaximo="640px"
+        anchoMaximo="780px"
+        zIndex={1150}
       >
         {guiaSeleccionadoDetalle && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', color: 'var(--texto-principal)' }}>

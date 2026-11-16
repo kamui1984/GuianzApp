@@ -93,20 +93,34 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
           .filter((s) => esSalidaVigente(s.fecha, s.horaInicio || s.hora_inicio));
         setSalidasProgramadas(salidasValidas);
 
-        // Seleccionar automáticamente la primera fecha vigente con disponibilidad
+        // Seleccionar automáticamente la primera fecha disponible y sincronizar el mes del calendario
         const primeraConCupos = salidasValidas.find(
           (s) => (s.cuposDisponibles ?? s.cupos_disponibles ?? s.cuposMaximos) > 0 && s.estado !== 'Completo'
         );
 
-        if (primeraConCupos) {
+        if (primeraConCupos && primeraConCupos.fecha) {
           setFechaReserva(primeraConCupos.fecha);
           const h12 = formatearHora12(primeraConCupos.horaInicio || primeraConCupos.hora_inicio);
           setHoraReserva(h12);
           setSalidaSeleccionada(primeraConCupos);
+
+          // Sincronizar el mes visible del calendario exactamente con la salida del paquete
+          try {
+            const partes = primeraConCupos.fecha.split('-');
+            if (partes.length >= 2) {
+              const anioSalida = parseInt(partes[0], 10);
+              const mesSalida = parseInt(partes[1], 10) - 1;
+              setMesActual(new Date(anioSalida, mesSalida, 1));
+            }
+          } catch (e) {
+            setMesActual(new Date());
+          }
         } else {
           setFechaReserva('');
           setHoraReserva('');
           setSalidaSeleccionada(null);
+          // Si no hay salidas para este paquete, reiniciar al mes actual
+          setMesActual(new Date());
         }
       } catch (err) {
         console.error('Error al cargar salidas programadas:', err);
@@ -503,6 +517,22 @@ export const ModalReserva = ({ paquete, abierto, alCerrar }) => {
               </div>
 
               {/* Cuadrícula de Días */}
+              {celdasCalendario.filter(c => Boolean(c)).every(c => !(mapaFechasSalidas[c.fechaStr] || []).length) && (
+                <div
+                  style={{
+                    gridColumn: '1 / -1',
+                    padding: '0.65rem 0.5rem',
+                    textAlign: 'center',
+                    fontSize: '0.78rem',
+                    color: 'var(--texto-secundario)',
+                    backgroundColor: 'rgba(23, 74, 91, 0.04)',
+                    borderRadius: '8px',
+                    marginBottom: '6px'
+                  }}
+                >
+                  Este mes no registra salidas programadas. Usa las flechas ‹ › para explorar otros meses con cupos.
+                </div>
+              )}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
                 {celdasCalendario.map((celda, idx) => {
                   if (!celda) {
